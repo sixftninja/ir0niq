@@ -87,6 +87,9 @@ actor SessionEngine {
     private let templateRepository: any TemplateRepositoryProtocol
     private let sessionRepository: any SessionRepositoryProtocol
     private let timerSystem: TimerSystem
+    var healthKitService: (any HealthKitServiceProtocol)?
+    var iCloudService: (any iCloudServiceProtocol)?
+    var watchSyncService: (any WatchSyncServiceProtocol)?
 
     // MARK: - State stream (observed by UI in Phase 3)
 
@@ -98,7 +101,10 @@ actor SessionEngine {
     init(
         templateRepository: any TemplateRepositoryProtocol,
         sessionRepository: any SessionRepositoryProtocol,
-        timerSystem: TimerSystem = TimerSystem()
+        timerSystem: TimerSystem = TimerSystem(),
+        healthKitService: (any HealthKitServiceProtocol)? = nil,
+        iCloudService: (any iCloudServiceProtocol)? = nil,
+        watchSyncService: (any WatchSyncServiceProtocol)? = nil
     ) {
         let (stream, continuation) = AsyncStream<SessionEngineState>.makeStream()
         self.stateUpdates = stream
@@ -106,6 +112,9 @@ actor SessionEngine {
         self.templateRepository = templateRepository
         self.sessionRepository = sessionRepository
         self.timerSystem = timerSystem
+        self.healthKitService = healthKitService
+        self.iCloudService = iCloudService
+        self.watchSyncService = watchSyncService
     }
 
     static func make(modelContainer: ModelContainer) -> SessionEngine {
@@ -187,6 +196,9 @@ actor SessionEngine {
             sessionStartedAt: now,
             lastInteractionAt: now
         )
+
+        // HealthKit: start workout recording
+        try? await healthKitService?.startWorkout(sessionId: sessionId, startDate: now)
 
         await startTimers(sessionId: sessionId)
         transition(to: .active(sessionId: sessionId))
@@ -430,7 +442,21 @@ actor SessionEngine {
             sessionContext = context
         }
 
-        try await sessionRepository.updateStatus(sessionId: sessionId, status: .complete, endedAt: Date())
+        let endedAt = Date()
+        try await sessionRepository.updateStatus(sessionId: sessionId, status: .complete, endedAt: endedAt)
+
+        // HealthKit: save workout
+        if let hkId = try? await healthKitService?.endWorkout(sessionId: sessionId, endDate: endedAt) {
+            try? await sessionRepository.updateHealthKitWorkoutId(sessionId: sessionId, workoutId: hkId)
+        }
+
+        // iCloud: export session log
+        if let iCloudService,
+           let dto = try? await sessionRepository.fetchById(sessionId) {
+            let model = SessionExportModel.make(from: dto)
+            try? await iCloudService.exportSession(model, templateSlug: nil)
+        }
+
         await timerSystem.cancelAll()
         transition(to: .ended(sessionId: sessionId))
     }
@@ -566,6 +592,65 @@ actor SessionEngine {
     private func transition(to newState: SessionEngineState) {
         state = newState
         stateUpdatesContinuation.yield(newState)
+        notifyWatch(state: newState)
+    }
+
+    private func notifyWatch(state: SessionEngineState) {
+        guard let watchSyncService else { return }
+        let context = sessionContext
+        Task { [weak self] in
+            guard let self else { return }
+            let message = await self.buildWatchMessage(for: state, context: context)
+            await watchSyncService.sendSessionState(message)
+        }
+    }
+
+    private func buildWatchMessage(
+        for state: SessionEngineState,
+        context: ActiveSessionContext?
+    ) -> WatchSessionStateMessage {
+        let stateName: String
+        switch state {
+        case .idle: stateName = "idle"
+        case .templateSelected: stateName = "templateSelected"
+        case .active: stateName = "active"
+        case .paused: stateName = "paused"
+        case .ending: stateName = "ending"
+        case .ended: stateName = "ended"
+        }
+
+        guard case .active = state, let context else {
+            return WatchSessionStateMessage(
+                sessionId: context?.sessionId.uuidString ?? "",
+                engineState: stateName,
+                exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil
+            )
+        }
+
+        let exercise = context.currentExercise
+        let set = context.currentSet
+        let setStatusName: String?
+        if let set {
+            switch set.lifecycleState {
+            case .pending: setStatusName = "pending"
+            case .inProgress: setStatusName = "inProgress"
+            case .resting: setStatusName = "resting"
+            case .awaitingInput: setStatusName = "awaitingInput"
+            case .logged: setStatusName = "logged"
+            case .notPerformed: setStatusName = "notPerformed"
+            }
+        } else {
+            setStatusName = nil
+        }
+
+        return WatchSessionStateMessage(
+            sessionId: context.sessionId.uuidString,
+            engineState: stateName,
+            exerciseName: nil,    // exercise name lookup would require repo call — deferred to Phase 4
+            setNumber: context.currentSetIndex + 1,
+            totalSets: exercise?.setContexts.count,
+            setStatus: setStatusName
+        )
     }
 
     private func collectUnloggedSets() -> [UnloggedSetInfo] {

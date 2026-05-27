@@ -30,6 +30,7 @@ protocol SessionRepositoryProtocol: Sendable {
     func updateExerciseStatus(exerciseId: UUID, status: SessionExerciseStatus) async throws
     func addPauseRecord(sessionId: UUID, startedAt: Date) async throws -> UUID
     func endPauseRecord(pauseId: UUID, endedAt: Date) async throws
+    func updateHealthKitWorkoutId(sessionId: UUID, workoutId: UUID) async throws
     func delete(sessionId: UUID) async throws
     func count() async throws -> Int
 }
@@ -208,6 +209,12 @@ actor SessionRepository: SessionRepositoryProtocol {
             record.endedAt = endedAt
             try modelContext.save()
         }
+    }
+
+    func updateHealthKitWorkoutId(sessionId: UUID, workoutId: UUID) throws {
+        guard let session = try fetchSessionModel(id: sessionId) else { return }
+        session.healthKitWorkoutId = workoutId
+        try modelContext.save()
     }
 
     func delete(sessionId: UUID) throws {

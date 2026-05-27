@@ -33,6 +33,9 @@ targets:
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: Forge/Forge.entitlements
     info:
       path: Forge/Info.plist
       properties:
@@ -44,6 +47,15 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        NSHealthShareUsageDescription: "Forge reads your heart rate to enhance workout tracking."
+        NSHealthUpdateUsageDescription: "Forge saves your workouts to Apple Health."
+        UIBackgroundModes:
+          - workout-processing
+        NSUbiquitousContainers:
+          iCloud.com.forgegym.app:
+            NSUbiquitousContainerIsDocumentScopePublic: true
+            NSUbiquitousContainerName: Forge
+            NSUbiquitousContainerSupportedFolderLevels: Any
 
   # ─── watchOS App ───────────────────────────────────────────────────────────
   ForgeWatch:

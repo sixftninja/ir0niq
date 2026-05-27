@@ -8,29 +8,38 @@
 
 /* Begin PBXBuildFile section */
 		096F3F000E2D5E8458653DEC /* TimerSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */; };
+		09ADE64480CF43024B267706 /* HealthKitServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8D073F9CA2AC54BB9B7614 /* HealthKitServiceTests.swift */; };
 		12A7422BDEE0762762D252E0 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3874711DD55440559919564A /* Exercise.swift */; };
 		14DFFBBFFA930D61600D0F3D /* ExerciseModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88D7A980A9DCFC9FABD1717 /* ExerciseModelTests.swift */; };
 		218A62D7ED3AA2B6885A8795 /* WorkoutSimulationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32892BA4FFC12FC7D050AD48 /* WorkoutSimulationTests.swift */; };
 		23C454AB11A7E777C571ED1D /* ForgeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CAF136A2212C7BAAD8461CD /* ForgeApp.swift */; };
 		34AB9941EA76CA5DD9CFA4D9 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0157A9AF6A9C201CFA5D51 /* Template.swift */; };
 		36B7B4634DF545B365D9A509 /* Color+Forge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */; };
+		372585CB154B6E8FB36974B9 /* iCloudService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426E1F93D943EB5E426E89D2 /* iCloudService.swift */; };
 		3C70A54064CE25974EBF4BC3 /* SessionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AE8A52DF8668D58DDBB1E /* SessionEngine.swift */; };
 		45CAE51053B95E56F5606AD8 /* ExerciseRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */; };
+		4681AC26973231CC698CC6BB /* WatchSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9FCCAAB31A38D9E46A98F1 /* WatchSyncServiceTests.swift */; };
+		490CA7BB509288EE2AB4204D /* WatchSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623B3E8B1981D5C8A1FD827C /* WatchSyncService.swift */; };
+		4A2ED58C4731B9F8D037AFA6 /* Data+GZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA7FDF56329B5273A332186 /* Data+GZip.swift */; };
 		502E7E2ACCA51C0C78C1C1DB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521DA2F35106996D8C88AE6D /* AppState.swift */; };
 		52EA6CC1911853CA6ADD40FD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05290DDC05DE21433C241D01 /* ContentView.swift */; };
 		5E5A66C6AF583A192C16D2BB /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2330235FE8484DE072437B83 /* DTOs.swift */; };
 		6A37B31F22189A871CADEF9A /* SeedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB351FBEA8AA6FC931BA0513 /* SeedDataTests.swift */; };
 		6ADF6F42A9F42473196B96DF /* ForgeWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */; };
 		79AD6D817D345AFCCA17449C /* SessionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB1816405B045486A7434B /* SessionRepository.swift */; };
+		7B83BBD465B4CAD9D8AB7488 /* iCloudServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144291A5F24427C4A40B431B /* iCloudServiceTests.swift */; };
 		7E31E7B43DFCCBA75C2468C0 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */; };
 		858842D1084669F6191F1E35 /* Color+Forge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */; };
 		862A030C2A6D8B2E07060DC6 /* TemplateRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325168E15F637F9B2453332 /* TemplateRepositoryTests.swift */; };
 		99BC94C5D8DD8C85CD08AAD2 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6DDFE8845917F50E28983 /* MockRepositories.swift */; };
 		A309D2EBDBBAD0C94F69657D /* ForgeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */; };
+		A53E8E3F3C1F44ED2F17A32A /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF794FC325C51FD549F2EC /* HealthKitService.swift */; };
+		A7C5ADB138BDE117F3A79907 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501EEB01923D005D49F7E817 /* MockServices.swift */; };
 		AE1C5BA1C5698824C6108A6B /* TimerSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBFCBDBF4958CB77BB6CC8E /* TimerSystemTests.swift */; };
 		AEA97EF9D4224BF7CBF09E09 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D3586764518A83A7291E8E /* Enums.swift */; };
 		B13FDE6E9B7E9C3D38BAB56C /* TemplateRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17131A1643027FADAB1345F4 /* TemplateRepository.swift */; };
 		C83CE9A1A89CAA5855346736 /* ForgeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A398D2245F77D45641AB920 /* ForgeUITests.swift */; };
+		C977D88FAF9877B4815F234F /* SessionExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AAB56ABE94FC3EFDCFF65D /* SessionExportModel.swift */; };
 		CAD175B30AB98CCA298BE708 /* ForgeExercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 6BEBDDE289E2587F6AA4F309 /* ForgeExercises.json */; };
 		D7732239A0C576EB199C33B3 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8456B3DC1C848D273B6C1C9 /* Session.swift */; };
 		E1819D1B27401DF6CA36451A /* ExerciseRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5C9B09411D200757B680E9 /* ExerciseRepository.swift */; };
@@ -66,6 +75,7 @@
 /* Begin PBXFileReference section */
 		05290DDC05DE21433C241D01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		083616D473CEA14CCE83E1B6 /* ForgeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ForgeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		144291A5F24427C4A40B431B /* iCloudServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudServiceTests.swift; sourceTree = "<group>"; };
 		16F5654DD636EB5E24C2AA11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		17131A1643027FADAB1345F4 /* TemplateRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRepository.swift; sourceTree = "<group>"; };
 		2330235FE8484DE072437B83 /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
@@ -74,15 +84,21 @@
 		32CD955AB86A1396DA9D8CC4 /* ForgeWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForgeWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3874711DD55440559919564A /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		3A0157A9AF6A9C201CFA5D51 /* Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Template.swift; sourceTree = "<group>"; };
+		3D8D073F9CA2AC54BB9B7614 /* HealthKitServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceTests.swift; sourceTree = "<group>"; };
+		426E1F93D943EB5E426E89D2 /* iCloudService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudService.swift; sourceTree = "<group>"; };
 		4325168E15F637F9B2453332 /* TemplateRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRepositoryTests.swift; sourceTree = "<group>"; };
 		454E747EFE01E4F56058A6DA /* SeedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataService.swift; sourceTree = "<group>"; };
+		49AAB56ABE94FC3EFDCFF65D /* SessionExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExportModel.swift; sourceTree = "<group>"; };
 		49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWatchApp.swift; sourceTree = "<group>"; };
+		501EEB01923D005D49F7E817 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
 		521DA2F35106996D8C88AE6D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		5FDA55941BDB098A23EAE9CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		623B3E8B1981D5C8A1FD827C /* WatchSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncService.swift; sourceTree = "<group>"; };
 		6421B44BEF04DFCAC458EF10 /* SessionModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModelTests.swift; sourceTree = "<group>"; };
 		6A398D2245F77D45641AB920 /* ForgeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeUITests.swift; sourceTree = "<group>"; };
 		6BEBDDE289E2587F6AA4F309 /* ForgeExercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ForgeExercises.json; sourceTree = "<group>"; };
 		75CB1816405B045486A7434B /* SessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRepository.swift; sourceTree = "<group>"; };
+		79BF794FC325C51FD549F2EC /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Forge.swift"; sourceTree = "<group>"; };
 		84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Forge.swift"; sourceTree = "<group>"; };
 		95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRepositoryTests.swift; sourceTree = "<group>"; };
@@ -91,6 +107,9 @@
 		9FC6DDFE8845917F50E28983 /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
 		A925E022D694E583251C362C /* SessionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEngineTests.swift; sourceTree = "<group>"; };
 		AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWatchTests.swift; sourceTree = "<group>"; };
+		AEA7FDF56329B5273A332186 /* Data+GZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+GZip.swift"; sourceTree = "<group>"; };
+		B8C9A59E5B07C7D1B2F352E1 /* Forge.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Forge.entitlements; sourceTree = "<group>"; };
+		BF9FCCAAB31A38D9E46A98F1 /* WatchSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncServiceTests.swift; sourceTree = "<group>"; };
 		C6D3586764518A83A7291E8E /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		C8456B3DC1C848D273B6C1C9 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		CEB26223EFA8DC9D74FDC778 /* ForgeWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ForgeWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +140,7 @@
 				C6D3586764518A83A7291E8E /* Enums.swift */,
 				3874711DD55440559919564A /* Exercise.swift */,
 				C8456B3DC1C848D273B6C1C9 /* Session.swift */,
+				49AAB56ABE94FC3EFDCFF65D /* SessionExportModel.swift */,
 				3A0157A9AF6A9C201CFA5D51 /* Template.swift */,
 			);
 			path = Models;
@@ -179,6 +199,16 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		6F31778C3CB3BD016D24F8F8 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				3D8D073F9CA2AC54BB9B7614 /* HealthKitServiceTests.swift */,
+				144291A5F24427C4A40B431B /* iCloudServiceTests.swift */,
+				BF9FCCAAB31A38D9E46A98F1 /* WatchSyncServiceTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		945741943784186FA0144CBC /* Engine */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,6 +230,7 @@
 			isa = PBXGroup;
 			children = (
 				7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */,
+				AEA7FDF56329B5273A332186 /* Data+GZip.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -221,6 +252,7 @@
 				B6043756902B980E3C616B34 /* Models */,
 				374E0D6FC3590273C23804EB /* Repositories */,
 				54A49080973A2245DC20BDD6 /* SeedData */,
+				6F31778C3CB3BD016D24F8F8 /* Services */,
 				3AED6A18EF01D7826E9D2488 /* Simulations */,
 			);
 			path = ForgeTests;
@@ -257,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				9FC6DDFE8845917F50E28983 /* MockRepositories.swift */,
+				501EEB01923D005D49F7E817 /* MockServices.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -272,6 +305,7 @@
 		DD5E2466335F3E5F02761415 /* Forge */ = {
 			isa = PBXGroup;
 			children = (
+				B8C9A59E5B07C7D1B2F352E1 /* Forge.entitlements */,
 				5FDA55941BDB098A23EAE9CF /* Info.plist */,
 				F58E162190EDFBD34CC2D4B6 /* App */,
 				9CECBD1B460C270262779922 /* Engine */,
@@ -299,8 +333,11 @@
 		F3C76A1B3595A87855E241B2 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				79BF794FC325C51FD549F2EC /* HealthKitService.swift */,
+				426E1F93D943EB5E426E89D2 /* iCloudService.swift */,
 				DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */,
 				454E747EFE01E4F56058A6DA /* SeedDataService.swift */,
+				623B3E8B1981D5C8A1FD827C /* WatchSyncService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -419,9 +456,6 @@
 					048EF5FF280B1128083FAB7B = {
 						TestTargetID = B86A17B415789897E93F9B10;
 					};
-					B86A17B415789897E93F9B10 = {
-						DevelopmentTeam = "";
-					};
 					BE45730CD0210B553EA333A3 = {
 						DevelopmentTeam = "";
 					};
@@ -468,13 +502,17 @@
 			files = (
 				14DFFBBFFA930D61600D0F3D /* ExerciseModelTests.swift in Sources */,
 				45CAE51053B95E56F5606AD8 /* ExerciseRepositoryTests.swift in Sources */,
+				09ADE64480CF43024B267706 /* HealthKitServiceTests.swift in Sources */,
 				99BC94C5D8DD8C85CD08AAD2 /* MockRepositories.swift in Sources */,
+				A7C5ADB138BDE117F3A79907 /* MockServices.swift in Sources */,
 				6A37B31F22189A871CADEF9A /* SeedDataTests.swift in Sources */,
 				F3E83C6F49C8FC8F4ABF3059 /* SessionEngineTests.swift in Sources */,
 				ED848D9C8DBDF83FED2BBB6D /* SessionModelTests.swift in Sources */,
 				862A030C2A6D8B2E07060DC6 /* TemplateRepositoryTests.swift in Sources */,
 				AE1C5BA1C5698824C6108A6B /* TimerSystemTests.swift in Sources */,
+				4681AC26973231CC698CC6BB /* WatchSyncServiceTests.swift in Sources */,
 				218A62D7ED3AA2B6885A8795 /* WorkoutSimulationTests.swift in Sources */,
+				7B83BBD465B4CAD9D8AB7488 /* iCloudServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,18 +524,23 @@
 				36B7B4634DF545B365D9A509 /* Color+Forge.swift in Sources */,
 				52EA6CC1911853CA6ADD40FD /* ContentView.swift in Sources */,
 				5E5A66C6AF583A192C16D2BB /* DTOs.swift in Sources */,
+				4A2ED58C4731B9F8D037AFA6 /* Data+GZip.swift in Sources */,
 				AEA97EF9D4224BF7CBF09E09 /* Enums.swift in Sources */,
 				12A7422BDEE0762762D252E0 /* Exercise.swift in Sources */,
 				E1819D1B27401DF6CA36451A /* ExerciseRepository.swift in Sources */,
 				23C454AB11A7E777C571ED1D /* ForgeApp.swift in Sources */,
+				A53E8E3F3C1F44ED2F17A32A /* HealthKitService.swift in Sources */,
 				7E31E7B43DFCCBA75C2468C0 /* ModelContainerFactory.swift in Sources */,
 				F6664B8AFB322537B9C3FA69 /* SeedDataService.swift in Sources */,
 				D7732239A0C576EB199C33B3 /* Session.swift in Sources */,
 				3C70A54064CE25974EBF4BC3 /* SessionEngine.swift in Sources */,
+				C977D88FAF9877B4815F234F /* SessionExportModel.swift in Sources */,
 				79AD6D817D345AFCCA17449C /* SessionRepository.swift in Sources */,
 				34AB9941EA76CA5DD9CFA4D9 /* Template.swift in Sources */,
 				B13FDE6E9B7E9C3D38BAB56C /* TemplateRepository.swift in Sources */,
 				096F3F000E2D5E8458653DEC /* TimerSystem.swift in Sources */,
+				490CA7BB509288EE2AB4204D /* WatchSyncService.swift in Sources */,
+				372585CB154B6E8FB36974B9 /* iCloudService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,20 +656,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_ENTITLEMENTS = Forge/Forge.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Forge/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.Forge;
 				SDKROOT = iphoneos;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -769,20 +809,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_ENTITLEMENTS = Forge/Forge.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Forge/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.Forge;
 				SDKROOT = iphoneos;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

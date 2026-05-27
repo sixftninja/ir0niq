@@ -31,7 +31,7 @@ actor MockTemplateRepository: TemplateRepositoryProtocol {
 // MARK: - MockSessionRepository
 
 actor MockSessionRepository: SessionRepositoryProtocol {
-    struct SessionRecord {
+    struct SessionRecord: Sendable {
         var id: UUID
         var status: SessionStatus
         var endedAt: Date?
@@ -55,7 +55,19 @@ actor MockSessionRepository: SessionRepositoryProtocol {
     var exerciseStatusUpdates: [UUID: SessionExerciseStatus] = [:]
 
     func fetchAll() throws -> [SessionDTO] { [] }
-    func fetchById(_ id: UUID) throws -> SessionDTO? { nil }
+
+    func fetchById(_ id: UUID) throws -> SessionDTO? {
+        guard let record = sessions[id] else { return nil }
+        return SessionDTO(
+            id: record.id,
+            templateId: nil,
+            startedAt: Date(),
+            endedAt: record.endedAt,
+            status: record.status,
+            totalPauseDuration: 0,
+            exercises: []
+        )
+    }
 
     func createSession(templateId: UUID?, startedAt: Date) throws -> UUID {
         let id = UUID()
@@ -64,7 +76,7 @@ actor MockSessionRepository: SessionRepositoryProtocol {
     }
 
     func updateStatus(sessionId: UUID, status: SessionStatus, endedAt: Date?) throws {
-        sessions[sessionId] = SessionRecord(id: sessionId, status: status, endedAt: endedAt)
+        sessions[sessionId] = SessionRecord(id: sessionId, status: status, endedAt: endedAt ?? Date())
     }
 
     func updateTotalPauseDuration(sessionId: UUID, duration: TimeInterval) throws {}
@@ -119,6 +131,10 @@ actor MockSessionRepository: SessionRepositoryProtocol {
             record.endedAt = endedAt
             pauseRecords[pauseId] = record
         }
+    }
+
+    func updateHealthKitWorkoutId(sessionId: UUID, workoutId: UUID) throws {
+        // Track in sessions without changing status
     }
 
     func delete(sessionId: UUID) throws {

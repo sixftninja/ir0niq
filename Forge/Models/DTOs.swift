@@ -117,6 +117,32 @@ struct SessionSetDTO: Sendable, Equatable {
     let noteLabel: String?
     let isUnrecorded: Bool
 
+    init(
+        id: UUID = UUID(),
+        order: Int,
+        status: SetStatus = .pending,
+        reps: Int? = nil,
+        weight: Double? = nil,
+        setTimerStart: Date? = nil,
+        setTimerEnd: Date? = nil,
+        restStart: Date? = nil,
+        restEnd: Date? = nil,
+        noteLabel: String? = nil,
+        isUnrecorded: Bool = false
+    ) {
+        self.id = id
+        self.order = order
+        self.status = status
+        self.reps = reps
+        self.weight = weight
+        self.setTimerStart = setTimerStart
+        self.setTimerEnd = setTimerEnd
+        self.restStart = restStart
+        self.restEnd = restEnd
+        self.noteLabel = noteLabel
+        self.isUnrecorded = isUnrecorded
+    }
+
     init(from model: SessionSet) {
         self.id = model.id
         self.order = model.order
