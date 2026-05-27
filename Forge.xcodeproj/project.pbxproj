@@ -1,0 +1,929 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		096F3F000E2D5E8458653DEC /* TimerSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */; };
+		12A7422BDEE0762762D252E0 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3874711DD55440559919564A /* Exercise.swift */; };
+		14DFFBBFFA930D61600D0F3D /* ExerciseModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88D7A980A9DCFC9FABD1717 /* ExerciseModelTests.swift */; };
+		218A62D7ED3AA2B6885A8795 /* WorkoutSimulationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32892BA4FFC12FC7D050AD48 /* WorkoutSimulationTests.swift */; };
+		23C454AB11A7E777C571ED1D /* ForgeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CAF136A2212C7BAAD8461CD /* ForgeApp.swift */; };
+		34AB9941EA76CA5DD9CFA4D9 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0157A9AF6A9C201CFA5D51 /* Template.swift */; };
+		36B7B4634DF545B365D9A509 /* Color+Forge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */; };
+		3C70A54064CE25974EBF4BC3 /* SessionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AE8A52DF8668D58DDBB1E /* SessionEngine.swift */; };
+		45CAE51053B95E56F5606AD8 /* ExerciseRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */; };
+		502E7E2ACCA51C0C78C1C1DB /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 521DA2F35106996D8C88AE6D /* AppState.swift */; };
+		52EA6CC1911853CA6ADD40FD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05290DDC05DE21433C241D01 /* ContentView.swift */; };
+		5E5A66C6AF583A192C16D2BB /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2330235FE8484DE072437B83 /* DTOs.swift */; };
+		6A37B31F22189A871CADEF9A /* SeedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB351FBEA8AA6FC931BA0513 /* SeedDataTests.swift */; };
+		6ADF6F42A9F42473196B96DF /* ForgeWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */; };
+		79AD6D817D345AFCCA17449C /* SessionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB1816405B045486A7434B /* SessionRepository.swift */; };
+		7E31E7B43DFCCBA75C2468C0 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */; };
+		858842D1084669F6191F1E35 /* Color+Forge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */; };
+		862A030C2A6D8B2E07060DC6 /* TemplateRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325168E15F637F9B2453332 /* TemplateRepositoryTests.swift */; };
+		99BC94C5D8DD8C85CD08AAD2 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6DDFE8845917F50E28983 /* MockRepositories.swift */; };
+		A309D2EBDBBAD0C94F69657D /* ForgeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */; };
+		AE1C5BA1C5698824C6108A6B /* TimerSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBFCBDBF4958CB77BB6CC8E /* TimerSystemTests.swift */; };
+		AEA97EF9D4224BF7CBF09E09 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D3586764518A83A7291E8E /* Enums.swift */; };
+		B13FDE6E9B7E9C3D38BAB56C /* TemplateRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17131A1643027FADAB1345F4 /* TemplateRepository.swift */; };
+		C83CE9A1A89CAA5855346736 /* ForgeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A398D2245F77D45641AB920 /* ForgeUITests.swift */; };
+		CAD175B30AB98CCA298BE708 /* ForgeExercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 6BEBDDE289E2587F6AA4F309 /* ForgeExercises.json */; };
+		D7732239A0C576EB199C33B3 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8456B3DC1C848D273B6C1C9 /* Session.swift */; };
+		E1819D1B27401DF6CA36451A /* ExerciseRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5C9B09411D200757B680E9 /* ExerciseRepository.swift */; };
+		ED848D9C8DBDF83FED2BBB6D /* SessionModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6421B44BEF04DFCAC458EF10 /* SessionModelTests.swift */; };
+		F3E83C6F49C8FC8F4ABF3059 /* SessionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A925E022D694E583251C362C /* SessionEngineTests.swift */; };
+		F6664B8AFB322537B9C3FA69 /* SeedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454E747EFE01E4F56058A6DA /* SeedDataService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1853ED7F177D7138E479E34C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD0290201C0E580E7A86156E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B86A17B415789897E93F9B10;
+			remoteInfo = Forge;
+		};
+		3CCC01E0491824D759E4FCDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD0290201C0E580E7A86156E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B86A17B415789897E93F9B10;
+			remoteInfo = Forge;
+		};
+		F23DA84766C653E80720EF9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD0290201C0E580E7A86156E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE45730CD0210B553EA333A3;
+			remoteInfo = ForgeWatch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05290DDC05DE21433C241D01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		083616D473CEA14CCE83E1B6 /* ForgeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ForgeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		16F5654DD636EB5E24C2AA11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		17131A1643027FADAB1345F4 /* TemplateRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRepository.swift; sourceTree = "<group>"; };
+		2330235FE8484DE072437B83 /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
+		31685D47D31E3DDDC140AB5A /* ForgeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ForgeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		32892BA4FFC12FC7D050AD48 /* WorkoutSimulationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSimulationTests.swift; sourceTree = "<group>"; };
+		32CD955AB86A1396DA9D8CC4 /* ForgeWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ForgeWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3874711DD55440559919564A /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
+		3A0157A9AF6A9C201CFA5D51 /* Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Template.swift; sourceTree = "<group>"; };
+		4325168E15F637F9B2453332 /* TemplateRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRepositoryTests.swift; sourceTree = "<group>"; };
+		454E747EFE01E4F56058A6DA /* SeedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataService.swift; sourceTree = "<group>"; };
+		49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWatchApp.swift; sourceTree = "<group>"; };
+		521DA2F35106996D8C88AE6D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		5FDA55941BDB098A23EAE9CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6421B44BEF04DFCAC458EF10 /* SessionModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModelTests.swift; sourceTree = "<group>"; };
+		6A398D2245F77D45641AB920 /* ForgeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeUITests.swift; sourceTree = "<group>"; };
+		6BEBDDE289E2587F6AA4F309 /* ForgeExercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ForgeExercises.json; sourceTree = "<group>"; };
+		75CB1816405B045486A7434B /* SessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRepository.swift; sourceTree = "<group>"; };
+		7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Forge.swift"; sourceTree = "<group>"; };
+		84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Forge.swift"; sourceTree = "<group>"; };
+		95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRepositoryTests.swift; sourceTree = "<group>"; };
+		9BBFCBDBF4958CB77BB6CC8E /* TimerSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSystemTests.swift; sourceTree = "<group>"; };
+		9CAF136A2212C7BAAD8461CD /* ForgeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeApp.swift; sourceTree = "<group>"; };
+		9FC6DDFE8845917F50E28983 /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
+		A925E022D694E583251C362C /* SessionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEngineTests.swift; sourceTree = "<group>"; };
+		AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWatchTests.swift; sourceTree = "<group>"; };
+		C6D3586764518A83A7291E8E /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		C8456B3DC1C848D273B6C1C9 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		CEB26223EFA8DC9D74FDC778 /* ForgeWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ForgeWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSystem.swift; sourceTree = "<group>"; };
+		D88D7A980A9DCFC9FABD1717 /* ExerciseModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseModelTests.swift; sourceTree = "<group>"; };
+		DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
+		EAD57FE43439B2C292022C07 /* Forge.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Forge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB351FBEA8AA6FC931BA0513 /* SeedDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataTests.swift; sourceTree = "<group>"; };
+		EB5AE8A52DF8668D58DDBB1E /* SessionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEngine.swift; sourceTree = "<group>"; };
+		FB5C9B09411D200757B680E9 /* ExerciseRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRepository.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		13A9E88B45B1CC22B280557B /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				FB5C9B09411D200757B680E9 /* ExerciseRepository.swift */,
+				75CB1816405B045486A7434B /* SessionRepository.swift */,
+				17131A1643027FADAB1345F4 /* TemplateRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		1922A1C44C7907E55CC62E97 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2330235FE8484DE072437B83 /* DTOs.swift */,
+				C6D3586764518A83A7291E8E /* Enums.swift */,
+				3874711DD55440559919564A /* Exercise.swift */,
+				C8456B3DC1C848D273B6C1C9 /* Session.swift */,
+				3A0157A9AF6A9C201CFA5D51 /* Template.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		374E0D6FC3590273C23804EB /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */,
+				4325168E15F637F9B2453332 /* TemplateRepositoryTests.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		3AED6A18EF01D7826E9D2488 /* Simulations */ = {
+			isa = PBXGroup;
+			children = (
+				32892BA4FFC12FC7D050AD48 /* WorkoutSimulationTests.swift */,
+			);
+			path = Simulations;
+			sourceTree = "<group>";
+		};
+		41C0AEC32001AE1EA2640441 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6BEBDDE289E2587F6AA4F309 /* ForgeExercises.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4D92E0C67E2F7B85FC426E2E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EAD57FE43439B2C292022C07 /* Forge.app */,
+				083616D473CEA14CCE83E1B6 /* ForgeTests.xctest */,
+				31685D47D31E3DDDC140AB5A /* ForgeUITests.xctest */,
+				32CD955AB86A1396DA9D8CC4 /* ForgeWatch.app */,
+				CEB26223EFA8DC9D74FDC778 /* ForgeWatchTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		54A49080973A2245DC20BDD6 /* SeedData */ = {
+			isa = PBXGroup;
+			children = (
+				EB351FBEA8AA6FC931BA0513 /* SeedDataTests.swift */,
+			);
+			path = SeedData;
+			sourceTree = "<group>";
+		};
+		63788AC99C321C33D154557D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		945741943784186FA0144CBC /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				A925E022D694E583251C362C /* SessionEngineTests.swift */,
+				9BBFCBDBF4958CB77BB6CC8E /* TimerSystemTests.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		9875522809C4F9E012E929ED /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		99F168C2C16AB9A3376B1D23 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		9CECBD1B460C270262779922 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				EB5AE8A52DF8668D58DDBB1E /* SessionEngine.swift */,
+				D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		A8EDD928972BE9F7AD6E8768 /* ForgeTests */ = {
+			isa = PBXGroup;
+			children = (
+				945741943784186FA0144CBC /* Engine */,
+				C8869BC2300006AB6BF1739B /* Mocks */,
+				B6043756902B980E3C616B34 /* Models */,
+				374E0D6FC3590273C23804EB /* Repositories */,
+				54A49080973A2245DC20BDD6 /* SeedData */,
+				3AED6A18EF01D7826E9D2488 /* Simulations */,
+			);
+			path = ForgeTests;
+			sourceTree = "<group>";
+		};
+		A93B036E8903DAFDA386EB91 /* ForgeWatch */ = {
+			isa = PBXGroup;
+			children = (
+				16F5654DD636EB5E24C2AA11 /* Info.plist */,
+				63788AC99C321C33D154557D /* App */,
+				9875522809C4F9E012E929ED /* Extensions */,
+			);
+			path = ForgeWatch;
+			sourceTree = "<group>";
+		};
+		B6043756902B980E3C616B34 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D88D7A980A9DCFC9FABD1717 /* ExerciseModelTests.swift */,
+				6421B44BEF04DFCAC458EF10 /* SessionModelTests.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C31349E3F02EFC1031777538 /* ForgeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				6A398D2245F77D45641AB920 /* ForgeUITests.swift */,
+			);
+			path = ForgeUITests;
+			sourceTree = "<group>";
+		};
+		C8869BC2300006AB6BF1739B /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				9FC6DDFE8845917F50E28983 /* MockRepositories.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		D1F2D80870EE39D59801AAE9 /* ForgeWatchTests */ = {
+			isa = PBXGroup;
+			children = (
+				AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */,
+			);
+			path = ForgeWatchTests;
+			sourceTree = "<group>";
+		};
+		DD5E2466335F3E5F02761415 /* Forge */ = {
+			isa = PBXGroup;
+			children = (
+				5FDA55941BDB098A23EAE9CF /* Info.plist */,
+				F58E162190EDFBD34CC2D4B6 /* App */,
+				9CECBD1B460C270262779922 /* Engine */,
+				99F168C2C16AB9A3376B1D23 /* Extensions */,
+				1922A1C44C7907E55CC62E97 /* Models */,
+				13A9E88B45B1CC22B280557B /* Repositories */,
+				41C0AEC32001AE1EA2640441 /* Resources */,
+				F3C76A1B3595A87855E241B2 /* Services */,
+			);
+			path = Forge;
+			sourceTree = "<group>";
+		};
+		EFCB33EBE3812EE38333409F = {
+			isa = PBXGroup;
+			children = (
+				DD5E2466335F3E5F02761415 /* Forge */,
+				A8EDD928972BE9F7AD6E8768 /* ForgeTests */,
+				C31349E3F02EFC1031777538 /* ForgeUITests */,
+				A93B036E8903DAFDA386EB91 /* ForgeWatch */,
+				D1F2D80870EE39D59801AAE9 /* ForgeWatchTests */,
+				4D92E0C67E2F7B85FC426E2E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F3C76A1B3595A87855E241B2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */,
+				454E747EFE01E4F56058A6DA /* SeedDataService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		F58E162190EDFBD34CC2D4B6 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				521DA2F35106996D8C88AE6D /* AppState.swift */,
+				05290DDC05DE21433C241D01 /* ContentView.swift */,
+				9CAF136A2212C7BAAD8461CD /* ForgeApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		048EF5FF280B1128083FAB7B /* ForgeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6BC4550D616EC74797620FCA /* Build configuration list for PBXNativeTarget "ForgeUITests" */;
+			buildPhases = (
+				F3113D6B5AD30C2FC45B1C87 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D3E0091C3B64DA6AF6FB0103 /* PBXTargetDependency */,
+			);
+			name = ForgeUITests;
+			packageProductDependencies = (
+			);
+			productName = ForgeUITests;
+			productReference = 31685D47D31E3DDDC140AB5A /* ForgeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		7F9BE0FCA95F530B2BDC1CF4 /* ForgeWatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4E7572EBAC64FE95B762F556 /* Build configuration list for PBXNativeTarget "ForgeWatchTests" */;
+			buildPhases = (
+				BC40CD008743A23893369475 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C3D45110B1827096C5200B4B /* PBXTargetDependency */,
+			);
+			name = ForgeWatchTests;
+			packageProductDependencies = (
+			);
+			productName = ForgeWatchTests;
+			productReference = CEB26223EFA8DC9D74FDC778 /* ForgeWatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B86A17B415789897E93F9B10 /* Forge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14C3B2F58A3E154141422499 /* Build configuration list for PBXNativeTarget "Forge" */;
+			buildPhases = (
+				54A6215C61489CB2E4C48797 /* Sources */,
+				A16CEC7F4CECFBE8099E0D0C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Forge;
+			packageProductDependencies = (
+			);
+			productName = Forge;
+			productReference = EAD57FE43439B2C292022C07 /* Forge.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BE45730CD0210B553EA333A3 /* ForgeWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9119696ABF2DAAFBCA9AABD1 /* Build configuration list for PBXNativeTarget "ForgeWatch" */;
+			buildPhases = (
+				E4C6E3503E0533234FD159DB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ForgeWatch;
+			packageProductDependencies = (
+			);
+			productName = ForgeWatch;
+			productReference = 32CD955AB86A1396DA9D8CC4 /* ForgeWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E67681C8A3FB60D1A136A1E4 /* ForgeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FEAA56CCDEB51C2BA172EB8E /* Build configuration list for PBXNativeTarget "ForgeTests" */;
+			buildPhases = (
+				0F3390C797B685858251930A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EEE0D85C94E4F1E6D58FDEBB /* PBXTargetDependency */,
+			);
+			name = ForgeTests;
+			packageProductDependencies = (
+			);
+			productName = ForgeTests;
+			productReference = 083616D473CEA14CCE83E1B6 /* ForgeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DD0290201C0E580E7A86156E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					048EF5FF280B1128083FAB7B = {
+						TestTargetID = B86A17B415789897E93F9B10;
+					};
+					B86A17B415789897E93F9B10 = {
+						DevelopmentTeam = "";
+					};
+					BE45730CD0210B553EA333A3 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 6CD494A99F804B5C2D6C9DD2 /* Build configuration list for PBXProject "Forge" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EFCB33EBE3812EE38333409F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4D92E0C67E2F7B85FC426E2E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B86A17B415789897E93F9B10 /* Forge */,
+				E67681C8A3FB60D1A136A1E4 /* ForgeTests */,
+				048EF5FF280B1128083FAB7B /* ForgeUITests */,
+				BE45730CD0210B553EA333A3 /* ForgeWatch */,
+				7F9BE0FCA95F530B2BDC1CF4 /* ForgeWatchTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A16CEC7F4CECFBE8099E0D0C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAD175B30AB98CCA298BE708 /* ForgeExercises.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0F3390C797B685858251930A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14DFFBBFFA930D61600D0F3D /* ExerciseModelTests.swift in Sources */,
+				45CAE51053B95E56F5606AD8 /* ExerciseRepositoryTests.swift in Sources */,
+				99BC94C5D8DD8C85CD08AAD2 /* MockRepositories.swift in Sources */,
+				6A37B31F22189A871CADEF9A /* SeedDataTests.swift in Sources */,
+				F3E83C6F49C8FC8F4ABF3059 /* SessionEngineTests.swift in Sources */,
+				ED848D9C8DBDF83FED2BBB6D /* SessionModelTests.swift in Sources */,
+				862A030C2A6D8B2E07060DC6 /* TemplateRepositoryTests.swift in Sources */,
+				AE1C5BA1C5698824C6108A6B /* TimerSystemTests.swift in Sources */,
+				218A62D7ED3AA2B6885A8795 /* WorkoutSimulationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		54A6215C61489CB2E4C48797 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				502E7E2ACCA51C0C78C1C1DB /* AppState.swift in Sources */,
+				36B7B4634DF545B365D9A509 /* Color+Forge.swift in Sources */,
+				52EA6CC1911853CA6ADD40FD /* ContentView.swift in Sources */,
+				5E5A66C6AF583A192C16D2BB /* DTOs.swift in Sources */,
+				AEA97EF9D4224BF7CBF09E09 /* Enums.swift in Sources */,
+				12A7422BDEE0762762D252E0 /* Exercise.swift in Sources */,
+				E1819D1B27401DF6CA36451A /* ExerciseRepository.swift in Sources */,
+				23C454AB11A7E777C571ED1D /* ForgeApp.swift in Sources */,
+				7E31E7B43DFCCBA75C2468C0 /* ModelContainerFactory.swift in Sources */,
+				F6664B8AFB322537B9C3FA69 /* SeedDataService.swift in Sources */,
+				D7732239A0C576EB199C33B3 /* Session.swift in Sources */,
+				3C70A54064CE25974EBF4BC3 /* SessionEngine.swift in Sources */,
+				79AD6D817D345AFCCA17449C /* SessionRepository.swift in Sources */,
+				34AB9941EA76CA5DD9CFA4D9 /* Template.swift in Sources */,
+				B13FDE6E9B7E9C3D38BAB56C /* TemplateRepository.swift in Sources */,
+				096F3F000E2D5E8458653DEC /* TimerSystem.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC40CD008743A23893369475 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6ADF6F42A9F42473196B96DF /* ForgeWatchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4C6E3503E0533234FD159DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				858842D1084669F6191F1E35 /* Color+Forge.swift in Sources */,
+				A309D2EBDBBAD0C94F69657D /* ForgeWatchApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3113D6B5AD30C2FC45B1C87 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C83CE9A1A89CAA5855346736 /* ForgeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C3D45110B1827096C5200B4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE45730CD0210B553EA333A3 /* ForgeWatch */;
+			targetProxy = F23DA84766C653E80720EF9C /* PBXContainerItemProxy */;
+		};
+		D3E0091C3B64DA6AF6FB0103 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B86A17B415789897E93F9B10 /* Forge */;
+			targetProxy = 3CCC01E0491824D759E4FCDD /* PBXContainerItemProxy */;
+		};
+		EEE0D85C94E4F1E6D58FDEBB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B86A17B415789897E93F9B10 /* Forge */;
+			targetProxy = 1853ED7F177D7138E479E34C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0F14B5D8D05C5B219B66A144 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchtests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ForgeWatch.app/ForgeWatch";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		275F1B62694CF106F98B4CC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchtests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ForgeWatch.app/ForgeWatch";
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		37237D8E2CB2E31D541748FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Forge;
+			};
+			name = Debug;
+		};
+		442FDACF09C5FC0D7B846F4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Forge/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5F3EE62C5E2894F15CF4C802 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = ForgeWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		6161F1C8570A23B93DE3C5C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Forge.app/Forge";
+			};
+			name = Release;
+		};
+		ADFDCA4C5D72A86C4098208A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Forge.app/Forge";
+			};
+			name = Debug;
+		};
+		AF7B7C6608444234562BD549 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		BABE6FBABB009ABC6B5201BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Forge;
+			};
+			name = Release;
+		};
+		CA5431A0961D90652011889D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Forge/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		DCC2F712BBF791A5AA4F603C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		FBAD726A8ECB20A7F2AEF884 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = ForgeWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14C3B2F58A3E154141422499 /* Build configuration list for PBXNativeTarget "Forge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				442FDACF09C5FC0D7B846F4F /* Debug */,
+				CA5431A0961D90652011889D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4E7572EBAC64FE95B762F556 /* Build configuration list for PBXNativeTarget "ForgeWatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				275F1B62694CF106F98B4CC6 /* Debug */,
+				0F14B5D8D05C5B219B66A144 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6BC4550D616EC74797620FCA /* Build configuration list for PBXNativeTarget "ForgeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37237D8E2CB2E31D541748FB /* Debug */,
+				BABE6FBABB009ABC6B5201BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6CD494A99F804B5C2D6C9DD2 /* Build configuration list for PBXProject "Forge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCC2F712BBF791A5AA4F603C /* Debug */,
+				AF7B7C6608444234562BD549 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9119696ABF2DAAFBCA9AABD1 /* Build configuration list for PBXNativeTarget "ForgeWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F3EE62C5E2894F15CF4C802 /* Debug */,
+				FBAD726A8ECB20A7F2AEF884 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FEAA56CCDEB51C2BA172EB8E /* Build configuration list for PBXNativeTarget "ForgeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ADFDCA4C5D72A86C4098208A /* Debug */,
+				6161F1C8570A23B93DE3C5C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DD0290201C0E580E7A86156E /* Project object */;
+}

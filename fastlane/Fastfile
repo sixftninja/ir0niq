@@ -1,0 +1,59 @@
+default_platform(:ios)
+
+platform :ios do
+
+  desc "Run all tests on simulator"
+  lane :test do
+    run_tests(
+      scheme: "Forge",
+      devices: ["iPhone 17 Pro"],
+      clean: true,
+      code_coverage: false,
+      xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
+    )
+  end
+
+  desc "Run watchOS tests"
+  lane :test_watch do
+    run_tests(
+      scheme: "ForgeWatch",
+      devices: ["Apple Watch SE 3 (44mm)"],
+      clean: true,
+      xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
+    )
+  end
+
+  desc "Build release archive"
+  lane :build do
+    build_app(
+      scheme: "Forge",
+      configuration: "Release",
+      export_method: "app-store"
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    build_app(
+      scheme: "Forge",
+      configuration: "Release",
+      export_method: "app-store"
+    )
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+
+  desc "Build and submit to App Store"
+  lane :release do
+    build_app(
+      scheme: "Forge",
+      configuration: "Release",
+      export_method: "app-store"
+    )
+    upload_to_app_store(
+      force: true,
+      skip_screenshots: true,
+      skip_metadata: false
+    )
+  end
+
+end
