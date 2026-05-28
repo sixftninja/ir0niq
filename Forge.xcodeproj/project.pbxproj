@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		008DED0E9E24BCCACE83127F /* TimeInterval+Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B8E59288C5C63792EA9C4 /* TimeInterval+Format.swift */; };
+		0457AEA94EA3415D13E1D445 /* WatchEndConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F6046C6715B9E969C28687 /* WatchEndConfirmView.swift */; };
 		056F161DB88BF30E0E668824 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A93D068E7C8931BB782294A /* HomeView.swift */; };
 		079FF20133B639B12B142222 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDC49EFD94C3B77419CE981 /* HistoryListView.swift */; };
 		096F3F000E2D5E8458653DEC /* TimerSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */; };
 		09ADE64480CF43024B267706 /* HealthKitServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8D073F9CA2AC54BB9B7614 /* HealthKitServiceTests.swift */; };
 		12A7422BDEE0762762D252E0 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3874711DD55440559919564A /* Exercise.swift */; };
+		13886E213022500DDE6F5BAC /* WatchHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81BD26D517141CB790279F0E /* WatchHealthKitService.swift */; };
 		14DFFBBFFA930D61600D0F3D /* ExerciseModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88D7A980A9DCFC9FABD1717 /* ExerciseModelTests.swift */; };
 		1771E8252A800362F2E1FE2A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3229B3590F7176F73C016BCE /* OnboardingView.swift */; };
 		1834C36DBB2761656914DBA1 /* HistoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29D61439612CC96ABE04AF6 /* HistoryUITests.swift */; };
@@ -25,9 +28,11 @@
 		372585CB154B6E8FB36974B9 /* iCloudService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426E1F93D943EB5E426E89D2 /* iCloudService.swift */; };
 		3C70A54064CE25974EBF4BC3 /* SessionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5AE8A52DF8668D58DDBB1E /* SessionEngine.swift */; };
 		3DBDA83CB3480DC759ADF508 /* ForgeTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458FDD96879F38C9C5F8FCD2 /* ForgeTabView.swift */; };
+		3F51C210A611770472B3943B /* WatchPausedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC85A81B8E1F7A929D18B110 /* WatchPausedView.swift */; };
 		442D3C8B00AD82DDE3AB1204 /* TimeInterval+Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB6245B83DF4162338B326C /* TimeInterval+Format.swift */; };
 		45CAE51053B95E56F5606AD8 /* ExerciseRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */; };
 		4681AC26973231CC698CC6BB /* WatchSyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9FCCAAB31A38D9E46A98F1 /* WatchSyncServiceTests.swift */; };
+		479DB8172FA674CB5AC9D7C3 /* WatchSessionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D6863F6F8412332CDAB9FEF /* WatchSessionViewModelTests.swift */; };
 		490CA7BB509288EE2AB4204D /* WatchSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623B3E8B1981D5C8A1FD827C /* WatchSyncService.swift */; };
 		4A2ED58C4731B9F8D037AFA6 /* Data+GZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA7FDF56329B5273A332186 /* Data+GZip.swift */; };
 		4A7317A41424CA32506CB57A /* InputFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA5CFDE0AA96D0BF56559A9 /* InputFaceView.swift */; };
@@ -35,6 +40,7 @@
 		51AC924B398B9B481E9FB2EF /* HistoryCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26D2437C2211D5F2DC462ABC /* HistoryCalendarView.swift */; };
 		52C860449F67BD88233A70A2 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2576F712CF749F77CCFF968 /* HistoryViewModel.swift */; };
 		52EA6CC1911853CA6ADD40FD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05290DDC05DE21433C241D01 /* ContentView.swift */; };
+		56F9A8B1C65257FC3E9F12EC /* WatchHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6896AFE79E054968A2A58C /* WatchHomeView.swift */; };
 		5E5A66C6AF583A192C16D2BB /* DTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2330235FE8484DE072437B83 /* DTOs.swift */; };
 		6254F41F885E3051B42433B3 /* SessionSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB05252C3385290E46CD28B /* SessionSummaryView.swift */; };
 		6A37B31F22189A871CADEF9A /* SeedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB351FBEA8AA6FC931BA0513 /* SeedDataTests.swift */; };
@@ -43,22 +49,27 @@
 		6AFF785A9CA15269A4CD7CC3 /* TemplateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0EA6A40A5DF0933DD1EAB3 /* TemplateListView.swift */; };
 		7085DF134BE923C9A28B18F1 /* SessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEC2ABC5DDA13137949DB11 /* SessionDetailView.swift */; };
 		736BC6F7AFB54E683D051A0B /* SessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B3160A8356665EB3812E4E /* SessionViewModel.swift */; };
+		78F820082201DB7953331DE0 /* ForgeWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D091FFD3FCA054955C7906DD /* ForgeWidgetBundle.swift */; };
 		79AD6D817D345AFCCA17449C /* SessionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB1816405B045486A7434B /* SessionRepository.swift */; };
 		7ABDD2B532D569F135F1A74B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DA534E6F179E8BE7F8B92A /* SettingsView.swift */; };
 		7B83BBD465B4CAD9D8AB7488 /* iCloudServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144291A5F24427C4A40B431B /* iCloudServiceTests.swift */; };
 		7BC65E03CE1AA4155F148CFE /* PreviewRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4BE9EB736FCAF9DAC643C4 /* PreviewRepositories.swift */; };
 		7E31E7B43DFCCBA75C2468C0 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */; };
 		81E39742A0D3CB02B894392E /* SettingsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F06232AF84AD46C1872648 /* SettingsUITests.swift */; };
+		825C62825E0BB8C209EFCF7A /* WatchComplicationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56570F6CEB477226AADCC768 /* WatchComplicationTests.swift */; };
+		8331B6F4A284C181F13EC359 /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76F106CD291B532B8CE07D4 /* WatchConnectivityService.swift */; };
 		858842D1084669F6191F1E35 /* Color+Forge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */; };
 		85A0575586CEBD8C092FAA84 /* ReviewBeforeSavingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7070F07F593894978FE18104 /* ReviewBeforeSavingView.swift */; };
 		862A030C2A6D8B2E07060DC6 /* TemplateRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4325168E15F637F9B2453332 /* TemplateRepositoryTests.swift */; };
 		8E124C61D61CE1B5F5BD47E4 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F6EACE0D45A6701E1C8ADF /* AppModel.swift */; };
+		958D685F04AC67142230BEBE /* WatchActiveSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C0F4F5230B2AD368810570 /* WatchActiveSessionView.swift */; };
 		9818A5E7EFE415730DA6FFDB /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725DE6FDAFC7CDEC9D1C3421 /* TimerView.swift */; };
 		988509AE275D00809A152C30 /* TemplateEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB3E122A14418E845FBEE38 /* TemplateEditorView.swift */; };
 		99BC94C5D8DD8C85CD08AAD2 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6DDFE8845917F50E28983 /* MockRepositories.swift */; };
 		A07A73F41D0DE539E5143AF2 /* ProGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFBFD0481AD48CE8A0D55D3 /* ProGateView.swift */; };
 		A309D2EBDBBAD0C94F69657D /* ForgeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */; };
 		A53E8E3F3C1F44ED2F17A32A /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF794FC325C51FD549F2EC /* HealthKitService.swift */; };
+		A5B0F277EF753D089494CC23 /* WatchSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2362947FADA756F895E55A97 /* WatchSessionViewModel.swift */; };
 		A7C5ADB138BDE117F3A79907 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501EEB01923D005D49F7E817 /* MockServices.swift */; };
 		AE1C5BA1C5698824C6108A6B /* TimerSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBFCBDBF4958CB77BB6CC8E /* TimerSystemTests.swift */; };
 		AEA97EF9D4224BF7CBF09E09 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D3586764518A83A7291E8E /* Enums.swift */; };
@@ -67,14 +78,18 @@
 		B188AB7A0EB352D15D6E561E /* TemplateUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D6D962F152A12CB9B847EA /* TemplateUITests.swift */; };
 		BA513D0B4ADCC2002F387D10 /* ExercisePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A9A4229AECBF00099C4B5C /* ExercisePickerView.swift */; };
 		BF1CD5C5EE1E9BB0B5A1868C /* SetFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC1F0ACDA8DDBFDAFD1704B /* SetFaceView.swift */; };
+		C1BDCB8FC57C049791754503 /* WatchMusicControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D202D7F456977ACCCC080B4 /* WatchMusicControlsView.swift */; };
 		C83CE9A1A89CAA5855346736 /* ForgeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A398D2245F77D45641AB920 /* ForgeUITests.swift */; };
+		C8C00BA250859C9DE6D95950 /* WatchRestFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181D03B0C288D474E680BAB9 /* WatchRestFaceView.swift */; };
 		C977D88FAF9877B4815F234F /* SessionExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AAB56ABE94FC3EFDCFF65D /* SessionExportModel.swift */; };
 		CAD175B30AB98CCA298BE708 /* ForgeExercises.json in Resources */ = {isa = PBXBuildFile; fileRef = 6BEBDDE289E2587F6AA4F309 /* ForgeExercises.json */; };
+		CC2E8D75383425A502FAC908 /* WatchSetFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88C23ED00BDC3B9F902D2C7 /* WatchSetFaceView.swift */; };
 		D08CE90D55F267F6BBC1513C /* ExerciseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 235CDAF768C95558E0653D3A /* ExerciseRowView.swift */; };
 		D7732239A0C576EB199C33B3 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8456B3DC1C848D273B6C1C9 /* Session.swift */; };
 		E1819D1B27401DF6CA36451A /* ExerciseRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5C9B09411D200757B680E9 /* ExerciseRepository.swift */; };
 		ED848D9C8DBDF83FED2BBB6D /* SessionModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6421B44BEF04DFCAC458EF10 /* SessionModelTests.swift */; };
 		EE0D298CC762A427794496D1 /* TemplateDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7B02841858F084B7526AD0 /* TemplateDetailView.swift */; };
+		EF7A9136C49E18139DACC4B2 /* WatchInputFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DFC42C5841737676A8F895 /* WatchInputFaceView.swift */; };
 		F3E83C6F49C8FC8F4ABF3059 /* SessionEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A925E022D694E583251C362C /* SessionEngineTests.swift */; };
 		F620DD0A9B62965E7D9F3681 /* ForgeNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741A4DA61604D1C9D1D5FD63 /* ForgeNavigationTests.swift */; };
 		F6664B8AFB322537B9C3FA69 /* SeedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454E747EFE01E4F56058A6DA /* SeedDataService.swift */; };
@@ -113,9 +128,11 @@
 		144291A5F24427C4A40B431B /* iCloudServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudServiceTests.swift; sourceTree = "<group>"; };
 		16F5654DD636EB5E24C2AA11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		17131A1643027FADAB1345F4 /* TemplateRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateRepository.swift; sourceTree = "<group>"; };
+		181D03B0C288D474E680BAB9 /* WatchRestFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRestFaceView.swift; sourceTree = "<group>"; };
 		1CAC8D0DAA4974CB1385A73E /* ActiveSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionView.swift; sourceTree = "<group>"; };
 		2330235FE8484DE072437B83 /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
 		235CDAF768C95558E0653D3A /* ExerciseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRowView.swift; sourceTree = "<group>"; };
+		2362947FADA756F895E55A97 /* WatchSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionViewModel.swift; sourceTree = "<group>"; };
 		26D2437C2211D5F2DC462ABC /* HistoryCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCalendarView.swift; sourceTree = "<group>"; };
 		31685D47D31E3DDDC140AB5A /* ForgeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ForgeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3229B3590F7176F73C016BCE /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -134,11 +151,17 @@
 		49AAB56ABE94FC3EFDCFF65D /* SessionExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionExportModel.swift; sourceTree = "<group>"; };
 		49FC536A90E73F46CE47AA78 /* ForgeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWatchApp.swift; sourceTree = "<group>"; };
 		4AD094723BDFD580DEE226D0 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		4D6863F6F8412332CDAB9FEF /* WatchSessionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionViewModelTests.swift; sourceTree = "<group>"; };
 		501EEB01923D005D49F7E817 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
 		521DA2F35106996D8C88AE6D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		53F06232AF84AD46C1872648 /* SettingsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsUITests.swift; sourceTree = "<group>"; };
+		53F96C2CB60B7F19408717F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		56570F6CEB477226AADCC768 /* WatchComplicationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchComplicationTests.swift; sourceTree = "<group>"; };
+		5B6896AFE79E054968A2A58C /* WatchHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchHomeView.swift; sourceTree = "<group>"; };
+		5D202D7F456977ACCCC080B4 /* WatchMusicControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMusicControlsView.swift; sourceTree = "<group>"; };
 		5FB6245B83DF4162338B326C /* TimeInterval+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Format.swift"; sourceTree = "<group>"; };
 		5FDA55941BDB098A23EAE9CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		61F6046C6715B9E969C28687 /* WatchEndConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchEndConfirmView.swift; sourceTree = "<group>"; };
 		623B3E8B1981D5C8A1FD827C /* WatchSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncService.swift; sourceTree = "<group>"; };
 		6421B44BEF04DFCAC458EF10 /* SessionModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModelTests.swift; sourceTree = "<group>"; };
 		654D2EAD76768757989D73E9 /* RestFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestFaceView.swift; sourceTree = "<group>"; };
@@ -152,8 +175,10 @@
 		75CB1816405B045486A7434B /* SessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRepository.swift; sourceTree = "<group>"; };
 		79BF794FC325C51FD549F2EC /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
 		7AB5E2C8A941D7048B7953BE /* Color+Forge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Forge.swift"; sourceTree = "<group>"; };
+		81BD26D517141CB790279F0E /* WatchHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchHealthKitService.swift; sourceTree = "<group>"; };
 		84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Forge.swift"; sourceTree = "<group>"; };
 		8C6008C903630957C7EC7EB8 /* PausedFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PausedFaceView.swift; sourceTree = "<group>"; };
+		8E3AF32C2E810FA815CBE58E /* ForgeWatchComplication.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ForgeWatchComplication.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4BE9EB736FCAF9DAC643C4 /* PreviewRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewRepositories.swift; sourceTree = "<group>"; };
 		95D217612E0E345AF0D86B23 /* ExerciseRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRepositoryTests.swift; sourceTree = "<group>"; };
 		95DA534E6F179E8BE7F8B92A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -169,6 +194,7 @@
 		AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWatchTests.swift; sourceTree = "<group>"; };
 		AEA7FDF56329B5273A332186 /* Data+GZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+GZip.swift"; sourceTree = "<group>"; };
 		B14F64D7B97C9EE6A562B96D /* TemplateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateViewModel.swift; sourceTree = "<group>"; };
+		B4DFC42C5841737676A8F895 /* WatchInputFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchInputFaceView.swift; sourceTree = "<group>"; };
 		B8C9A59E5B07C7D1B2F352E1 /* Forge.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Forge.entitlements; sourceTree = "<group>"; };
 		BCDC49EFD94C3B77419CE981 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
 		BF9FCCAAB31A38D9E46A98F1 /* WatchSyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncServiceTests.swift; sourceTree = "<group>"; };
@@ -176,15 +202,21 @@
 		C8456B3DC1C848D273B6C1C9 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		CEB26223EFA8DC9D74FDC778 /* ForgeWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ForgeWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFEC2ABC5DDA13137949DB11 /* SessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetailView.swift; sourceTree = "<group>"; };
+		D091FFD3FCA054955C7906DD /* ForgeWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgeWidgetBundle.swift; sourceTree = "<group>"; };
 		D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSystem.swift; sourceTree = "<group>"; };
+		D76F106CD291B532B8CE07D4 /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityService.swift; sourceTree = "<group>"; };
+		D7C0F4F5230B2AD368810570 /* WatchActiveSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchActiveSessionView.swift; sourceTree = "<group>"; };
 		D88D7A980A9DCFC9FABD1717 /* ExerciseModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseModelTests.swift; sourceTree = "<group>"; };
 		DB6CC01840EAACA4A5083775 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		E29D61439612CC96ABE04AF6 /* HistoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryUITests.swift; sourceTree = "<group>"; };
 		EAD57FE43439B2C292022C07 /* Forge.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Forge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB351FBEA8AA6FC931BA0513 /* SeedDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedDataTests.swift; sourceTree = "<group>"; };
 		EB5AE8A52DF8668D58DDBB1E /* SessionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEngine.swift; sourceTree = "<group>"; };
+		EC85A81B8E1F7A929D18B110 /* WatchPausedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchPausedView.swift; sourceTree = "<group>"; };
+		EC8B8E59288C5C63792EA9C4 /* TimeInterval+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Format.swift"; sourceTree = "<group>"; };
 		EDB05252C3385290E46CD28B /* SessionSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSummaryView.swift; sourceTree = "<group>"; };
 		EEC1F0ACDA8DDBFDAFD1704B /* SetFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetFaceView.swift; sourceTree = "<group>"; };
+		F88C23ED00BDC3B9F902D2C7 /* WatchSetFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSetFaceView.swift; sourceTree = "<group>"; };
 		FB5C9B09411D200757B680E9 /* ExerciseRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -210,6 +242,24 @@
 				3A0157A9AF6A9C201CFA5D51 /* Template.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		2188F5033639C002B6002515 /* ForgeWatchComplication */ = {
+			isa = PBXGroup;
+			children = (
+				D091FFD3FCA054955C7906DD /* ForgeWidgetBundle.swift */,
+				53F96C2CB60B7F19408717F1 /* Info.plist */,
+			);
+			path = ForgeWatchComplication;
+			sourceTree = "<group>";
+		};
+		2F8FF9B645AC6534CCDB290F /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				D76F106CD291B532B8CE07D4 /* WatchConnectivityService.swift */,
+				81BD26D517141CB790279F0E /* WatchHealthKitService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		311E2051DADBE1F837046D13 /* Settings */ = {
@@ -266,6 +316,7 @@
 				083616D473CEA14CCE83E1B6 /* ForgeTests.xctest */,
 				31685D47D31E3DDDC140AB5A /* ForgeUITests.xctest */,
 				32CD955AB86A1396DA9D8CC4 /* ForgeWatch.app */,
+				8E3AF32C2E810FA815CBE58E /* ForgeWatchComplication.appex */,
 				CEB26223EFA8DC9D74FDC778 /* ForgeWatchTests.xctest */,
 			);
 			name = Products;
@@ -333,6 +384,7 @@
 			isa = PBXGroup;
 			children = (
 				84F35DB38C58EC71A5A3AED8 /* Color+Forge.swift */,
+				EC8B8E59288C5C63792EA9C4 /* TimeInterval+Format.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -354,6 +406,15 @@
 				D5BB74C3B77E1A654F02E2C0 /* TimerSystem.swift */,
 			);
 			path = Engine;
+			sourceTree = "<group>";
+		};
+		A013EAC9A7AB0C01DF6CD058 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				D9E2ECD7396CBC96746F9A31 /* Home */,
+				F707CB07877DFACDA4B4BEB9 /* Session */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 		A2D33D6070E0A78DC30AAF33 /* History */ = {
@@ -397,6 +458,9 @@
 				16F5654DD636EB5E24C2AA11 /* Info.plist */,
 				63788AC99C321C33D154557D /* App */,
 				9875522809C4F9E012E929ED /* Extensions */,
+				2F8FF9B645AC6534CCDB290F /* Services */,
+				A013EAC9A7AB0C01DF6CD058 /* UI */,
+				F01367E3C1A9725B0E3495E2 /* ViewModels */,
 			);
 			path = ForgeWatch;
 			sourceTree = "<group>";
@@ -444,8 +508,18 @@
 			isa = PBXGroup;
 			children = (
 				AE49A2B4E6387B2ECA68E7E9 /* ForgeWatchTests.swift */,
+				56570F6CEB477226AADCC768 /* WatchComplicationTests.swift */,
+				4D6863F6F8412332CDAB9FEF /* WatchSessionViewModelTests.swift */,
 			);
 			path = ForgeWatchTests;
+			sourceTree = "<group>";
+		};
+		D9E2ECD7396CBC96746F9A31 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				5B6896AFE79E054968A2A58C /* WatchHomeView.swift */,
+			);
+			path = Home;
 			sourceTree = "<group>";
 		};
 		DD5E2466335F3E5F02761415 /* Forge */ = {
@@ -481,9 +555,18 @@
 				A8EDD928972BE9F7AD6E8768 /* ForgeTests */,
 				C31349E3F02EFC1031777538 /* ForgeUITests */,
 				A93B036E8903DAFDA386EB91 /* ForgeWatch */,
+				2188F5033639C002B6002515 /* ForgeWatchComplication */,
 				D1F2D80870EE39D59801AAE9 /* ForgeWatchTests */,
 				4D92E0C67E2F7B85FC426E2E /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F01367E3C1A9725B0E3495E2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				2362947FADA756F895E55A97 /* WatchSessionViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		F3C76A1B3595A87855E241B2 /* Services */ = {
@@ -523,6 +606,20 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		F707CB07877DFACDA4B4BEB9 /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				D7C0F4F5230B2AD368810570 /* WatchActiveSessionView.swift */,
+				61F6046C6715B9E969C28687 /* WatchEndConfirmView.swift */,
+				B4DFC42C5841737676A8F895 /* WatchInputFaceView.swift */,
+				5D202D7F456977ACCCC080B4 /* WatchMusicControlsView.swift */,
+				EC85A81B8E1F7A929D18B110 /* WatchPausedView.swift */,
+				181D03B0C288D474E680BAB9 /* WatchRestFaceView.swift */,
+				F88C23ED00BDC3B9F902D2C7 /* WatchSetFaceView.swift */,
+			);
+			path = Session;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -543,6 +640,23 @@
 			productName = ForgeUITests;
 			productReference = 31685D47D31E3DDDC140AB5A /* ForgeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		5F22C4BF243CADE3796BFB9B /* ForgeWatchComplication */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11C24DE654E2895C29312610 /* Build configuration list for PBXNativeTarget "ForgeWatchComplication" */;
+			buildPhases = (
+				A81477D8725B033830593051 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ForgeWatchComplication;
+			packageProductDependencies = (
+			);
+			productName = ForgeWatchComplication;
+			productReference = 8E3AF32C2E810FA815CBE58E /* ForgeWatchComplication.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		7F9BE0FCA95F530B2BDC1CF4 /* ForgeWatchTests */ = {
 			isa = PBXNativeTarget;
@@ -627,6 +741,9 @@
 					048EF5FF280B1128083FAB7B = {
 						TestTargetID = B86A17B415789897E93F9B10;
 					};
+					5F22C4BF243CADE3796BFB9B = {
+						DevelopmentTeam = "";
+					};
 					BE45730CD0210B553EA333A3 = {
 						DevelopmentTeam = "";
 					};
@@ -650,6 +767,7 @@
 				E67681C8A3FB60D1A136A1E4 /* ForgeTests */,
 				048EF5FF280B1128083FAB7B /* ForgeUITests */,
 				BE45730CD0210B553EA333A3 /* ForgeWatch */,
+				5F22C4BF243CADE3796BFB9B /* ForgeWatchComplication */,
 				7F9BE0FCA95F530B2BDC1CF4 /* ForgeWatchTests */,
 			);
 		};
@@ -743,11 +861,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A81477D8725B033830593051 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78F820082201DB7953331DE0 /* ForgeWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC40CD008743A23893369475 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6ADF6F42A9F42473196B96DF /* ForgeWatchTests.swift in Sources */,
+				825C62825E0BB8C209EFCF7A /* WatchComplicationTests.swift in Sources */,
+				479DB8172FA674CB5AC9D7C3 /* WatchSessionViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -757,6 +885,18 @@
 			files = (
 				858842D1084669F6191F1E35 /* Color+Forge.swift in Sources */,
 				A309D2EBDBBAD0C94F69657D /* ForgeWatchApp.swift in Sources */,
+				008DED0E9E24BCCACE83127F /* TimeInterval+Format.swift in Sources */,
+				958D685F04AC67142230BEBE /* WatchActiveSessionView.swift in Sources */,
+				8331B6F4A284C181F13EC359 /* WatchConnectivityService.swift in Sources */,
+				0457AEA94EA3415D13E1D445 /* WatchEndConfirmView.swift in Sources */,
+				13886E213022500DDE6F5BAC /* WatchHealthKitService.swift in Sources */,
+				56F9A8B1C65257FC3E9F12EC /* WatchHomeView.swift in Sources */,
+				EF7A9136C49E18139DACC4B2 /* WatchInputFaceView.swift in Sources */,
+				C1BDCB8FC57C049791754503 /* WatchMusicControlsView.swift in Sources */,
+				3F51C210A611770472B3943B /* WatchPausedView.swift in Sources */,
+				C8C00BA250859C9DE6D95950 /* WatchRestFaceView.swift in Sources */,
+				A5B0F277EF753D089494CC23 /* WatchSessionViewModel.swift in Sources */,
+				CC2E8D75383425A502FAC908 /* WatchSetFaceView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -911,6 +1051,27 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Forge.app/Forge";
 			};
 			name = Release;
+		};
+		774CB535E210D2DCFF91892B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = ForgeWatchComplication/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp.complication;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
 		};
 		ADFDCA4C5D72A86C4098208A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1090,6 +1251,27 @@
 			};
 			name = Debug;
 		};
+		F1809181D75CD3F8AB5E73C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = ForgeWatchComplication/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp.complication;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
 		FBAD726A8ECB20A7F2AEF884 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1110,6 +1292,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		11C24DE654E2895C29312610 /* Build configuration list for PBXNativeTarget "ForgeWatchComplication" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				774CB535E210D2DCFF91892B /* Debug */,
+				F1809181D75CD3F8AB5E73C0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		14C3B2F58A3E154141422499 /* Build configuration list for PBXNativeTarget "Forge" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

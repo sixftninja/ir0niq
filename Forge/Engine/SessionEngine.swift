@@ -656,7 +656,8 @@ actor SessionEngine {
             return WatchSessionStateMessage(
                 sessionId: context?.sessionId.uuidString ?? "",
                 engineState: stateName,
-                exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil
+                exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
+                targetRestDuration: nil
             )
         }
 
@@ -676,13 +677,20 @@ actor SessionEngine {
             setStatusName = nil
         }
 
+        // Extract targetRestDuration if the set is currently resting
+        var targetRestDuration: TimeInterval? = nil
+        if let set = context.currentSet, case .resting(_, let t) = set.lifecycleState {
+            targetRestDuration = t
+        }
+
         return WatchSessionStateMessage(
             sessionId: context.sessionId.uuidString,
             engineState: stateName,
-            exerciseName: nil,    // exercise name lookup would require repo call — deferred to Phase 4
+            exerciseName: exercise?.exerciseName,
             setNumber: context.currentSetIndex + 1,
             totalSets: exercise?.setContexts.count,
-            setStatus: setStatusName
+            setStatus: setStatusName,
+            targetRestDuration: targetRestDuration
         )
     }
 

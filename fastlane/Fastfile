@@ -13,11 +13,11 @@ platform :ios do
     )
   end
 
-  desc "Run watchOS tests"
+  desc "Run watchOS tests (requires paired iPhone simulator)"
   lane :test_watch do
     run_tests(
       scheme: "ForgeWatch",
-      devices: ["Apple Watch SE 3 (44mm)"],
+      devices: ["Apple Watch Series 11 (46mm)"],
       clean: true,
       xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
     )

@@ -29,7 +29,7 @@ Run all tests on simulator
 [bundle exec] fastlane ios test_watch
 ```
 
-Run watchOS tests
+Run watchOS tests (requires paired iPhone simulator)
 
 ### ios build
 

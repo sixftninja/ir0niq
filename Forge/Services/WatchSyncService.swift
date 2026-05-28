@@ -10,6 +10,7 @@ struct WatchSessionStateMessage: Codable, Sendable {
     let setNumber: Int?
     let totalSets: Int?
     let setStatus: String?
+    let targetRestDuration: TimeInterval?
 }
 
 struct WatchSetCompletionMessage: Codable, Sendable {

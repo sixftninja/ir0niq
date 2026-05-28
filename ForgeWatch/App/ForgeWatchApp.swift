@@ -2,16 +2,24 @@ import SwiftUI
 
 @main
 struct ForgeWatchApp: App {
+    @State private var sessionVM = WatchSessionViewModel()
+
     var body: some Scene {
         WindowGroup {
-            WatchContentView()
+            WatchRootView()
+                .environment(sessionVM)
         }
     }
 }
 
-struct WatchContentView: View {
+struct WatchRootView: View {
+    @Environment(WatchSessionViewModel.self) private var vm
+
     var body: some View {
-        Text("Forge")
-            .foregroundStyle(Color.forgeOrange)
+        if vm.isSessionActive {
+            WatchActiveSessionView()
+        } else {
+            WatchHomeView()
+        }
     }
 }
