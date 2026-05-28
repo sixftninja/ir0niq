@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Exercise DTO
 
-struct ExerciseDTO: Sendable, Equatable {
+struct ExerciseDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let name: String
     let exerciseDescription: String
@@ -12,6 +12,28 @@ struct ExerciseDTO: Sendable, Equatable {
     let iconName: String
     let isCustom: Bool
     let isSeeded: Bool
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        exerciseDescription: String,
+        equipmentType: EquipmentType,
+        isSingleHand: Bool,
+        muscleGroups: [MuscleGroup],
+        iconName: String,
+        isCustom: Bool = false,
+        isSeeded: Bool = false
+    ) {
+        self.id = id
+        self.name = name
+        self.exerciseDescription = exerciseDescription
+        self.equipmentType = equipmentType
+        self.isSingleHand = isSingleHand
+        self.muscleGroups = muscleGroups
+        self.iconName = iconName
+        self.isCustom = isCustom
+        self.isSeeded = isSeeded
+    }
 
     init(from model: Exercise) {
         self.id = model.id
@@ -28,14 +50,14 @@ struct ExerciseDTO: Sendable, Equatable {
 
 // MARK: - Template DTOs
 
-struct TemplateDTO: Sendable, Equatable {
+struct TemplateDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let name: String
     let createdAt: Date
     let exercises: [TemplateExerciseDTO]
 }
 
-struct TemplateExerciseDTO: Sendable, Equatable {
+struct TemplateExerciseDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let exerciseId: UUID
     let exerciseName: String
@@ -44,7 +66,7 @@ struct TemplateExerciseDTO: Sendable, Equatable {
     let sets: [TemplateSetDTO]
 }
 
-struct TemplateSetDTO: Sendable, Equatable {
+struct TemplateSetDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let order: Int
     let targetReps: Int?
@@ -84,7 +106,7 @@ struct TemplateSetDTO: Sendable, Equatable {
 
 // MARK: - Session DTOs
 
-struct SessionDTO: Sendable, Equatable {
+struct SessionDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let templateId: UUID?
     let startedAt: Date
@@ -94,7 +116,7 @@ struct SessionDTO: Sendable, Equatable {
     let exercises: [SessionExerciseDTO]
 }
 
-struct SessionExerciseDTO: Sendable, Equatable {
+struct SessionExerciseDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let exerciseId: UUID
     let exerciseName: String
@@ -104,7 +126,7 @@ struct SessionExerciseDTO: Sendable, Equatable {
     let sets: [SessionSetDTO]
 }
 
-struct SessionSetDTO: Sendable, Equatable {
+struct SessionSetDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let order: Int
     let status: SetStatus

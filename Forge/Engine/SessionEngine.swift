@@ -27,6 +27,7 @@ struct ActiveSessionContext: Sendable {
     struct ExerciseContext: Sendable {
         let sessionExerciseId: UUID
         let exerciseId: UUID
+        let exerciseName: String
         var setContexts: [SetContext]
         var status: SessionExerciseStatus = .pending
 
@@ -41,6 +42,24 @@ struct ActiveSessionContext: Sendable {
             var setTimerEnd: Date?
             var restStart: Date?
             var restEnd: Date?
+            // Template targets — carried for UI display and default values
+            let targetReps: Int?
+            let targetWeight: Double?
+            let targetRestDuration: TimeInterval?
+
+            init(
+                sessionSetId: UUID,
+                order: Int,
+                targetReps: Int? = nil,
+                targetWeight: Double? = nil,
+                targetRestDuration: TimeInterval? = nil
+            ) {
+                self.sessionSetId = sessionSetId
+                self.order = order
+                self.targetReps = targetReps
+                self.targetWeight = targetWeight
+                self.targetRestDuration = targetRestDuration
+            }
         }
     }
 
@@ -93,7 +112,7 @@ actor SessionEngine {
 
     // MARK: - State stream (observed by UI in Phase 3)
 
-    let stateUpdates: AsyncStream<SessionEngineState>
+    nonisolated let stateUpdates: AsyncStream<SessionEngineState>
     private let stateUpdatesContinuation: AsyncStream<SessionEngineState>.Continuation
 
     // MARK: - Init / Factory
@@ -120,7 +139,9 @@ actor SessionEngine {
     static func make(modelContainer: ModelContainer) -> SessionEngine {
         SessionEngine(
             templateRepository: TemplateRepository(modelContainer: modelContainer),
-            sessionRepository: SessionRepository(modelContainer: modelContainer)
+            sessionRepository: SessionRepository(modelContainer: modelContainer),
+            healthKitService: HealthKitService.shared,
+            iCloudService: Forge.iCloudService.shared
         )
     }
 
@@ -179,13 +200,20 @@ actor SessionEngine {
                 executionOrder: exIndex
             )
             var setContexts: [ActiveSessionContext.ExerciseContext.SetContext] = []
-            for (setIndex, _) in templateExercise.sets.enumerated() {
+            for (setIndex, templateSet) in templateExercise.sets.enumerated() {
                 let setId = try await sessionRepository.addSet(to: sessionExerciseId, order: setIndex)
-                setContexts.append(.init(sessionSetId: setId, order: setIndex))
+                setContexts.append(.init(
+                    sessionSetId: setId,
+                    order: setIndex,
+                    targetReps: templateSet.targetReps,
+                    targetWeight: templateSet.targetWeight,
+                    targetRestDuration: templateSet.restDuration
+                ))
             }
             exerciseContexts.append(.init(
                 sessionExerciseId: sessionExerciseId,
                 exerciseId: templateExercise.exerciseId,
+                exerciseName: templateExercise.exerciseName,
                 setContexts: setContexts
             ))
         }
@@ -229,7 +257,8 @@ actor SessionEngine {
         scheduleIdleReset(sessionId: context.sessionId)
     }
 
-    /// Taps Rest: transitions current set from inProgress → resting and schedules nudge timer.
+    /// Taps Rest: transitions current set from inProgress → resting.
+    /// Uses the set's template rest duration by default; pass an override to change it.
     func tapRest(targetRestDuration: TimeInterval? = nil) async throws {
         guard case .active = state else {
             throw SessionEngineError.invalidTransition(from: state, action: "tapRest")
@@ -244,15 +273,18 @@ actor SessionEngine {
         let now = Date()
         context.exercises[exIdx].setContexts[setIdx].setTimerEnd = now
         context.exercises[exIdx].setContexts[setIdx].restStart = now
+        // Use explicit override, else fall back to the set's template target
+        let effectiveRestDuration = targetRestDuration
+            ?? context.exercises[exIdx].setContexts[setIdx].targetRestDuration
         context.exercises[exIdx].setContexts[setIdx].lifecycleState = .resting(
             setEndedAt: now,
-            targetRestDuration: targetRestDuration
+            targetRestDuration: effectiveRestDuration
         )
         context.lastInteractionAt = now
         sessionContext = context
 
         let setId = context.exercises[exIdx].setContexts[setIdx].sessionSetId
-        if let duration = targetRestDuration {
+        if let duration = effectiveRestDuration {
             let nudgeDuration = duration * Self.nudgeMultiplier
             await timerSystem.schedule(.nudge(setId: setId), after: nudgeDuration) { [weak self] in
                 await self?.handleRestNudge(setId: setId)
@@ -471,7 +503,7 @@ actor SessionEngine {
 
     // MARK: - Unplanned exercise (edge case 7: requires >= 1 set)
 
-    func addUnplannedExercise(exerciseId: UUID, setCount: Int) async throws {
+    func addUnplannedExercise(exerciseId: UUID, exerciseName: String = "", setCount: Int) async throws {
         guard case .active(let sessionId) = state, var context = sessionContext else {
             throw SessionEngineError.invalidTransition(from: state, action: "addUnplannedExercise")
         }
@@ -493,6 +525,7 @@ actor SessionEngine {
         context.exercises.append(.init(
             sessionExerciseId: sessionExerciseId,
             exerciseId: exerciseId,
+            exerciseName: exerciseName,
             setContexts: setContexts
         ))
         sessionContext = context

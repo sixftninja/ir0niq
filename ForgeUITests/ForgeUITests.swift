@@ -7,11 +7,13 @@ final class ForgeUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+        app.launchArguments = ["--skip-onboarding"]
         app.launch()
     }
 
     func testAppLaunches() {
-        // Phase 1: stub UI should show "Forge" text
-        XCTAssertTrue(app.staticTexts["Forge"].exists, "App should launch and show placeholder text")
+        // With --skip-onboarding, the tab bar should be visible
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5),
+                      "Tab bar should appear after launch with onboarding skipped")
     }
 }
