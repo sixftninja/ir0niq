@@ -26,6 +26,7 @@ struct ForgeApp: App {
                 .environment(appModel.templateVM)
                 .environment(appModel.historyVM)
                 .environment(appModel.settingsVM)
+                .environment(appModel.storeKit)
                 .task {
                     await appModel.templateVM.seedExercisesIfNeeded()
                     await appModel.templateVM.loadAll()

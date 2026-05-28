@@ -8,7 +8,7 @@ final class AppState {
     var isProUser: Bool = false
     var hasCompletedOnboarding: Bool = CommandLine.arguments.contains("--skip-onboarding")
 
-    // MARK: - Pro feature limits
-    static let freeTemplateLimit = 7
-    static let freeHistoryDays = 90
+    // MARK: - Pro feature limits (nonisolated so they can be read from any context)
+    nonisolated static let freeTemplateLimit = 7
+    nonisolated static let freeHistoryDays = 90
 }

@@ -3,6 +3,9 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppState.self) private var appState
     @Environment(SettingsViewModel.self) private var vm
+    @Environment(StoreKitService.self) private var storeKit
+    @State private var showPurchaseError = false
+    @State private var purchaseErrorMessage = ""
 
     var body: some View {
         NavigationStack {
@@ -26,12 +29,41 @@ struct SettingsView: View {
                             Spacer()
                         }
                     } else {
-                        Button("Upgrade to Forge Pro") {
-                            // StoreKit purchase — Phase 5
-                            appState.isProUser = true
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Forge Pro")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                            Text("Unlimited templates · Full history · Analytics · Export")
+                                .font(.caption)
+                                .foregroundStyle(.white.opacity(0.6))
+
+                            HStack(spacing: 12) {
+                                Button(storeKit.isPurchasing ? "Purchasing…" : "Upgrade") {
+                                    Task {
+                                        do {
+                                            _ = try await storeKit.purchase(appState: appState)
+                                        } catch {
+                                            purchaseErrorMessage = error.localizedDescription
+                                            showPurchaseError = true
+                                        }
+                                    }
+                                }
+                                .disabled(storeKit.isPurchasing)
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(Color.forgeOrange)
+                                .clipShape(Capsule())
+                                .accessibilityIdentifier("upgrade_pro_button")
+
+                                Button("Restore") {
+                                    Task { await storeKit.restorePurchases(appState: appState) }
+                                }
+                                .foregroundStyle(Color.forgeOrange.opacity(0.8))
+                                .font(.subheadline)
+                            }
                         }
-                        .foregroundStyle(Color.forgeOrange)
-                        .accessibilityIdentifier("upgrade_pro_button")
+                        .padding(.vertical, 4)
                     }
                 }
                 .listRowBackground(Color(white: 0.1))
@@ -62,6 +94,11 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
             .preferredColorScheme(.dark)
+            .alert("Purchase Failed", isPresented: $showPurchaseError) {
+                Button("OK") {}
+            } message: {
+                Text(purchaseErrorMessage)
+            }
         }
     }
 }
@@ -70,4 +107,5 @@ struct SettingsView: View {
     SettingsView()
         .environment(AppState())
         .environment(SettingsViewModel())
+        .environment(StoreKitService.shared)
 }

@@ -1,0 +1,31 @@
+{
+  "identifier": "ForgeProducts",
+  "nonConsumableIAP": [
+    {
+      "displayPrice": "9.99",
+      "familyShareable": false,
+      "internalID": "ForgePro001",
+      "localizations": [
+        {
+          "description": "Unlock unlimited templates, full history, analytics, PR tracking, and CSV/PDF export.",
+          "displayName": "Forge Pro",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.forgegym.app.pro",
+      "referenceName": "Forge Pro",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_enableFamilySharing": false,
+    "_failTransactionsEnabled": false,
+    "_receiptDataVersion": "RECEIPT_DATA_VERSION_2",
+    "_storefront": "USA",
+    "_storeKitErrors": []
+  },
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

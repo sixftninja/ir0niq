@@ -13,6 +13,7 @@ final class AppModel {
     let historyVM: HistoryViewModel
     let settingsVM: SettingsViewModel
     let engine: SessionEngine
+    let storeKit: StoreKitService
 
     init(modelContainer: ModelContainer) {
         let appState = AppState()
@@ -20,6 +21,7 @@ final class AppModel {
 
         let engine = SessionEngine.make(modelContainer: modelContainer)
         self.engine = engine
+        SessionEngine.current = engine   // for AppIntents in-process access
 
         // Async: request HealthKit authorization in background (non-blocking)
         Task {
@@ -34,5 +36,9 @@ final class AppModel {
         self.templateVM = TemplateViewModel(templateRepo: templateRepo, exerciseRepo: exerciseRepo)
         self.historyVM = HistoryViewModel(sessionRepo: sessionRepo, appState: appState)
         self.settingsVM = SettingsViewModel()
+        self.storeKit = StoreKitService.shared
+
+        // Initialize StoreKit (non-blocking — happens in background)
+        Task { await StoreKitService.shared.initialize(appState: appState) }
     }
 }

@@ -75,6 +75,13 @@ struct ActiveSessionContext: Sendable {
     }
 }
 
+// MARK: - Global accessor for AppIntents (set once at app startup)
+
+extension SessionEngine {
+    /// Set by ForgeApp at launch. AppIntents call methods on this instance.
+    nonisolated(unsafe) static var current: SessionEngine?
+}
+
 // MARK: - Unlogged set info (returned by endSession for review)
 
 struct UnloggedSetInfo: Sendable, Equatable {
@@ -395,6 +402,26 @@ actor SessionEngine {
             sessionContext = context
         }
         scheduleIdleReset(sessionId: context.sessionId)
+    }
+
+    // MARK: - Navigate to previous set (Siri intent support)
+
+    /// Moves the current set index back by one. No-op if already at first set of first exercise.
+    func goToPreviousSet() throws {
+        guard case .active = state, var context = sessionContext else {
+            throw SessionEngineError.invalidTransition(from: state, action: "goToPreviousSet")
+        }
+        if context.currentSetIndex > 0 {
+            context.currentSetIndex -= 1
+            sessionContext = context
+        } else if context.currentExerciseIndex > 0 {
+            let prevExIdx = context.currentExerciseIndex - 1
+            context.currentExerciseIndex = prevExIdx
+            context.currentSetIndex = max(0, context.exercises[prevExIdx].setContexts.count - 1)
+            sessionContext = context
+        } else {
+            throw SessionEngineError.invalidTransition(from: state, action: "goToPreviousSet: already at first set")
+        }
     }
 
     // MARK: - Pause / Resume
