@@ -44,6 +44,7 @@ targets:
           CODE_SIGN_STYLE: Automatic
           CODE_SIGN_IDENTITY: "Apple Distribution"
           CODE_SIGNING_REQUIRED: YES
+          CODE_SIGNING_ALLOWED: YES
     info:
       path: Forge/Info.plist
       properties:
