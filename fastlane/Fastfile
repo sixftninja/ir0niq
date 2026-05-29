@@ -87,7 +87,7 @@ platform :ios do
       changelog: "New Forge beta build."
     )
 
-    slack_notify_if_configured("🚀 Forge beta uploaded to TestFlight!")
+    slack_notify_if_configured(message: "Ironiq beta uploaded to TestFlight!")
   end
 
   # ── Release ──────────────────────────────────────────────────────────────
@@ -123,7 +123,7 @@ platform :ios do
       precheck_include_in_app_purchases: false
     )
 
-    slack_notify_if_configured("🎉 Forge submitted to App Store!")
+    slack_notify_if_configured(message: "Ironiq submitted to App Store!")
   end
 
   # ── Metadata sync ────────────────────────────────────────────────────────
