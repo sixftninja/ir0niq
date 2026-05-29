@@ -1,8 +1,22 @@
 default_platform(:ios)
 
+# ─── Shared helpers ──────────────────────────────────────────────────────────
+
+def api_key
+  app_store_connect_api_key(
+    key_id:       ENV["APP_STORE_CONNECT_API_KEY_ID"],
+    issuer_id:    ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+    key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+  )
+end
+
+# ─── Platform lanes ──────────────────────────────────────────────────────────
+
 platform :ios do
 
-  desc "Run all tests on simulator"
+  # ── Test ─────────────────────────────────────────────────────────────────
+
+  desc "Run all iOS tests on simulator"
   lane :test do
     run_tests(
       scheme: "Forge",
@@ -13,7 +27,7 @@ platform :ios do
     )
   end
 
-  desc "Run watchOS tests (requires paired iPhone simulator)"
+  desc "Run watchOS tests"
   lane :test_watch do
     run_tests(
       scheme: "ForgeWatch",
@@ -23,37 +37,96 @@ platform :ios do
     )
   end
 
-  desc "Build release archive"
+  # ── Build ────────────────────────────────────────────────────────────────
+
+  desc "Archive a Release build (no upload). Produces Forge.ipa in ./build/"
   lane :build do
     build_app(
       scheme: "Forge",
       configuration: "Release",
-      export_method: "app-store"
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "Forge.ipa",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}"
     )
   end
+
+  # ── Beta ─────────────────────────────────────────────────────────────────
 
   desc "Build and upload to TestFlight"
   lane :beta do
+    key = api_key
+
+    increment_build_number(xcodeproj: "Forge.xcodeproj")
+
     build_app(
       scheme: "Forge",
       configuration: "Release",
-      export_method: "app-store"
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "Forge.ipa",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}"
     )
-    upload_to_testflight(skip_waiting_for_build_processing: true)
+
+    upload_to_testflight(
+      api_key: key,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      notify_external_testers: false,
+      changelog: "New Forge beta build."
+    )
+
+    slack_notify_if_configured("🚀 Forge beta uploaded to TestFlight!")
   end
+
+  # ── Release ──────────────────────────────────────────────────────────────
 
   desc "Build and submit to App Store"
   lane :release do
+    key = api_key
+
+    increment_build_number(xcodeproj: "Forge.xcodeproj")
+
     build_app(
       scheme: "Forge",
       configuration: "Release",
-      export_method: "app-store"
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "Forge.ipa",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}"
     )
-    upload_to_app_store(
+
+    deliver(
+      api_key: key,
       force: true,
       skip_screenshots: true,
-      skip_metadata: false
+      skip_metadata: false,
+      submit_for_review: false,    # manual submit after metadata review
+      metadata_path: "./fastlane/metadata",
+      precheck_include_in_app_purchases: false
     )
+
+    slack_notify_if_configured("🎉 Forge submitted to App Store!")
+  end
+
+  # ── Metadata sync ────────────────────────────────────────────────────────
+
+  desc "Push App Store metadata without a build"
+  lane :metadata do
+    deliver(
+      api_key: api_key,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      force: true,
+      metadata_path: "./fastlane/metadata"
+    )
+  end
+
+  # ── Private helpers ──────────────────────────────────────────────────────
+
+  private_lane :slack_notify_if_configured do |options|
+    next unless ENV["SLACK_URL"]
+    slack(message: options[:message], slack_url: ENV["SLACK_URL"])
   end
 
 end

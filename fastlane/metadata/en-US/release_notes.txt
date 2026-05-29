@@ -1,0 +1,8 @@
+Initial release of Forge — your precision gym training companion.
+
+• Full session tracking with set timers, rest countdowns, and auto-save
+• Apple Watch app with Digital Crown reps/weight entry and haptic rest countdown
+• 80+ built-in exercises with HealthKit integration
+• Siri Shortcuts for hands-free control
+• iCloud Drive session export
+• Forge Pro: unlimited templates, full history, analytics

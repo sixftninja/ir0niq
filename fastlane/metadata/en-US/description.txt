@@ -1,0 +1,46 @@
+Forge is the serious gym tracker built for people who train hard and want every rep logged perfectly.
+
+TRACK YOUR ENTIRE WORKOUT
+• Set-by-set logging with actual reps, weight, and rest time
+• Auto-saving on every interaction — never lose a set
+• Precision rest timers with nudge when you go over
+• Session timer up to 3 hours with idle auto-save
+
+BUILT FOR YOUR WRIST
+• Full Apple Watch companion — control your session without touching your phone
+• See the set timer, rest countdown, and heart rate on your watch face
+• Digital Crown to enter reps and weight
+• Haptic countdown in the last 5 seconds of rest
+
+TEMPLATES THAT ADAPT
+• Build templates from 80+ exercises across every muscle group
+• Add unplanned exercises mid-session
+• Quick-start ad-hoc sessions when you just want to move
+
+HEALTH & HEALTH KIT
+• Workouts saved to Apple Health automatically
+• Live heart rate during sets via Apple Watch
+• Active calories tracked
+
+HISTORY & PROGRESS
+• Complete session history with exercise-by-exercise breakdown
+• Calendar view to see your workout streaks
+• Forge Pro unlocks full history and analytics
+
+FORGE PRO
+• Unlimited templates (free tier: 7)
+• Full history beyond 90 days
+• Advanced analytics and personal records
+• CSV and PDF export
+• Custom exercise icons
+
+SIRI SHORTCUTS
+• "Next set in Forge"
+• "Pause my Forge workout"
+• "End my Forge workout"
+• Works with Apple Shortcuts
+
+PRIVACY FIRST
+• All data stays on your device and iCloud Drive
+• No account required
+• No ads, no tracking

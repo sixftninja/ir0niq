@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios test
 ```
 
-Run all tests on simulator
+Run all iOS tests on simulator
 
 ### ios test_watch
 
@@ -29,7 +29,7 @@ Run all tests on simulator
 [bundle exec] fastlane ios test_watch
 ```
 
-Run watchOS tests (requires paired iPhone simulator)
+Run watchOS tests
 
 ### ios build
 
@@ -37,7 +37,7 @@ Run watchOS tests (requires paired iPhone simulator)
 [bundle exec] fastlane ios build
 ```
 
-Build release archive
+Archive a Release build (no upload). Produces Forge.ipa in ./build/
 
 ### ios beta
 
@@ -54,6 +54,14 @@ Build and upload to TestFlight
 ```
 
 Build and submit to App Store
+
+### ios metadata
+
+```sh
+[bundle exec] fastlane ios metadata
+```
+
+Push App Store metadata without a build
 
 ----
 
