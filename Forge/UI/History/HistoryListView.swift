@@ -41,7 +41,7 @@ struct HistoryListView: View {
             .navigationDestination(for: SessionDTO.self) { session in
                 SessionDetailView(session: session)
             }
-            .preferredColorScheme(.dark)
+            
         }
         .task { await vm.loadSessions() }
     }

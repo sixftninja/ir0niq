@@ -27,6 +27,7 @@ struct ForgeApp: App {
                 .environment(appModel.historyVM)
                 .environment(appModel.settingsVM)
                 .environment(appModel.storeKit)
+                .preferredColorScheme(appModel.appState.useDarkMode ? .dark : .light)
                 .task {
                     await appModel.templateVM.seedExercisesIfNeeded()
                     await appModel.templateVM.loadAll()

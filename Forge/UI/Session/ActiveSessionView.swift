@@ -34,7 +34,7 @@ struct ActiveSessionView: View {
                     .transition(.opacity)
             }
         }
-        .preferredColorScheme(.dark)
+        
         // End confirm dialog
         .confirmationDialog(
             "End Session?",

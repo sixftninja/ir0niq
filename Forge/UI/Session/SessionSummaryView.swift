@@ -3,6 +3,7 @@ import SwiftUI
 struct SessionSummaryView: View {
     @Environment(SessionViewModel.self) private var vm
     @Environment(HistoryViewModel.self) private var historyVM
+    @Environment(AppState.self) private var appState
     @Environment(\.dismiss) private var dismiss
 
     // Populated from the just-completed session
@@ -23,7 +24,8 @@ struct SessionSummaryView: View {
                         statCard(icon: "checkmark.circle.fill", label: "Sets Logged", value: "\(s.setsLogged)")
 
                         // Volume
-                        statCard(icon: "chart.bar.fill", label: "Total Volume", value: "\(Int(s.totalVolumeKg)) kg")
+                        statCard(icon: "chart.bar.fill", label: "Total Volume",
+                                 value: WeightFormatter.format(s.totalVolumeKg, unitSystem: appState.unitSystem))
 
                         // Exercise list
                         exerciseBreakdown(s)
@@ -50,7 +52,7 @@ struct SessionSummaryView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        
         .task { await loadSummary() }
     }
 

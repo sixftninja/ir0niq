@@ -43,7 +43,7 @@ struct ExercisePickerView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        
     }
 }
 

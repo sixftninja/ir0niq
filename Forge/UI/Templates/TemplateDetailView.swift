@@ -34,7 +34,7 @@ struct TemplateDetailView: View {
         .sheet(isPresented: $showEditor) {
             TemplateEditorView(existingTemplate: template)
         }
-        .preferredColorScheme(.dark)
+        
     }
 
     @ViewBuilder

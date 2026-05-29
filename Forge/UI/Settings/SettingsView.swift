@@ -16,10 +16,14 @@ struct SettingsView: View {
                         Text("Imperial (lbs)").tag(UnitSystem.imperial)
                         Text("Metric (kg)").tag(UnitSystem.metric)
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.primary)
                     .accessibilityIdentifier("unit_picker")
+
+                    Toggle("Dark Mode", isOn: $state.useDarkMode)
+                        .tint(Color.forgeOrange)
+                        .accessibilityIdentifier("dark_mode_toggle")
                 }
-                .listRowBackground(Color(white: 0.1))
+                .listRowBackground(Color.forgeSurface)
 
                 Section("Forge Pro") {
                     if appState.isProUser {
@@ -93,7 +97,7 @@ struct SettingsView: View {
             .background(Color.forgeDark)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
-            .preferredColorScheme(.dark)
+            
             .alert("Purchase Failed", isPresented: $showPurchaseError) {
                 Button("OK") {}
             } message: {

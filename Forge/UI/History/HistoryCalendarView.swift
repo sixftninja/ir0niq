@@ -44,7 +44,7 @@ struct HistoryCalendarView: View {
         .navigationDestination(for: SessionDTO.self) { session in
             SessionDetailView(session: session)
         }
-        .preferredColorScheme(.dark)
+        
     }
 
     private var calendarGrid: some View {

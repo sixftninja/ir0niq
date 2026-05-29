@@ -50,7 +50,7 @@ struct OnboardingView: View {
                 .accessibilityIdentifier("onboarding_cta")
             }
         }
-        .preferredColorScheme(.dark)
+        
     }
 
     @ViewBuilder

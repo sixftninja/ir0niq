@@ -68,6 +68,6 @@ struct ReviewBeforeSavingView: View {
             .navigationTitle("Review")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .preferredColorScheme(.dark)
+        
     }
 }

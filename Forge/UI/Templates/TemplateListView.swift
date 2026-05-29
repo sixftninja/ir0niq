@@ -57,7 +57,7 @@ struct TemplateListView: View {
             .sheet(isPresented: $showProGate) {
                 proGateSheet
             }
-            .preferredColorScheme(.dark)
+            
         }
     }
 
@@ -90,7 +90,7 @@ struct TemplateListView: View {
                 showProGate = false
             }
         }
-        .preferredColorScheme(.dark)
+        
     }
 }
 

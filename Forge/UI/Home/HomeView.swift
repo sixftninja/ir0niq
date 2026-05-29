@@ -24,7 +24,7 @@ struct HomeView: View {
             .background(Color.forgeDark)
             .navigationTitle("Forge")
             .navigationBarTitleDisplayMode(.large)
-            .preferredColorScheme(.dark)
+            
         }
         .sheet(isPresented: $showTemplatePicker) {
             TemplatePickerSheet { templateId in
@@ -130,7 +130,7 @@ private struct TemplatePickerSheet: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        
     }
 }
 

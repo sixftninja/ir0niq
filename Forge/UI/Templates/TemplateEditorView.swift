@@ -57,7 +57,7 @@ struct TemplateEditorView: View {
                     showExercisePicker = false
                 }
             }
-            .preferredColorScheme(.dark)
+            
         }
         .onAppear(perform: populateFromExisting)
     }

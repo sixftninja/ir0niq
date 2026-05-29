@@ -44,7 +44,7 @@ struct SessionDetailView: View {
         .background(Color.forgeDark)
         .navigationTitle("Session")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.dark)
+        
     }
 
     @ViewBuilder

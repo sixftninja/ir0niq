@@ -21,7 +21,8 @@ final class WatchSessionViewModelTests: XCTestCase {
             setNumber: setNumber,
             totalSets: totalSets,
             setStatus: setStatus,
-            targetRestDuration: targetRestDuration
+            targetRestDuration: targetRestDuration,
+            unitSystem: nil
         )
     }
 

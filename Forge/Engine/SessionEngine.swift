@@ -684,7 +684,7 @@ actor SessionEngine {
                 sessionId: context?.sessionId.uuidString ?? "",
                 engineState: stateName,
                 exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
-                targetRestDuration: nil
+                targetRestDuration: nil, unitSystem: nil
             )
         }
 
@@ -717,7 +717,8 @@ actor SessionEngine {
             setNumber: context.currentSetIndex + 1,
             totalSets: exercise?.setContexts.count,
             setStatus: setStatusName,
-            targetRestDuration: targetRestDuration
+            targetRestDuration: targetRestDuration,
+            unitSystem: nil   // set by AppModel in Phase 7 via engine.currentUnitSystem
         )
     }
 
