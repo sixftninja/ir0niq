@@ -47,7 +47,12 @@ platform :ios do
       export_method: "app-store",
       output_directory: "./build",
       output_name: "Forge.ipa",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}"
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
+      export_options: {
+        method: "app-store-connect",
+        teamID: ENV["TEAM_ID"],
+        signingStyle: "automatic"
+      }
     )
   end
 
@@ -65,7 +70,12 @@ platform :ios do
       export_method: "app-store",
       output_directory: "./build",
       output_name: "Forge.ipa",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}"
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
+      export_options: {
+        method: "app-store-connect",
+        teamID: ENV["TEAM_ID"],
+        signingStyle: "automatic"
+      }
     )
 
     upload_to_testflight(
@@ -93,7 +103,12 @@ platform :ios do
       export_method: "app-store",
       output_directory: "./build",
       output_name: "Forge.ipa",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}"
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']}",
+      export_options: {
+        method: "app-store-connect",
+        teamID: ENV["TEAM_ID"],
+        signingStyle: "automatic"
+      }
     )
 
     deliver(
