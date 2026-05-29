@@ -47,7 +47,7 @@ targets:
     info:
       path: Forge/Info.plist
       properties:
-        CFBundleDisplayName: Forge
+        CFBundleDisplayName: Ironiq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen:
@@ -83,7 +83,7 @@ targets:
     info:
       path: ForgeWatch/Info.plist
       properties:
-        CFBundleDisplayName: Forge
+        CFBundleDisplayName: Ironiq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
@@ -110,7 +110,7 @@ targets:
     info:
       path: ForgeWatchComplication/Info.plist
       properties:
-        CFBundleDisplayName: Forge Complication
+        CFBundleDisplayName: Ironiq Complication
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         NSExtension:

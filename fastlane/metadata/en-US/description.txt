@@ -1,4 +1,4 @@
-Forge is the serious gym tracker built for people who train hard and want every rep logged perfectly.
+Ironiq is the serious gym tracker built for people who train hard and want every rep logged perfectly.
 
 TRACK YOUR ENTIRE WORKOUT
 • Set-by-set logging with actual reps, weight, and rest time
@@ -25,9 +25,9 @@ HEALTH & HEALTH KIT
 HISTORY & PROGRESS
 • Complete session history with exercise-by-exercise breakdown
 • Calendar view to see your workout streaks
-• Forge Pro unlocks full history and analytics
+• Ironiq Pro unlocks full history and analytics
 
-FORGE PRO
+IRONIQ PRO
 • Unlimited templates (free tier: 7)
 • Full history beyond 90 days
 • Advanced analytics and personal records
@@ -35,9 +35,9 @@ FORGE PRO
 • Custom exercise icons
 
 SIRI SHORTCUTS
-• "Next set in Forge"
-• "Pause my Forge workout"
-• "End my Forge workout"
+• "Next set in Ironiq"
+• "Pause my Ironiq workout"
+• "End my Ironiq workout"
 • Works with Apple Shortcuts
 
 PRIVACY FIRST
