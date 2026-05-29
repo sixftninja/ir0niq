@@ -8,14 +8,21 @@ struct TemplateEditorView: View {
 
     @State private var name: String = ""
     @State private var selectedExercises: [ExerciseEditorRow] = []
+    @State private var expandedExerciseId: UUID? = nil
     @State private var showExercisePicker = false
     @State private var isSaving = false
+
+    private var displayTitle: String {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        return trimmed.isEmpty ? (existingTemplate == nil ? "New Template" : "Edit Template") : trimmed
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Template Name") {
                     TextField("e.g. Push Day", text: $name)
+                        .textInputAutocapitalization(.words)
                         .accessibilityIdentifier("template_name_field")
                 }
                 .listRowBackground(Color(white: 0.1))
@@ -39,7 +46,7 @@ struct TemplateEditorView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.forgeDark)
-            .navigationTitle(existingTemplate == nil ? "New Template" : "Edit Template")
+            .navigationTitle(displayTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -53,37 +60,74 @@ struct TemplateEditorView: View {
             }
             .sheet(isPresented: $showExercisePicker) {
                 ExercisePickerView { exercise in
-                    selectedExercises.append(ExerciseEditorRow(exercise: exercise))
+                    let newRow = ExerciseEditorRow(exercise: exercise)
+                    selectedExercises.append(newRow)
+                    expandedExerciseId = newRow.id
                     showExercisePicker = false
                 }
             }
-            
         }
         .onAppear(perform: populateFromExisting)
     }
 
     @ViewBuilder
     private func exerciseEditorRow(_ row: Binding<ExerciseEditorRow>) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(row.wrappedValue.exercise.name)
-                    .font(.body).bold()
-                    .foregroundStyle(.white)
-                Spacer()
-                Stepper("", value: row.sets, in: 1...20)
-                    .labelsHidden()
-                Text("\(row.wrappedValue.sets) sets")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.6))
-                    .frame(width: 48)
+        let isExpanded = expandedExerciseId == row.wrappedValue.id
+        VStack(alignment: .leading, spacing: 0) {
+            // Header row — tap to expand/collapse
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    expandedExerciseId = isExpanded ? nil : row.wrappedValue.id
+                }
+            } label: {
+                HStack {
+                    Text(row.wrappedValue.exercise.name)
+                        .font(.body).bold()
+                        .foregroundStyle(.white)
+                    Spacer()
+                    Text("\(row.wrappedValue.setRows.count) sets")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.6))
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .padding(.leading, 4)
+                }
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
             }
-            HStack(spacing: 16) {
-                labeledField("Reps", value: row.reps)
-                labeledField("Weight (kg)", value: row.weight)
-                labeledField("Rest (s)", value: row.restSeconds)
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                ForEach(row.wrappedValue.setRows.indices, id: \.self) { i in
+                    setRow(index: i, row: row)
+                }
+
+                Button {
+                    row.wrappedValue.setRows.append(SetEditorRow())
+                } label: {
+                    Label("Add Set", systemImage: "plus")
+                        .font(.caption)
+                        .foregroundStyle(Color.forgeOrange)
+                }
+                .padding(.top, 8)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
+    }
+
+    @ViewBuilder
+    private func setRow(index: Int, row: Binding<ExerciseEditorRow>) -> some View {
+        HStack(spacing: 12) {
+            Text("Set \(index + 1)")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.5))
+                .frame(width: 36, alignment: .leading)
+            labeledField("Reps", value: row.setRows[index].reps)
+            labeledField("kg", value: row.setRows[index].weight)
+            labeledField("Rest (s)", value: row.setRows[index].restSeconds)
+        }
+        .padding(.top, 6)
     }
 
     @ViewBuilder
@@ -96,7 +140,7 @@ struct TemplateEditorView: View {
                 .keyboardType(.numberPad)
                 .font(.caption)
                 .foregroundStyle(.white)
-                .frame(width: 60)
+                .frame(width: 56)
                 .padding(6)
                 .background(Color(white: 0.15))
                 .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -113,12 +157,16 @@ struct TemplateEditorView: View {
                     exerciseDescription: "", equipmentType: ex.equipmentTypeOverride ?? .barbell,
                     isSingleHand: false, muscleGroups: [], iconName: "", isCustom: false, isSeeded: false
                 ),
-                sets: ex.sets.count,
-                reps: ex.sets.first?.targetReps,
-                weight: ex.sets.first?.targetWeight.map { Int($0) },
-                restSeconds: ex.sets.first?.restDuration.map { Int($0) }
+                setRows: ex.sets.sorted { $0.order < $1.order }.map { s in
+                    SetEditorRow(
+                        reps: s.targetReps,
+                        weight: s.targetWeight.map { Int($0) },
+                        restSeconds: s.restDuration.map { Int($0) }
+                    )
+                }
             )
         }
+        expandedExerciseId = selectedExercises.first?.id
     }
 
     private func save() {
@@ -127,11 +175,11 @@ struct TemplateEditorView: View {
         isSaving = true
         Task {
             let exerciseInputs = selectedExercises.map { row -> CreateTemplateExerciseInput in
-                let sets = (0..<row.sets).map { _ in
+                let sets = row.setRows.map { s in
                     CreateTemplateSetInput(
-                        targetReps: row.reps,
-                        targetWeight: row.weight.map { Double($0) },
-                        restDuration: row.restSeconds.map { Double($0) }
+                        targetReps: s.reps,
+                        targetWeight: s.weight.map { Double($0) },
+                        restDuration: s.restSeconds.map { Double($0) }
                     )
                 }
                 return CreateTemplateExerciseInput(
@@ -146,15 +194,19 @@ struct TemplateEditorView: View {
     }
 }
 
-// MARK: - Editor row model
+// MARK: - Editor row models
+
+struct SetEditorRow: Identifiable {
+    let id = UUID()
+    var reps: Int? = 10
+    var weight: Int? = nil
+    var restSeconds: Int? = 30
+}
 
 struct ExerciseEditorRow: Identifiable {
     let id = UUID()
     var exercise: ExerciseDTO
-    var sets: Int = 3
-    var reps: Int? = 8
-    var weight: Int? = nil
-    var restSeconds: Int? = 90
+    var setRows: [SetEditorRow] = [SetEditorRow(), SetEditorRow(), SetEditorRow()]
 }
 
 extension TemplateViewModel {
