@@ -23,9 +23,9 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Forge reads your heart rate to enhance workout tracking.</string>
+	<string>Ironiq reads your heart rate to enhance workout tracking.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Forge saves your workouts to Apple Health.</string>
+	<string>Ironiq saves your workouts to Apple Health.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
 		<key>iCloud.com.forgegym.app</key>
@@ -38,10 +38,6 @@
 			<string>Any</string>
 		</dict>
 	</dict>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>workout-processing</string>
-	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

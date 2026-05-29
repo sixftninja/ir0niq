@@ -55,10 +55,8 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
-        NSHealthShareUsageDescription: "Forge reads your heart rate to enhance workout tracking."
-        NSHealthUpdateUsageDescription: "Forge saves your workouts to Apple Health."
-        UIBackgroundModes:
-          - workout-processing
+        NSHealthShareUsageDescription: "Ironiq reads your heart rate to enhance workout tracking."
+        NSHealthUpdateUsageDescription: "Ironiq saves your workouts to Apple Health."
         NSUbiquitousContainers:
           iCloud.com.forgegym.app:
             NSUbiquitousContainerIsDocumentScopePublic: true
