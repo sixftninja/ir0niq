@@ -7,7 +7,10 @@ import Observation
 final class AppState {
     var unitSystem: UnitSystem = .imperial
     var isProUser: Bool = false
-    var hasCompletedOnboarding: Bool = CommandLine.arguments.contains("--skip-onboarding")
+    var hasCompletedOnboarding: Bool = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+        || CommandLine.arguments.contains("--skip-onboarding") {
+        didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding") }
+    }
     var useDarkMode: Bool = true   // default: dark (gym context)
 
     // MARK: - Pro feature limits (nonisolated so they can be read from any context)

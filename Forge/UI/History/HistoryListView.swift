@@ -76,12 +76,16 @@ struct HistoryListView: View {
     private var groupedSessions: [(key: String, sessions: [SessionDTO])] {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
-        var grouped: [String: [SessionDTO]] = [:]
+        let cal = Calendar.current
+        var grouped: [Date: [SessionDTO]] = [:]
         for session in vm.sessions {
-            let key = formatter.string(from: session.startedAt)
-            grouped[key, default: []].append(session)
+            let comps = cal.dateComponents([.year, .month], from: session.startedAt)
+            let monthStart = cal.date(from: comps) ?? session.startedAt
+            grouped[monthStart, default: []].append(session)
         }
-        return grouped.sorted { $0.key > $1.key }.map { (key: $0.key, sessions: $0.value) }
+        return grouped
+            .sorted { $0.key > $1.key }
+            .map { (key: formatter.string(from: $0.key), sessions: $0.value) }
     }
 }
 

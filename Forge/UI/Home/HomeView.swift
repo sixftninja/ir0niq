@@ -22,9 +22,11 @@ struct HomeView: View {
                 .padding(.top, 8)
             }
             .background(Color.forgeDark)
-            .navigationTitle("Forge")
+            .navigationTitle("Ironiq")
             .navigationBarTitleDisplayMode(.large)
-            
+            .navigationDestination(for: SessionDTO.self) { session in
+                SessionDetailView(session: session)
+            }
         }
         .sheet(isPresented: $showTemplatePicker) {
             TemplatePickerSheet { templateId in

@@ -7,13 +7,12 @@ struct ForgeApp: App {
     @State private var appModel: AppModel
 
     init() {
-        do {
-            let container = try ModelContainerFactory.makeSharedContainer()
-            modelContainer = container
-            _appModel = State(wrappedValue: AppModel(modelContainer: container))
-        } catch {
-            fatalError("Failed to initialize ModelContainer: \(error)")
-        }
+        // makeSharedContainer auto-recovers from schema mismatches by wiping the store.
+        // If even that fails, fall back to in-memory so the app never brick-loops.
+        let container = (try? ModelContainerFactory.makeSharedContainer())
+            ?? (try! ModelContainerFactory.makeInMemoryContainer())
+        modelContainer = container
+        _appModel = State(wrappedValue: AppModel(modelContainer: container))
     }
 
     var body: some Scene {
