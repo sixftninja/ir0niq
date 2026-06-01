@@ -47,6 +47,14 @@ Archive a Release build (no upload). Produces Ironiq.ipa in ./build/
 
 Build and upload to TestFlight
 
+### ios distribute_beta
+
+```sh
+[bundle exec] fastlane ios distribute_beta
+```
+
+Distribute an existing TestFlight build
+
 ### ios release
 
 ```sh

@@ -101,6 +101,24 @@ platform :ios do
     slack_notify_if_configured(message: "Ironiq beta uploaded to TestFlight!")
   end
 
+
+  desc "Distribute an existing TestFlight build"
+  lane :distribute_beta do |options|
+    ENV["APP_STORE_CONNECT_API_KEY_PATH"] = File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
+    key = api_key
+
+    upload_to_testflight(
+      api_key: key,
+      distribute_only: true,
+      app_identifier: "com.ir0niq.app",
+      app_platform: "ios",
+      app_version: options[:version] || "1.0",
+      build_number: options[:build_number],
+      distribute_external: false,
+      notify_external_testers: false
+    )
+  end
+
   # ── Release ──────────────────────────────────────────────────────────────
 
   desc "Build and submit to App Store"
