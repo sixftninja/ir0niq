@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE45730CD0210B553EA333A3"
+               BlueprintIdentifier = "1738BF334A62C5C4BD72A940"
                BuildableName = "IroniqWatch.app"
                BlueprintName = "IroniqWatch"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5F22C4BF243CADE3796BFB9B"
+               BlueprintIdentifier = "57992F2F127DBBEE3C8AB2C3"
                BuildableName = "IroniqWatchComplication.appex"
                BlueprintName = "IroniqWatchComplication"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -42,7 +42,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7F9BE0FCA95F530B2BDC1CF4"
+               BlueprintIdentifier = "A502202506D43688C5610D9A"
                BuildableName = "IroniqWatchTests.xctest"
                BlueprintName = "IroniqWatchTests"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -58,7 +58,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BE45730CD0210B553EA333A3"
+            BlueprintIdentifier = "1738BF334A62C5C4BD72A940"
             BuildableName = "IroniqWatch.app"
             BlueprintName = "IroniqWatch"
             ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -70,7 +70,7 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7F9BE0FCA95F530B2BDC1CF4"
+               BlueprintIdentifier = "A502202506D43688C5610D9A"
                BuildableName = "IroniqWatchTests.xctest"
                BlueprintName = "IroniqWatchTests"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -92,7 +92,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BE45730CD0210B553EA333A3"
+            BlueprintIdentifier = "1738BF334A62C5C4BD72A940"
             BuildableName = "IroniqWatch.app"
             BlueprintName = "IroniqWatch"
             ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -109,7 +109,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BE45730CD0210B553EA333A3"
+            BlueprintIdentifier = "1738BF334A62C5C4BD72A940"
             BuildableName = "IroniqWatch.app"
             BlueprintName = "IroniqWatch"
             ReferencedContainer = "container:Ironiq.xcodeproj">

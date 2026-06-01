@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B86A17B415789897E93F9B10"
+               BlueprintIdentifier = "5C1880E4956898BA553B58CC"
                BuildableName = "Ironiq.app"
                BlueprintName = "Ironiq"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -29,7 +29,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E67681C8A3FB60D1A136A1E4"
+               BlueprintIdentifier = "E71CD805EB3B11CC128256AC"
                BuildableName = "IroniqTests.xctest"
                BlueprintName = "IroniqTests"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -43,7 +43,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "048EF5FF280B1128083FAB7B"
+               BlueprintIdentifier = "E42D978FFCE9E3DDD2507CC8"
                BuildableName = "IroniqUITests.xctest"
                BlueprintName = "IroniqUITests"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -60,7 +60,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B86A17B415789897E93F9B10"
+            BlueprintIdentifier = "5C1880E4956898BA553B58CC"
             BuildableName = "Ironiq.app"
             BlueprintName = "Ironiq"
             ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -72,7 +72,7 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E67681C8A3FB60D1A136A1E4"
+               BlueprintIdentifier = "E71CD805EB3B11CC128256AC"
                BuildableName = "IroniqTests.xctest"
                BlueprintName = "IroniqTests"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -83,7 +83,7 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "048EF5FF280B1128083FAB7B"
+               BlueprintIdentifier = "E42D978FFCE9E3DDD2507CC8"
                BuildableName = "IroniqUITests.xctest"
                BlueprintName = "IroniqUITests"
                ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -107,7 +107,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B86A17B415789897E93F9B10"
+            BlueprintIdentifier = "5C1880E4956898BA553B58CC"
             BuildableName = "Ironiq.app"
             BlueprintName = "Ironiq"
             ReferencedContainer = "container:Ironiq.xcodeproj">
@@ -126,7 +126,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B86A17B415789897E93F9B10"
+            BlueprintIdentifier = "5C1880E4956898BA553B58CC"
             BuildableName = "Ironiq.app"
             BlueprintName = "Ironiq"
             ReferencedContainer = "container:Ironiq.xcodeproj">

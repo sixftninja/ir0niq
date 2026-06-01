@@ -38,18 +38,26 @@ struct ModelContainerFactory {
     }
 
     static func makeContainer(inMemory: Bool) throws -> ModelContainer {
-        let schema = Self.schema
-        let config: ModelConfiguration
         if inMemory {
-            config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
-        } else {
-            try preparePersistentStoreDirectory()
-            config = ModelConfiguration(schema: schema, url: storeURL)
+            let schema = Self.schema
+            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+            return try ModelContainer(for: schema, configurations: config)
         }
+        return try makePersistentContainer(storeURL: storeURL)
+    }
+
+    static func makePersistentContainer(storeURL: URL) throws -> ModelContainer {
+        let schema = Self.schema
+        try preparePersistentStoreDirectory(for: storeURL)
+        let config = ModelConfiguration(schema: schema, url: storeURL, cloudKitDatabase: .none)
         return try ModelContainer(for: schema, configurations: config)
     }
 
     private static func preparePersistentStoreDirectory() throws {
+        try preparePersistentStoreDirectory(for: storeURL)
+    }
+
+    private static func preparePersistentStoreDirectory(for storeURL: URL) throws {
         let directory = storeURL.deletingLastPathComponent()
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     }

@@ -1,6 +1,7 @@
 # Environment — never commit
 .env
 client_*.plist
+*.mobileprovision
 
 # Xcode
 *.xcuserstate
