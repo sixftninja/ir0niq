@@ -1,20 +1,81 @@
 import Foundation
-import SwiftUI
 import Observation
+import SwiftUI
+
+enum SyncProvider: String, CaseIterable, Codable {
+  case apple
+  case google
+
+  var displayName: String {
+    switch self {
+    case .apple: return "Apple"
+    case .google: return "Google"
+    }
+  }
+}
 
 @MainActor
 @Observable
 final class AppState {
-    var unitSystem: UnitSystem = .imperial
-    var isProUser: Bool = false
-    var hasCompletedOnboarding: Bool = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-        || CommandLine.arguments.contains("--skip-onboarding") {
-        didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding") }
-    }
-    var useDarkMode: Bool = true   // default: dark (gym context)
-    var restReminderSeconds: Int = 120
+  private enum Keys {
+    static let syncProvider = "syncProvider"
+    static let syncAccountId = "syncAccountId"
+    static let syncAccountLabel = "syncAccountLabel"
+    static let syncEnabled = "syncEnabled"
+  }
 
-    // MARK: - Pro feature limits (nonisolated so they can be read from any context)
-    nonisolated static let freeTemplateLimit = 7
-    nonisolated static let freeHistoryDays = 90
+  var unitSystem: UnitSystem = .imperial
+  var isProUser: Bool = false
+  var hasCompletedOnboarding: Bool =
+    UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
+    || CommandLine.arguments.contains("--skip-onboarding")
+  {
+    didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding") }
+  }
+  var useDarkMode: Bool = true  // default: dark (gym context)
+  var restReminderSeconds: Int = 120
+  var syncProvider: SyncProvider? = UserDefaults.standard.string(forKey: Keys.syncProvider).flatMap(
+    SyncProvider.init(rawValue:))
+  var syncAccountId: String? = UserDefaults.standard.string(forKey: Keys.syncAccountId)
+  var syncAccountLabel: String? = UserDefaults.standard.string(forKey: Keys.syncAccountLabel)
+  var syncStatusMessage: String? = nil
+  var isPreparingSync = false
+  var showProviderSwitchWarning = false
+
+  var hasCompletedRequiredSync: Bool {
+    UserDefaults.standard.bool(forKey: Keys.syncEnabled)
+      || CommandLine.arguments.contains("--skip-onboarding")
+      || CommandLine.arguments.contains("--start-adhoc-session")
+  }
+
+  var syncStatusLabel: String {
+    guard let syncProvider else { return "Not connected" }
+    return "\(syncProvider.displayName) Drive connected"
+  }
+
+  func completeSync(provider: SyncProvider, accountId: String, accountLabel: String?) {
+    syncProvider = provider
+    syncAccountId = accountId
+    syncAccountLabel = accountLabel
+    UserDefaults.standard.set(provider.rawValue, forKey: Keys.syncProvider)
+    UserDefaults.standard.set(accountId, forKey: Keys.syncAccountId)
+    UserDefaults.standard.set(accountLabel, forKey: Keys.syncAccountLabel)
+    UserDefaults.standard.set(true, forKey: Keys.syncEnabled)
+    syncStatusMessage = "\(provider.displayName) sync is ready."
+  }
+
+  func clearSyncForProviderSwitch() {
+    syncProvider = nil
+    syncAccountId = nil
+    syncAccountLabel = nil
+    UserDefaults.standard.removeObject(forKey: Keys.syncProvider)
+    UserDefaults.standard.removeObject(forKey: Keys.syncAccountId)
+    UserDefaults.standard.removeObject(forKey: Keys.syncAccountLabel)
+    UserDefaults.standard.set(false, forKey: Keys.syncEnabled)
+    syncStatusMessage = nil
+  }
+
+  // MARK: - Pro feature limits (nonisolated so they can be read from any context)
+  nonisolated static let freeTemplateLimit = 7
+  nonisolated static let freeHistoryDays = 90
 }

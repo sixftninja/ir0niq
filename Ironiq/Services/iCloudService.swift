@@ -3,87 +3,125 @@ import Foundation
 // MARK: - Protocol
 
 protocol iCloudServiceProtocol: Sendable {
-    /// Exports a session as a gzipped JSON file. Returns the written file URL.
-    func exportSession(_ model: SessionExportModel, templateSlug: String?) async throws -> URL
+  /// Prepares the user-owned sync folders required before the app can be used.
+  func prepareSyncFolders() async throws
+
+  /// Exports a session as a gzipped JSON file. Returns the written file URL.
+  func exportSession(_ model: SessionExportModel, templateSlug: String?) async throws -> URL
+
+  /// Exports a template as a gzipped JSON file. Returns the written file URL.
+  func exportTemplate(_ model: TemplateExportModel) async throws -> URL
 }
 
 // MARK: - Errors
 
 enum iCloudError: Error, Equatable {
-    case containerUnavailable
-    case serializationFailed
-    case compressionFailed
-    case fileAlreadyExists
-    case writeFailed(String)
+  case containerUnavailable
+  case serializationFailed
+  case compressionFailed
+  case fileAlreadyExists
+  case writeFailed(String)
 }
 
 // MARK: - Production implementation
 
 actor iCloudService: iCloudServiceProtocol {
-    private let containerIdentifier = "iCloud.com.forgegym.app"
-    private let fileManager: FileManager
+  private let containerIdentifier = "iCloud.com.forgegym.app"
+  private let fileManager: FileManager
 
-    static let shared = iCloudService()
-    private init(fileManager: FileManager = .default) { self.fileManager = fileManager }
+  static let shared = iCloudService()
+  private init(fileManager: FileManager = .default) { self.fileManager = fileManager }
 
-    func exportSession(_ model: SessionExportModel, templateSlug: String? = nil) async throws -> URL {
-        let directory = try resolveDirectory(for: model.startedAt)
-        let filename = buildFilename(date: model.startedAt, slug: templateSlug)
-        let fileURL = directory.appendingPathComponent(filename)
+  func prepareSyncFolders() async throws {
+    guard fileManager.url(forUbiquityContainerIdentifier: containerIdentifier) != nil else {
+      throw iCloudError.containerUnavailable
+    }
+    _ = try resolveDirectory(for: Date(), category: "Sessions")
+    _ = try resolveDirectory(for: Date(), category: "Templates")
+  }
 
-        guard !fileManager.fileExists(atPath: fileURL.path) else {
-            throw iCloudError.fileAlreadyExists
-        }
+  func exportSession(_ model: SessionExportModel, templateSlug: String? = nil) async throws -> URL {
+    let directory = try resolveDirectory(for: model.startedAt, category: "Sessions")
+    let filename = buildFilename(date: model.startedAt, slug: templateSlug)
+    let fileURL = directory.appendingPathComponent(filename)
 
-        let jsonData = try model.jsonData()
-        let compressed = try jsonData.gzipped()
-
-        do {
-            try compressed.write(to: fileURL, options: .atomic)
-        } catch {
-            throw iCloudError.writeFailed(error.localizedDescription)
-        }
-        return fileURL
+    guard !fileManager.fileExists(atPath: fileURL.path) else {
+      throw iCloudError.fileAlreadyExists
     }
 
-    // MARK: - Helpers
+    let jsonData = try model.jsonData()
+    let compressed = try jsonData.gzipped()
 
-    private func resolveDirectory(for date: Date) throws -> URL {
-        let baseURL: URL
+    do {
+      try compressed.write(to: fileURL, options: .atomic)
+    } catch {
+      throw iCloudError.writeFailed(error.localizedDescription)
+    }
+    return fileURL
+  }
 
-        if let iCloudURL = fileManager.url(forUbiquityContainerIdentifier: containerIdentifier) {
-            // Use iCloud Drive when available
-            baseURL = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
-        } else {
-            // Fall back to local documents (simulator / no iCloud sign-in)
-            baseURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        }
+  func exportTemplate(_ model: TemplateExportModel) async throws -> URL {
+    let directory = try resolveDirectory(for: model.updatedAt, category: "Templates")
+    let fileURL = directory.appendingPathComponent(
+      "ironiq_template_\(model.id.uuidString.lowercased()).json.gz")
 
-        let calendar = Calendar.current
-        let year = calendar.component(.year, from: date)
-        let month = calendar.component(.month, from: date)
-        let directory = baseURL
-            .appendingPathComponent("Ironiq", isDirectory: true)
-            .appendingPathComponent("Sessions", isDirectory: true)
-            .appendingPathComponent(String(year), isDirectory: true)
-            .appendingPathComponent(String(format: "%02d", month), isDirectory: true)
+    let jsonData = try model.jsonData()
+    let compressed = try jsonData.gzipped()
 
-        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-        return directory
+    do {
+      try compressed.write(to: fileURL, options: .atomic)
+    } catch {
+      throw iCloudError.writeFailed(error.localizedDescription)
+    }
+    return fileURL
+  }
+
+  // MARK: - Helpers
+
+  private func resolveDirectory(for date: Date, category: String) throws -> URL {
+    let baseURL: URL
+
+    if let iCloudURL = fileManager.url(forUbiquityContainerIdentifier: containerIdentifier) {
+      baseURL = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
+    } else {
+      baseURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 
-    private func buildFilename(date: Date, slug: String?) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmmss"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        let timestamp = formatter.string(from: date)
+    let calendar = Calendar.current
+    let year = calendar.component(.year, from: date)
+    let month = calendar.component(.month, from: date)
+    let categoryDirectory =
+      baseURL
+      .appendingPathComponent("Ironiq", isDirectory: true)
+      .appendingPathComponent(category, isDirectory: true)
 
-        if let slug = slug?.lowercased()
-                        .replacingOccurrences(of: " ", with: "-")
-                        .filter({ $0.isLetter || $0.isNumber || $0 == "-" }),
-           !slug.isEmpty {
-            return "ironiq_\(timestamp)_\(slug).json.gz"
-        }
-        return "ironiq_\(timestamp).json.gz"
+    let directory: URL
+    if category == "Sessions" {
+      directory =
+        categoryDirectory
+        .appendingPathComponent(String(year), isDirectory: true)
+        .appendingPathComponent(String(format: "%02d", month), isDirectory: true)
+    } else {
+      directory = categoryDirectory
     }
+
+    try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+    return directory
+  }
+
+  private func buildFilename(date: Date, slug: String?) -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyyMMdd_HHmmss"
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    let timestamp = formatter.string(from: date)
+
+    if let slug = slug?.lowercased()
+      .replacingOccurrences(of: " ", with: "-")
+      .filter({ $0.isLetter || $0.isNumber || $0 == "-" }),
+      !slug.isEmpty
+    {
+      return "ironiq_\(timestamp)_\(slug).json.gz"
+    }
+    return "ironiq_\(timestamp).json.gz"
+  }
 }
