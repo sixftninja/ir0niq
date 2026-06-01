@@ -277,10 +277,11 @@ actor SessionEngine {
             throw SessionEngineError.invalidTransition(from: state, action: "beginCurrentSet")
         }
         guard var context = sessionContext,
-              context.currentSet != nil else {
+              context.exercises.indices.contains(context.currentExerciseIndex),
+              context.exercises[context.currentExerciseIndex].setContexts.indices.contains(context.currentSetIndex) else {
             throw SessionEngineError.setNotFound
         }
-        switch context.currentExercise!.setContexts[context.currentSetIndex].lifecycleState {
+        switch context.exercises[context.currentExerciseIndex].setContexts[context.currentSetIndex].lifecycleState {
         case .pending:
             break
         case .inProgress:

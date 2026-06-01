@@ -47,7 +47,7 @@ targets:
     info:
       path: Ironiq/Info.plist
       properties:
-        CFBundleDisplayName: ir0niq
+        CFBundleDisplayName: Ironiq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen:
@@ -81,7 +81,7 @@ targets:
     info:
       path: IroniqWatch/Info.plist
       properties:
-        CFBundleDisplayName: ir0niq
+        CFBundleDisplayName: Ironiq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
@@ -108,7 +108,7 @@ targets:
     info:
       path: IroniqWatchComplication/Info.plist
       properties:
-        CFBundleDisplayName: ir0niq Complication
+        CFBundleDisplayName: Ironiq Complication
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         NSExtension:
