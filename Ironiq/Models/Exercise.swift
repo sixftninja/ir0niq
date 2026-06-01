@@ -3,12 +3,12 @@ import SwiftData
 
 @Model
 final class Exercise {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var name: String
     var exerciseDescription: String
     var equipmentType: String          // EquipmentType.rawValue — stored as String for SwiftData compatibility
     var isSingleHand: Bool
-    var muscleGroupsRaw: [String]      // [MuscleGroup.rawValue]
+    var muscleGroupsRaw: String        // Comma-separated MuscleGroup.rawValue list
     var iconName: String
     var isCustom: Bool
     var isSeeded: Bool
@@ -20,8 +20,14 @@ final class Exercise {
     }
 
     var muscleGroups: [MuscleGroup] {
-        get { muscleGroupsRaw.compactMap { MuscleGroup(rawValue: $0) } }
-        set { muscleGroupsRaw = newValue.map { $0.rawValue } }
+        get {
+            muscleGroupsRaw
+                .split(separator: ",")
+                .compactMap { MuscleGroup(rawValue: String($0)) }
+        }
+        set {
+            muscleGroupsRaw = newValue.map { $0.rawValue }.joined(separator: ",")
+        }
     }
 
     var defaultLoggingType: SetLoggingType {
@@ -46,7 +52,7 @@ final class Exercise {
         self.exerciseDescription = exerciseDescription
         self.equipmentType = equipmentType.rawValue
         self.isSingleHand = isSingleHand
-        self.muscleGroupsRaw = muscleGroups.map { $0.rawValue }
+        self.muscleGroupsRaw = muscleGroups.map { $0.rawValue }.joined(separator: ",")
         self.iconName = iconName
         self.isCustom = isCustom
         self.isSeeded = isSeeded

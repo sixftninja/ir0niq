@@ -3,7 +3,7 @@ import SwiftData
 
 @Model
 final class Session {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var template: Template?
     var startedAt: Date
     var endedAt: Date?
@@ -42,7 +42,7 @@ final class Session {
 
 @Model
 final class SessionExercise {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var session: Session?
     var exercise: Exercise?
     var order: Int
@@ -76,7 +76,7 @@ final class SessionExercise {
 
 @Model
 final class SessionSet {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var sessionExercise: SessionExercise?
     var order: Int
     var statusRaw: String
@@ -120,7 +120,7 @@ final class SessionSet {
 
 @Model
 final class PauseRecord {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var session: Session?
     var startedAt: Date
     var endedAt: Date?

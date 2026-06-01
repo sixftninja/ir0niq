@@ -3,7 +3,7 @@ import SwiftData
 
 @Model
 final class Template {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var name: String
     var createdAt: Date
     @Relationship(deleteRule: .cascade, inverse: \TemplateExercise.template)
@@ -23,7 +23,7 @@ final class Template {
 
 @Model
 final class TemplateExercise {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var template: Template?
     var exercise: Exercise?
     var order: Int
@@ -55,7 +55,7 @@ final class TemplateExercise {
 
 @Model
 final class TemplateSet {
-    @Attribute(.unique) var id: UUID
+    var id: UUID
     var templateExercise: TemplateExercise?
     var order: Int
     var targetReps: Int?

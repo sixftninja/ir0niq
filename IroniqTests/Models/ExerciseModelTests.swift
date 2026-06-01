@@ -68,6 +68,7 @@ final class ExerciseModelTests: XCTestCase {
         try context.save()
 
         let fetched = try context.fetch(FetchDescriptor<Exercise>()).first
+        XCTAssertEqual(fetched?.muscleGroupsRaw, "biceps,forearms")
         XCTAssertEqual(Set(fetched?.muscleGroups ?? []), Set(groups))
     }
 

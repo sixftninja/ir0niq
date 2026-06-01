@@ -51,12 +51,18 @@ private enum AppStartup {
     } catch {
       let persistentError = error
       do {
-        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let container = try ModelContainerFactory.makeRebuiltSharedContainer()
         return .ready(container, AppModel(modelContainer: container))
       } catch {
-        return .failed(
-          "Ironiq could not open its local workout database. Persistent store error: \(persistentError.localizedDescription). Recovery store error: \(error.localizedDescription)."
-        )
+        let rebuildError = error
+        do {
+          let container = try ModelContainerFactory.makeInMemoryContainer()
+          return .ready(container, AppModel(modelContainer: container))
+        } catch {
+          return .failed(
+            "Ironiq could not open its local workout database. Persistent store error: \(persistentError.localizedDescription). Rebuild error: \(rebuildError.localizedDescription). Recovery store error: \(error.localizedDescription)."
+          )
+        }
       }
     }
   }
