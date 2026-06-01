@@ -279,6 +279,7 @@ final class GoogleDriveService: NSObject {
     -> GoogleTokenResponse
   {
     var request = URLRequest(url: URL(string: "https://oauth2.googleapis.com/token")!)
+    request.timeoutInterval = 20
     request.httpMethod = "POST"
     request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
     request.httpBody = formEncoded([
@@ -298,6 +299,7 @@ final class GoogleDriveService: NSObject {
 
   private func fetchAccount(accessToken: String) async throws -> GoogleDriveAccount {
     var request = URLRequest(url: URL(string: "https://openidconnect.googleapis.com/v1/userinfo")!)
+    request.timeoutInterval = 20
     request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
     let (data, response) = try await URLSession.shared.data(for: request)
     guard (response as? HTTPURLResponse)?.statusCode == 200 else {
@@ -346,6 +348,7 @@ final class GoogleDriveService: NSObject {
     ]
 
     var request = URLRequest(url: components.url!)
+    request.timeoutInterval = 20
     request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
     let (data, response) = try await URLSession.shared.data(for: request)
@@ -361,6 +364,7 @@ final class GoogleDriveService: NSObject {
   {
     var request = URLRequest(
       url: URL(string: "https://www.googleapis.com/drive/v3/files?fields=id,name")!)
+    request.timeoutInterval = 20
     request.httpMethod = "POST"
     request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")

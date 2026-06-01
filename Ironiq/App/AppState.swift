@@ -39,11 +39,12 @@ final class AppState {
   var syncAccountId: String? = UserDefaults.standard.string(forKey: Keys.syncAccountId)
   var syncAccountLabel: String? = UserDefaults.standard.string(forKey: Keys.syncAccountLabel)
   var syncStatusMessage: String? = nil
+  var syncEnabled: Bool = UserDefaults.standard.bool(forKey: Keys.syncEnabled)
   var isPreparingSync = false
   var showProviderSwitchWarning = false
 
   var hasCompletedRequiredSync: Bool {
-    UserDefaults.standard.bool(forKey: Keys.syncEnabled)
+    syncEnabled
       || CommandLine.arguments.contains("--skip-onboarding")
       || CommandLine.arguments.contains("--start-adhoc-session")
   }
@@ -60,6 +61,7 @@ final class AppState {
     UserDefaults.standard.set(provider.rawValue, forKey: Keys.syncProvider)
     UserDefaults.standard.set(accountId, forKey: Keys.syncAccountId)
     UserDefaults.standard.set(accountLabel, forKey: Keys.syncAccountLabel)
+    syncEnabled = true
     UserDefaults.standard.set(true, forKey: Keys.syncEnabled)
     syncStatusMessage = "\(provider.displayName) sync is ready."
   }
@@ -71,6 +73,7 @@ final class AppState {
     UserDefaults.standard.removeObject(forKey: Keys.syncProvider)
     UserDefaults.standard.removeObject(forKey: Keys.syncAccountId)
     UserDefaults.standard.removeObject(forKey: Keys.syncAccountLabel)
+    syncEnabled = false
     UserDefaults.standard.set(false, forKey: Keys.syncEnabled)
     syncStatusMessage = nil
   }

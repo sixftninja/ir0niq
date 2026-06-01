@@ -46,7 +46,7 @@ struct SyncGateView: View {
         }
 
         VStack(spacing: 12) {
-          SignInWithAppleButton(.continue) { request in
+          SignInWithAppleButton(.signIn) { request in
             request.requestedScopes = [.fullName, .email]
           } onCompletion: { result in
             Task { await handleAppleResult(result) }
@@ -62,7 +62,7 @@ struct SyncGateView: View {
           } label: {
             HStack(spacing: 10) {
               Image(systemName: "g.circle.fill")
-              Text("Continue with Google")
+              Text("Login with Google")
                 .fontWeight(.semibold)
             }
             .foregroundStyle(.white)
@@ -121,7 +121,10 @@ struct SyncGateView: View {
     } catch GoogleDriveError.authorizationCancelled {
       errorMessage = nil
     } catch {
-      errorMessage = error.localizedDescription
+      errorMessage =
+        error.localizedDescription.isEmpty
+        ? "Google Drive setup could not finish. Try again."
+        : error.localizedDescription
     }
   }
 
@@ -144,8 +147,27 @@ struct SyncGateView: View {
     } catch iCloudError.containerUnavailable {
       errorMessage =
         "iCloud Drive is not available. Sign into iCloud and enable iCloud Drive, then try again."
+    } catch let error as ASAuthorizationError {
+      errorMessage = appleAuthorizationMessage(for: error)
     } catch {
-      errorMessage = error.localizedDescription
+      errorMessage =
+        error.localizedDescription.isEmpty
+        ? "Apple login could not finish. Try again."
+        : error.localizedDescription
+    }
+  }
+
+  private func appleAuthorizationMessage(for error: ASAuthorizationError) -> String {
+    switch error.code {
+    case .canceled:
+      return ""
+    case .failed, .invalidResponse, .notHandled, .unknown:
+      return
+        "Apple login could not finish. Make sure Sign in with Apple is enabled for Ironiq and try again."
+    case .notInteractive:
+      return "Apple login needs interaction. Try again."
+    default:
+      return "Apple login could not finish. Try again."
     }
   }
 }
