@@ -19,8 +19,8 @@
 | Key | Value |
 |---|---|
 | App display name | Ironiq |
-| Bundle ID (iOS) | com.forgegym.app |
-| Bundle ID (watchOS) | com.forgegym.app.watchkitapp |
+| Bundle ID (iOS) | com.ir0niq.app |
+| Bundle ID (watchOS) | com.ir0niq.app.watchkitapp |
 | Minimum iOS | 17.0 |
 | Minimum watchOS | 10.0 |
 | Swift version | 6.0 |
@@ -200,7 +200,7 @@ static let ironiqRed    = Color(hex: "E53E3E")  // heart rate only
 
 ## Ironiq Pro — StoreKit
 
-Product ID: `com.forgegym.app.pro`
+Product ID: `com.ir0niq.app.pro`
 
 Gated features:
 - Unlimited templates (free: 7)

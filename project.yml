@@ -1,6 +1,6 @@
 name: Ironiq
 options:
-  bundleIdPrefix: com.forgegym
+  bundleIdPrefix: com.ir0niq
   deploymentTarget:
     iOS: "17.0"
     watchOS: "10.0"
@@ -28,7 +28,7 @@ targets:
       - path: Ironiq
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app
         TARGETED_DEVICE_FAMILY: "1"
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         CODE_SIGN_ENTITLEMENTS: Ironiq/Ironiq.entitlements
@@ -58,7 +58,7 @@ targets:
         NSHealthShareUsageDescription: "Ironiq reads your heart rate to enhance workout tracking."
         NSHealthUpdateUsageDescription: "Ironiq saves your workouts to Apple Health."
         NSUbiquitousContainers:
-          iCloud.com.forgegym.app:
+          iCloud.com.ir0niq.app:
             NSUbiquitousContainerIsDocumentScopePublic: true
             NSUbiquitousContainerName: Ironiq
             NSUbiquitousContainerSupportedFolderLevels: Any
@@ -72,7 +72,7 @@ targets:
       - path: IroniqWatch
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.watchkitapp
+        PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.watchkitapp
         TARGETED_DEVICE_FAMILY: "4"
         DEVELOPMENT_TEAM: ""
         CODE_SIGN_IDENTITY: ""
@@ -100,7 +100,7 @@ targets:
       - path: IroniqWatchComplication
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.watchkitapp.complication
+        PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.watchkitapp.watchkitextension
         DEVELOPMENT_TEAM: ""
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
@@ -128,7 +128,7 @@ targets:
         embed: false
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.tests
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
@@ -146,7 +146,7 @@ targets:
         embed: false
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.uitests
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
@@ -163,7 +163,7 @@ targets:
         embed: false
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.watchtests
+        PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.watchtests
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO

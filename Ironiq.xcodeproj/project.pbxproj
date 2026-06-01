@@ -1045,7 +1045,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchtests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.watchtests;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1066,7 +1066,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchtests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.watchtests;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1088,7 +1088,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.uitests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Ironiq;
@@ -1111,7 +1111,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app;
 				SDKROOT = iphoneos;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1127,7 +1127,7 @@
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = IroniqWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1149,7 +1149,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ironiq.app/Ironiq";
@@ -1169,7 +1169,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp.complication;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.watchkitapp.watchkitextension;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1191,7 +1191,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ironiq.app/Ironiq";
@@ -1269,7 +1269,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.uitests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.uitests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Ironiq;
@@ -1293,7 +1293,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app;
 				SDKROOT = iphoneos;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1378,7 +1378,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp.complication;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.watchkitapp.watchkitextension;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1395,7 +1395,7 @@
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = IroniqWatch/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgegym.app.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ir0niq.app.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;

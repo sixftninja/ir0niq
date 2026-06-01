@@ -26,7 +26,7 @@ enum iCloudError: Error, Equatable {
 // MARK: - Production implementation
 
 actor iCloudService: iCloudServiceProtocol {
-  private let containerIdentifier = "iCloud.com.forgegym.app"
+  private let containerIdentifier = "iCloud.com.ir0niq.app"
   private let fileManager: FileManager
 
   static let shared = iCloudService()

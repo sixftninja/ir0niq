@@ -28,7 +28,7 @@
 	<string>Ironiq saves your workouts to Apple Health.</string>
 	<key>NSUbiquitousContainers</key>
 	<dict>
-		<key>iCloud.com.forgegym.app</key>
+		<key>iCloud.com.ir0niq.app</key>
 		<dict>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>

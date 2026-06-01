@@ -5,5 +5,5 @@
 # storage_mode("git")
 # type("appstore")
 
-app_identifier(["com.forgegym.app", "com.forgegym.app.watchkitapp"])
+app_identifier(["com.ir0niq.app", "com.ir0niq.app.watchkitapp", "com.ir0niq.app.watchkitapp.watchkitextension"])
 username(ENV["APPLE_ID"])
