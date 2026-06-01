@@ -47,6 +47,11 @@ targets:
     info:
       path: Ironiq/Info.plist
       properties:
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - com.googleusercontent.apps.323802514528-f5inc1l6a4sgt7r067is6v8gghmc5aji
+        GoogleOAuthClientID: 323802514528-f5inc1l6a4sgt7r067is6v8gghmc5aji.apps.googleusercontent.com
+        GoogleOAuthReversedClientID: com.googleusercontent.apps.323802514528-f5inc1l6a4sgt7r067is6v8gghmc5aji
         CFBundleDisplayName: Ironiq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"

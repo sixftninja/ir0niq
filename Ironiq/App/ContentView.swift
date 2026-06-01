@@ -58,7 +58,7 @@ struct SyncGateView: View {
           .accessibilityIdentifier("apple_sync_button")
 
           Button {
-            showGoogleUnavailable = true
+            Task { await handleGoogleSignIn() }
           } label: {
             HStack(spacing: 10) {
               Image(systemName: "g.circle.fill")
@@ -75,6 +75,7 @@ struct SyncGateView: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 12))
           }
+          .disabled(appState.isPreparingSync)
           .accessibilityIdentifier("google_sync_button")
         }
 
@@ -106,12 +107,21 @@ struct SyncGateView: View {
       }
       .padding(24)
     }
-    .alert("Google Drive setup needed", isPresented: $showGoogleUnavailable) {
-      Button("OK") {}
-    } message: {
-      Text(
-        "Google login requires a Google OAuth client ID, URL scheme, and Drive API scope from Google Cloud. Apple + iCloud sync can be used now."
-      )
+  }
+
+  @MainActor
+  private func handleGoogleSignIn() async {
+    appState.isPreparingSync = true
+    errorMessage = nil
+    defer { appState.isPreparingSync = false }
+
+    do {
+      let account = try await GoogleDriveService.shared.connectAndPrepareSyncFolders()
+      appState.completeSync(provider: .google, accountId: account.id, accountLabel: account.email)
+    } catch GoogleDriveError.authorizationCancelled {
+      errorMessage = nil
+    } catch {
+      errorMessage = error.localizedDescription
     }
   }
 
