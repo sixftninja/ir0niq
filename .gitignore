@@ -42,3 +42,6 @@ build/
 # CocoaPods (not used but just in case)
 Pods/
 Podfile.lock
+
+# Local design references
+/icons/

@@ -1,0 +1,976 @@
+{
+  "exercises": [
+    {
+      "id": "00000001-0000-4000-8000-000000000000",
+      "name": "Deadlift",
+      "description": "Hip-hinge compound lift pulling a loaded barbell from the floor to standing, building posterior chain strength and total-body power, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "glutes",
+        "hamstrings"
+      ],
+      "iconName": "deadlift"
+    },
+    {
+      "id": "00000002-0000-4000-8000-000000000000",
+      "name": "Romanian Deadlift",
+      "description": "Hip-hinge with a slight knee bend, lowering the barbell along the legs to maximise hamstring and glute stretch under load.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "hamstrings",
+        "glutes",
+        "back"
+      ],
+      "iconName": "romanian-deadlift"
+    },
+    {
+      "id": "00000003-0000-4000-8000-000000000000",
+      "name": "Sumo Deadlift",
+      "description": "Wide-stance deadlift with toes angled out, placing greater demand on the glutes and inner thighs than conventional stance, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "glutes",
+        "quadriceps",
+        "hamstrings"
+      ],
+      "iconName": "sumo-deadlift"
+    },
+    {
+      "id": "00000004-0000-4000-8000-000000000000",
+      "name": "Squat",
+      "description": "Foundational lower-body movement with a barbell on the upper back, driving through the heels to develop quad and glute strength.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "core"
+      ],
+      "iconName": "squat"
+    },
+    {
+      "id": "00000005-0000-4000-8000-000000000000",
+      "name": "Front Squat",
+      "description": "Squat variation with the barbell held in a front rack position, emphasising the quadriceps and demanding significant core stability, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "core"
+      ],
+      "iconName": "front-squat"
+    },
+    {
+      "id": "00000006-0000-4000-8000-000000000000",
+      "name": "Goblet Squat",
+      "description": "Squat holding a kettlebell at chest height, promoting an upright torso and deep range of motion for lower-body development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "kettlebell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "core"
+      ],
+      "iconName": "goblet-squat"
+    },
+    {
+      "id": "00000007-0000-4000-8000-000000000000",
+      "name": "Leg Press",
+      "description": "Seated machine movement pushing a weighted platform away, allowing heavy quad loading with spinal support throughout the set, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hamstrings"
+      ],
+      "iconName": "leg-press"
+    },
+    {
+      "id": "00000008-0000-4000-8000-000000000000",
+      "name": "Leg Extension",
+      "description": "Seated machine exercise extending the knee against resistance to isolate and directly strengthen the quadriceps muscle group, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps"
+      ],
+      "iconName": "leg-extension"
+    },
+    {
+      "id": "00000009-0000-4000-8000-000000000000",
+      "name": "Leg Curl",
+      "description": "Lying or seated machine movement curling the heels toward the glutes under resistance to isolate and strengthen the hamstrings, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "hamstrings"
+      ],
+      "iconName": "leg-curl"
+    },
+    {
+      "id": "00000010-0000-4000-8000-000000000000",
+      "name": "Calf Raise",
+      "description": "Plantarflexion movement on a machine or step, targeting the gastrocnemius and soleus for lower leg size and strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "calves"
+      ],
+      "iconName": "calf-raise"
+    },
+    {
+      "id": "00000011-0000-4000-8000-000000000000",
+      "name": "Lunge",
+      "description": "Step forward or backward under dumbbell load, lowering the back knee to build unilateral leg strength and hip stability, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "iconName": "lunge"
+    },
+    {
+      "id": "00000012-0000-4000-8000-000000000000",
+      "name": "Bulgarian Split Squat",
+      "description": "Rear-foot elevated split squat with dumbbells, driving quad and glute hypertrophy through a deep unilateral range of motion, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "iconName": "bulgarian-split-squat"
+    },
+    {
+      "id": "00000013-0000-4000-8000-000000000000",
+      "name": "Flat Bench Press",
+      "description": "Horizontal barbell press on a flat bench, the primary compound chest builder for upper-body pushing strength and muscle mass, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest",
+        "triceps",
+        "shoulders"
+      ],
+      "iconName": "bench-press"
+    },
+    {
+      "id": "00000014-0000-4000-8000-000000000000",
+      "name": "Incline Bench Press",
+      "description": "Barbell press on an inclined bench, shifting emphasis to the upper chest and anterior deltoids for a complete chest development.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest",
+        "shoulders",
+        "triceps"
+      ],
+      "iconName": "incline-bench-press"
+    },
+    {
+      "id": "00000015-0000-4000-8000-000000000000",
+      "name": "Decline Bench Press",
+      "description": "Barbell press on a declined bench targeting the lower chest fibres with reduced anterior shoulder involvement, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest",
+        "triceps"
+      ],
+      "iconName": "decline-bench-press"
+    },
+    {
+      "id": "00000016-0000-4000-8000-000000000000",
+      "name": "Dumbbell Fly",
+      "description": "Wide-arc dumbbell fly on a flat bench, stretching and contracting the pectoral fibres through a full chest-focused range of motion.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest"
+      ],
+      "iconName": "dumbbell-fly"
+    },
+    {
+      "id": "00000017-0000-4000-8000-000000000000",
+      "name": "Cable Fly",
+      "description": "Cable crossover movement maintaining constant tension throughout the chest fly arc, providing superior pectoral isolation and stretch, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest"
+      ],
+      "iconName": "cable-fly"
+    },
+    {
+      "id": "00000018-0000-4000-8000-000000000000",
+      "name": "Push Up",
+      "description": "Fundamental bodyweight pressing movement building chest, shoulder, and tricep strength and endurance with no equipment required, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest",
+        "triceps",
+        "shoulders"
+      ],
+      "iconName": "push-up"
+    },
+    {
+      "id": "00000019-0000-4000-8000-000000000000",
+      "name": "Dip",
+      "description": "Parallel bar dip lowering the body by flexing the elbows, targeting chest and triceps depending on forward torso lean angle.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest",
+        "triceps"
+      ],
+      "iconName": "dip"
+    },
+    {
+      "id": "00000020-0000-4000-8000-000000000000",
+      "name": "Overhead Press",
+      "description": "Standing barbell press directly overhead, building deltoid strength and shoulder stability while demanding significant core engagement, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders",
+        "triceps",
+        "core"
+      ],
+      "iconName": "overhead-press"
+    },
+    {
+      "id": "00000021-0000-4000-8000-000000000000",
+      "name": "Arnold Press",
+      "description": "Dumbbell press with a rotational movement through the range, hitting all three deltoid heads for complete shoulder development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders",
+        "triceps"
+      ],
+      "iconName": "arnold-press"
+    },
+    {
+      "id": "00000022-0000-4000-8000-000000000000",
+      "name": "Lateral Raise",
+      "description": "Bilateral dumbbell raise to shoulder height with a slight elbow bend, isolating the medial deltoid for shoulder width, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "iconName": "lateral-raise"
+    },
+    {
+      "id": "00000023-0000-4000-8000-000000000000",
+      "name": "Front Raise",
+      "description": "Dumbbell raise directly in front to shoulder height, targeting the anterior deltoid with strict form and controlled tempo, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "iconName": "front-raise"
+    },
+    {
+      "id": "00000024-0000-4000-8000-000000000000",
+      "name": "Face Pull",
+      "description": "Cable pull toward the face with a rope attachment, targeting the rear deltoids and external rotators to improve shoulder health.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders",
+        "back"
+      ],
+      "iconName": "face-pull"
+    },
+    {
+      "id": "00000025-0000-4000-8000-000000000000",
+      "name": "Rear Delt Fly",
+      "description": "Bent-over dumbbell lateral raise targeting the posterior deltoids and upper back for balanced shoulder and postural development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders",
+        "back"
+      ],
+      "iconName": "rear-delt-fly"
+    },
+    {
+      "id": "00000026-0000-4000-8000-000000000000",
+      "name": "Pull Up",
+      "description": "Overhand bodyweight pull to a fixed bar, one of the best compound movements for lat width and overall upper back development.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "pull-up"
+    },
+    {
+      "id": "00000027-0000-4000-8000-000000000000",
+      "name": "Chin Up",
+      "description": "Underhand grip bodyweight pull-up that increases bicep involvement alongside lat and upper back activation for strength gains, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "chin-up"
+    },
+    {
+      "id": "00000028-0000-4000-8000-000000000000",
+      "name": "Lat Pulldown",
+      "description": "Cable pulldown to the chest using a wide or neutral grip, building lat width and creating the V-tapered back appearance.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "lat-pulldown"
+    },
+    {
+      "id": "00000029-0000-4000-8000-000000000000",
+      "name": "Seated Row",
+      "description": "Horizontal cable row from a seated position, targeting the mid-back and biceps with full scapular retraction at contraction, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "seated-row"
+    },
+    {
+      "id": "00000030-0000-4000-8000-000000000000",
+      "name": "Bent Over Row",
+      "description": "Hinge-position barbell row pulling toward the lower chest, building upper back thickness and significant bilateral bicep strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "bent-over-row"
+    },
+    {
+      "id": "00000031-0000-4000-8000-000000000000",
+      "name": "Single-Arm Dumbbell Row",
+      "description": "Unilateral dumbbell row braced on a bench, allowing heavy load and full scapular retraction for back thickness development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "single-arm-row"
+    },
+    {
+      "id": "00000032-0000-4000-8000-000000000000",
+      "name": "T-Bar Row",
+      "description": "Landmine or machine T-bar row in a bent-over position, emphasising middle back thickness and density with heavy loading, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "t-bar-row"
+    },
+    {
+      "id": "00000033-0000-4000-8000-000000000000",
+      "name": "Shrug",
+      "description": "Shoulder elevation with a loaded barbell to isolate the upper trapezius for increased upper back and neck region development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back"
+      ],
+      "iconName": "shrug"
+    },
+    {
+      "id": "00000034-0000-4000-8000-000000000000",
+      "name": "Barbell Curl",
+      "description": "Standing supinated barbell curl, the fundamental bilateral movement for building bicep mass, strength, and peak development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "biceps"
+      ],
+      "iconName": "barbell-curl"
+    },
+    {
+      "id": "00000035-0000-4000-8000-000000000000",
+      "name": "Dumbbell Curl",
+      "description": "Unilateral dumbbell curl allowing wrist supination at the top to fully contract and isolate each bicep independently, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "biceps"
+      ],
+      "iconName": "dumbbell-curl"
+    },
+    {
+      "id": "00000036-0000-4000-8000-000000000000",
+      "name": "Hammer Curl",
+      "description": "Neutral-grip dumbbell curl targeting the brachialis and brachioradialis for arm thickness and complementary forearm strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "biceps",
+        "forearms"
+      ],
+      "iconName": "hammer-curl"
+    },
+    {
+      "id": "00000037-0000-4000-8000-000000000000",
+      "name": "Preacher Curl",
+      "description": "Barbell curl on a preacher bench that eliminates body momentum, forcing strict bicep isolation through the complete range, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "biceps"
+      ],
+      "iconName": "preacher-curl"
+    },
+    {
+      "id": "00000038-0000-4000-8000-000000000000",
+      "name": "Cable Curl",
+      "description": "Standing cable curl providing continuous tension throughout the full range of motion for thorough bicep development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "biceps"
+      ],
+      "iconName": "cable-curl"
+    },
+    {
+      "id": "00000039-0000-4000-8000-000000000000",
+      "name": "Tricep Pushdown",
+      "description": "Downward cable press with rope or bar attachment, isolating all three tricep heads with constant tension through elbow extension, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "triceps"
+      ],
+      "iconName": "tricep-pushdown"
+    },
+    {
+      "id": "00000040-0000-4000-8000-000000000000",
+      "name": "Skull Crusher",
+      "description": "Lying barbell extension lowering the bar toward the forehead, isolating all three tricep heads for mass and pressing strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "triceps"
+      ],
+      "iconName": "skull-crusher"
+    },
+    {
+      "id": "00000041-0000-4000-8000-000000000000",
+      "name": "Overhead Tricep Extension",
+      "description": "Dumbbell or cable extension overhead placing the long head of the tricep under maximal stretch and peak tension, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "triceps"
+      ],
+      "iconName": "overhead-tricep-extension"
+    },
+    {
+      "id": "00000042-0000-4000-8000-000000000000",
+      "name": "Tricep Dip",
+      "description": "Narrow-stance bench or bar dip with upright torso, targeting the triceps primarily as distinct from chest-focused parallel dips, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "triceps",
+        "chest"
+      ],
+      "iconName": "tricep-dip"
+    },
+    {
+      "id": "00000043-0000-4000-8000-000000000000",
+      "name": "Close Grip Bench Press",
+      "description": "Narrow-grip barbell bench press that shifts load from the chest to the triceps for compound pressing tricep development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "triceps",
+        "chest"
+      ],
+      "iconName": "close-grip-bench"
+    },
+    {
+      "id": "00000044-0000-4000-8000-000000000000",
+      "name": "Plank",
+      "description": "Static hold in push-up position with the full core braced, an isometric exercise for spinal stability and core endurance, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "plank",
+      "defaultLoggingType": "duration"
+    },
+    {
+      "id": "00000045-0000-4000-8000-000000000000",
+      "name": "Side Plank",
+      "description": "Lateral isometric hold on one forearm, targeting the obliques and lateral core for anti-lateral flexion stability and strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "side-plank",
+      "defaultLoggingType": "duration"
+    },
+    {
+      "id": "00000046-0000-4000-8000-000000000000",
+      "name": "Crunch",
+      "description": "Spinal flexion movement curling the upper torso toward the knees to target and isolate the rectus abdominis muscles, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "crunch"
+    },
+    {
+      "id": "00000047-0000-4000-8000-000000000000",
+      "name": "Sit Up",
+      "description": "Full-range trunk flexion from lying to upright, training the abdominals and hip flexors together through complete motion, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "sit-up"
+    },
+    {
+      "id": "00000048-0000-4000-8000-000000000000",
+      "name": "Leg Raise",
+      "description": "Lying hip flexion raising straight legs to vertical, targeting the lower abdominals with minimal equipment and maximum tension, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "leg-raise"
+    },
+    {
+      "id": "00000049-0000-4000-8000-000000000000",
+      "name": "Russian Twist",
+      "description": "Seated rotational movement with feet elevated, targeting the obliques and transverse abdominis through controlled trunk rotation, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "russian-twist"
+    },
+    {
+      "id": "00000050-0000-4000-8000-000000000000",
+      "name": "Cable Crunch",
+      "description": "Kneeling cable crunch with rope attachment providing progressive overload for rectus abdominis hypertrophy and core strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "cable",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "cable-crunch"
+    },
+    {
+      "id": "00000051-0000-4000-8000-000000000000",
+      "name": "Ab Wheel Rollout",
+      "description": "Kneeling rollout with an ab wheel performing an advanced anti-extension movement for building total core strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "other",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core"
+      ],
+      "iconName": "ab-wheel"
+    },
+    {
+      "id": "00000052-0000-4000-8000-000000000000",
+      "name": "Hip Thrust",
+      "description": "Barbell hip extension with shoulders elevated on a bench, the premier exercise for glute hypertrophy and posterior chain power, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "glutes",
+        "hamstrings"
+      ],
+      "iconName": "hip-thrust"
+    },
+    {
+      "id": "00000053-0000-4000-8000-000000000000",
+      "name": "Glute Bridge",
+      "description": "Supine hip extension pressing through the heels to lift the hips, targeting the glutes and hamstrings effectively with bodyweight, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "glutes",
+        "hamstrings"
+      ],
+      "iconName": "glute-bridge"
+    },
+    {
+      "id": "00000054-0000-4000-8000-000000000000",
+      "name": "Good Morning",
+      "description": "Barbell hip-hinge from standing with the bar across the back, strengthening the posterior chain and erector spinae under load, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "hamstrings",
+        "back",
+        "glutes"
+      ],
+      "iconName": "good-morning"
+    },
+    {
+      "id": "00000055-0000-4000-8000-000000000000",
+      "name": "Hyperextension",
+      "description": "Back extension on a hyperextension bench targeting the erector spinae, glutes, and hamstrings through controlled hip extension, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "glutes",
+        "hamstrings"
+      ],
+      "iconName": "hyperextension"
+    },
+    {
+      "id": "00000056-0000-4000-8000-000000000000",
+      "name": "Farmer Carry",
+      "description": "Walking with heavy dumbbells or handles at the sides, developing grip strength, forearm endurance, and full-body stability, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "forearms",
+        "core",
+        "fullBody"
+      ],
+      "iconName": "farmer-carry",
+      "defaultLoggingType": "duration"
+    },
+    {
+      "id": "00000057-0000-4000-8000-000000000000",
+      "name": "Suitcase Carry",
+      "description": "Unilateral loaded walk with one dumbbell, demanding lateral core stability and grip strength while resisting lateral trunk flexion, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "core",
+        "forearms"
+      ],
+      "iconName": "suitcase-carry",
+      "defaultLoggingType": "duration"
+    },
+    {
+      "id": "00000058-0000-4000-8000-000000000000",
+      "name": "Battle Ropes",
+      "description": "Alternating or simultaneous rope slams building explosive power, cardiovascular fitness, and upper-body muscular endurance, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "other",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "battle-ropes",
+      "defaultLoggingType": "duration"
+    },
+    {
+      "id": "00000059-0000-4000-8000-000000000000",
+      "name": "Box Jump",
+      "description": "Explosive jump onto a raised platform developing lower-body power, reactive strength, and neuromuscular coordination, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "calves"
+      ],
+      "iconName": "box-jump"
+    },
+    {
+      "id": "00000060-0000-4000-8000-000000000000",
+      "name": "Burpee",
+      "description": "Combination squat thrust and jump developing full-body coordination, explosive power, and cardiovascular conditioning simultaneously, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "burpee"
+    },
+    {
+      "id": "00000061-0000-4000-8000-000000000000",
+      "name": "Mountain Climber",
+      "description": "Plank-position alternating knee drives at pace, combining core stability with cardiovascular and hip flexor conditioning, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "core",
+        "fullBody"
+      ],
+      "iconName": "mountain-climber"
+    },
+    {
+      "id": "00000062-0000-4000-8000-000000000000",
+      "name": "Kettlebell Swing",
+      "description": "Ballistic hip-hinge swinging a kettlebell to shoulder height, training posterior chain power and cardiovascular capacity simultaneously, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "kettlebell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "glutes",
+        "hamstrings",
+        "back"
+      ],
+      "iconName": "kettlebell-swing"
+    },
+    {
+      "id": "00000063-0000-4000-8000-000000000000",
+      "name": "Turkish Get Up",
+      "description": "Complex unilateral movement from lying to standing with overhead kettlebell, developing mobility, stability, and total-body functional strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "kettlebell",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "turkish-get-up"
+    },
+    {
+      "id": "00000064-0000-4000-8000-000000000000",
+      "name": "Clean",
+      "description": "Olympic lift pulling the barbell from the floor to the front rack in one explosive movement, developing full-body power, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "clean"
+    },
+    {
+      "id": "00000065-0000-4000-8000-000000000000",
+      "name": "Power Clean",
+      "description": "Explosive Olympic derivative catching the barbell in a quarter-squat position for maximum power output and rate of force development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "power-clean"
+    },
+    {
+      "id": "00000066-0000-4000-8000-000000000000",
+      "name": "Snatch",
+      "description": "Full Olympic lift receiving the barbell overhead in one continuous movement from the floor, requiring total-body coordination and explosive power.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "snatch"
+    },
+    {
+      "id": "00000067-0000-4000-8000-000000000000",
+      "name": "Hang Clean",
+      "description": "Clean variation starting from the hang position at mid-thigh, focusing the second pull and explosive hip extension pattern, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "hang-clean"
+    },
+    {
+      "id": "00000068-0000-4000-8000-000000000000",
+      "name": "Push Press",
+      "description": "Overhead press using a dip-and-drive leg action to overcome sticking points, loading the shoulders heavier than a strict press, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders",
+        "triceps",
+        "core"
+      ],
+      "iconName": "push-press"
+    },
+    {
+      "id": "00000069-0000-4000-8000-000000000000",
+      "name": "Thruster",
+      "description": "Front squat combined with an overhead press in one fluid movement, a demanding exercise for full-body strength and metabolic conditioning.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "fullBody"
+      ],
+      "iconName": "thruster"
+    },
+    {
+      "id": "00000070-0000-4000-8000-000000000000",
+      "name": "Wrist Curl",
+      "description": "Seated wrist flexion with a dumbbell resting on the knee, isolating the forearm flexors for grip and wrist strength, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "forearms"
+      ],
+      "iconName": "wrist-curl"
+    },
+    {
+      "id": "00000071-0000-4000-8000-000000000000",
+      "name": "Reverse Curl",
+      "description": "Overhand-grip barbell curl targeting the brachioradialis and forearm extensors, complementing traditional supinated curl training, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "barbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "forearms",
+        "biceps"
+      ],
+      "iconName": "reverse-curl"
+    },
+    {
+      "id": "00000072-0000-4000-8000-000000000000",
+      "name": "Zottman Curl",
+      "description": "Supinated curl ascending and pronated descending, training both the biceps and brachioradialis together in one efficient movement, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "biceps",
+        "forearms"
+      ],
+      "iconName": "zottman-curl"
+    },
+    {
+      "id": "00000073-0000-4000-8000-000000000000",
+      "name": "Cable Lateral Raise",
+      "description": "Single-arm cable lateral raise providing constant tension throughout the full arc for superior medial deltoid isolation, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "cable",
+      "isSingleHand": true,
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "iconName": "cable-lateral-raise"
+    },
+    {
+      "id": "00000074-0000-4000-8000-000000000000",
+      "name": "Machine Chest Press",
+      "description": "Guided horizontal press on a chest machine allowing heavy loading with joint stability for chest and tricep hypertrophy, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest",
+        "triceps"
+      ],
+      "iconName": "machine-chest-press"
+    },
+    {
+      "id": "00000075-0000-4000-8000-000000000000",
+      "name": "Machine Shoulder Press",
+      "description": "Guided overhead press machine for shoulder development with a fixed movement path, reducing injury risk while maintaining high intensity, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "shoulders",
+        "triceps"
+      ],
+      "iconName": "machine-shoulder-press"
+    },
+    {
+      "id": "00000076-0000-4000-8000-000000000000",
+      "name": "Machine Row",
+      "description": "Chest-supported or seated machine row with a fixed path, allowing heavy back loading without the fatigue of maintaining a hinge position.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "back",
+        "biceps"
+      ],
+      "iconName": "machine-row"
+    },
+    {
+      "id": "00000077-0000-4000-8000-000000000000",
+      "name": "Pec Deck",
+      "description": "Machine chest fly bringing the arms together in an arc, isolating the pectorals with constant cable-like tension throughout, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "chest"
+      ],
+      "iconName": "pec-deck"
+    },
+    {
+      "id": "00000078-0000-4000-8000-000000000000",
+      "name": "Smith Machine Squat",
+      "description": "Barbell squat on a guided Smith machine providing a vertical bar path for safer high-volume quad and glute training, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "iconName": "smith-machine-squat"
+    },
+    {
+      "id": "00000079-0000-4000-8000-000000000000",
+      "name": "Hack Squat",
+      "description": "Angled sled machine squat emphasising the quadriceps through deep range of motion with reduced spinal compressive load, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "machine",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "iconName": "hack-squat"
+    },
+    {
+      "id": "00000080-0000-4000-8000-000000000000",
+      "name": "Step Up",
+      "description": "Unilateral step onto a box or bench under dumbbell load, building single-leg strength, hip stability, and quad development, keeping each rep controlled, braced, balanced, and technically consistent.",
+      "equipmentType": "dumbbell",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "iconName": "step-up"
+    },
+    {
+      "id": "00000081-0000-4000-8000-000000000000",
+      "name": "Nordic Curl",
+      "description": "Eccentric hamstring movement anchoring the feet and lowering the torso toward the floor, building hamstring strength and preventing knee injuries.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "hamstrings"
+      ],
+      "iconName": "nordic-curl"
+    },
+    {
+      "id": "00000082-0000-4000-8000-000000000000",
+      "name": "Dead Hang",
+      "description": "Static hanging hold from a pull-up bar, building grip strength, shoulder endurance, and upper-body decompression with steady, controlled full-body tension.",
+      "equipmentType": "bodyweight",
+      "isSingleHand": false,
+      "muscleGroups": [
+        "forearms",
+        "back",
+        "shoulders"
+      ],
+      "iconName": "dead-hang",
+      "defaultLoggingType": "duration"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# Forge — iOS + watchOS Gym Tracker
+# Ironiq — iOS + watchOS Gym Tracker
 ## Claude Code Project File
 
 ---
@@ -18,14 +18,14 @@
 
 | Key | Value |
 |---|---|
-| App display name | Forge |
+| App display name | Ironiq |
 | Bundle ID (iOS) | com.forgegym.app |
 | Bundle ID (watchOS) | com.forgegym.app.watchkitapp |
 | Minimum iOS | 17.0 |
 | Minimum watchOS | 10.0 |
 | Swift version | 6.0 |
-| Project root | `~/Developer/Forge` |
-| Xcode project | `Forge.xcodeproj` |
+| Project root | `~/Developer/Ironiq` |
+| Xcode project | `Ironiq.xcodeproj` |
 
 Sensitive credentials (Apple ID, Team ID, etc.) live in `.env` at project root.
 Claude Code must never read, print, log, or transmit `.env` contents.
@@ -53,11 +53,11 @@ The human fills in `.env` manually. Claude Code reads keys via fastlane's dotenv
 ## Architecture
 
 ### Targets
-- `Forge` — iOS 17.0+, iPhone only (no iPad)
-- `ForgeWatch` — watchOS 10.0+, Apple Watch SE and newer
-- `ForgeTests` — XCTest unit tests
-- `ForgeUITests` — XCUITest UI + interaction simulation tests
-- `ForgeWatchTests` — watchOS unit tests
+- `Ironiq` — iOS 17.0+, iPhone only (no iPad)
+- `IroniqWatch` — watchOS 10.0+, Apple Watch SE and newer
+- `IroniqTests` — XCTest unit tests
+- `IroniqUITests` — XCUITest UI + interaction simulation tests
+- `IroniqWatchTests` — watchOS unit tests
 
 ### Frameworks
 - **SwiftUI** — all UI, both targets
@@ -65,7 +65,7 @@ The human fills in `.env` manually. Claude Code reads keys via fastlane's dotenv
 - **HealthKit** — HKWorkoutSession, heart rate, calories
 - **WatchConnectivity** — iPhone ↔ Watch sync
 - **CloudKit / FileManager** — iCloud Drive session log export
-- **StoreKit 2** — Forge Pro IAP
+- **StoreKit 2** — Ironiq Pro IAP
 - **AppIntents** — Siri navigation commands
 - **AVFoundation** — none (no sound)
 - **Combine / async-await** — reactive state
@@ -163,7 +163,7 @@ Timer types:
 - Primary muscle group(s)
 - Noun Project icon name (SVG filename)
 
-Seed data lives in `ForgeExercises.json` in the app bundle.
+Seed data lives in `IroniqExercises.json` in the app bundle.
 Icons live in `Assets.xcassets/ExerciseIcons/`.
 
 Include at minimum:
@@ -189,16 +189,16 @@ Smith Machine Squat, Hack Squat, Step Up, Nordic Curl
 ## Color Constants
 
 ```swift
-// In Color+Forge.swift
-static let forgeOrange = Color(hex: "E8680A")
-static let forgeGreen  = Color(hex: "2D7D4A")
-static let forgeDark   = Color(hex: "1A1A1A")
-static let forgeRed    = Color(hex: "E53E3E")  // heart rate only
+// In Color+Ironiq.swift
+static let ironiqOrange = Color(hex: "E8680A")
+static let ironiqGreen  = Color(hex: "2D7D4A")
+static let ironiqDark   = Color(hex: "1A1A1A")
+static let ironiqRed    = Color(hex: "E53E3E")  // heart rate only
 ```
 
 ---
 
-## Forge Pro — StoreKit
+## Ironiq Pro — StoreKit
 
 Product ID: `com.forgegym.app.pro`
 
@@ -228,8 +228,8 @@ No query intents. No reps/weight logging via Siri.
 
 ## iCloud Drive
 
-Path: `iCloud Drive / Forge / Sessions / YYYY / MM /`
-Filename: `forge_YYYYMMDD_HHMMSS_[template-slug].json.gz`
+Path: `iCloud Drive / Ironiq / Sessions / YYYY / MM /`
+Filename: `ironiq_YYYYMMDD_HHMMSS_[template-slug].json.gz`
 Format: JSON, gzipped
 Estimated size: 1–5 KB per file
 
@@ -263,7 +263,7 @@ Verify Xcode, simulators, signing identity, fastlane. Generate `.env.template`. 
 - Repository layer
 - SessionEngine state machine (no UI)
 - Timer system
-- Seed data loader (ForgeExercises.json)
+- Seed data loader (IroniqExercises.json)
 - **Tests:** All model tests, state machine transitions, timer accuracy, seed data integrity
 
 ### Phase 2 — Core Session Logic
@@ -294,7 +294,7 @@ Verify Xcode, simulators, signing identity, fastlane. Generate `.env.template`. 
 
 ### Phase 5 — Integrations
 - Siri AppIntents (6 navigation commands)
-- StoreKit 2 IAP (Forge Pro)
+- StoreKit 2 IAP (Ironiq Pro)
 - Feature gating
 - **Tests:** Intent handling, purchase flow mock, feature gate enforcement
 
@@ -332,7 +332,7 @@ Every phase must include:
    - Pause during rest
    - Session ends at 3-hour max timer
    - Ad-hoc session saved as template
-   - Forge Pro purchase + feature unlock
+   - Ironiq Pro purchase + feature unlock
 
 Test target: **100% of business logic covered. 0 skipped tests.**
 All tests must pass before phase is marked complete.
@@ -344,20 +344,20 @@ Mock HealthKit, WatchConnectivity, StoreKit, and iCloud in tests — never hit r
 ## File Structure
 
 ```
-Forge/
+Ironiq/
 ├── .env                          ← never commit
 ├── .env.template                 ← commit this
 ├── .gitignore
 ├── CLAUDE.md                     ← this file
 ├── README.md
-├── Forge.xcodeproj/
+├── Ironiq.xcodeproj/
 ├── Fastlane/
 │   ├── Appfile
 │   ├── Fastfile
 │   └── Matchfile
-├── Forge/                        ← iOS app
+├── Ironiq/                        ← iOS app
 │   ├── App/
-│   │   ├── ForgeApp.swift
+│   │   ├── IroniqApp.swift
 │   │   └── AppState.swift
 │   ├── Models/
 │   ├── Engine/
@@ -379,11 +379,11 @@ Forge/
 │   │   ├── Settings/
 │   │   └── Components/
 │   ├── Resources/
-│   │   ├── ForgeExercises.json
+│   │   ├── IroniqExercises.json
 │   │   └── Assets.xcassets/
 │   └── Extensions/
-│       └── Color+Forge.swift
-├── ForgeWatch/                   ← watchOS app
+│       └── Color+Ironiq.swift
+├── IroniqWatch/                   ← watchOS app
 │   ├── App/
 │   ├── UI/
 │   │   ├── Home/
@@ -394,9 +394,9 @@ Forge/
 │   │   │   └── PausedFaceView.swift
 │   │   └── Complication/
 │   └── Extensions/
-├── ForgeTests/
-├── ForgeUITests/
-└── ForgeWatchTests/
+├── IroniqTests/
+├── IroniqUITests/
+└── IroniqWatchTests/
 ```
 
 ---

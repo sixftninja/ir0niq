@@ -1,4 +1,4 @@
-name: Forge
+name: Ironiq
 options:
   bundleIdPrefix: com.forgegym
   deploymentTarget:
@@ -20,18 +20,18 @@ configs:
 targets:
 
   # ─── iOS App ───────────────────────────────────────────────────────────────
-  Forge:
+  Ironiq:
     type: application
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: Forge
+      - path: Ironiq
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app
         TARGETED_DEVICE_FAMILY: "1"
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
-        CODE_SIGN_ENTITLEMENTS: Forge/Forge.entitlements
+        CODE_SIGN_ENTITLEMENTS: Ironiq/Ironiq.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         # Unsigned for simulator/test builds — overridden in Fastfile for distribution
@@ -45,9 +45,9 @@ targets:
           CODE_SIGNING_REQUIRED: YES
           CODE_SIGNING_ALLOWED: YES
     info:
-      path: Forge/Info.plist
+      path: Ironiq/Info.plist
       properties:
-        CFBundleDisplayName: Ironiq
+        CFBundleDisplayName: ir0niq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen:
@@ -60,16 +60,16 @@ targets:
         NSUbiquitousContainers:
           iCloud.com.forgegym.app:
             NSUbiquitousContainerIsDocumentScopePublic: true
-            NSUbiquitousContainerName: Forge
+            NSUbiquitousContainerName: Ironiq
             NSUbiquitousContainerSupportedFolderLevels: Any
 
   # ─── watchOS App ───────────────────────────────────────────────────────────
-  ForgeWatch:
+  IroniqWatch:
     type: application
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
-      - path: ForgeWatch
+      - path: IroniqWatch
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.watchkitapp
@@ -79,25 +79,25 @@ targets:
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
     info:
-      path: ForgeWatch/Info.plist
+      path: IroniqWatch/Info.plist
       properties:
-        CFBundleDisplayName: Ironiq
+        CFBundleDisplayName: ir0niq
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
         WKWatchOnly: true
-        NSHealthShareUsageDescription: "Forge reads heart rate during your workout."
-        NSHealthUpdateUsageDescription: "Forge saves your workout to Apple Health."
+        NSHealthShareUsageDescription: "Ironiq reads heart rate during your workout."
+        NSHealthUpdateUsageDescription: "Ironiq saves your workout to Apple Health."
         UIBackgroundModes:
           - workout-processing
 
   # ─── watchOS Complication Extension ───────────────────────────────────────
-  ForgeWatchComplication:
+  IroniqWatchComplication:
     type: app-extension
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
-      - path: ForgeWatchComplication
+      - path: IroniqWatchComplication
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.forgegym.app.watchkitapp.complication
@@ -106,25 +106,25 @@ targets:
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
     info:
-      path: ForgeWatchComplication/Info.plist
+      path: IroniqWatchComplication/Info.plist
       properties:
-        CFBundleDisplayName: Ironiq Complication
+        CFBundleDisplayName: ir0niq Complication
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
   # ─── iOS Unit Tests ────────────────────────────────────────────────────────
-  ForgeTests:
+  IroniqTests:
     type: bundle.unit-test
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: ForgeTests
+      - path: IroniqTests
     resources:
-      - path: Forge/Resources/ForgeExercises.json
+      - path: Ironiq/Resources/IroniqExercises.json
     dependencies:
-      - target: Forge
+      - target: Ironiq
         embed: false
     settings:
       base:
@@ -135,14 +135,14 @@ targets:
         ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
 
   # ─── iOS UI Tests ──────────────────────────────────────────────────────────
-  ForgeUITests:
+  IroniqUITests:
     type: bundle.ui-testing
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: ForgeUITests
+      - path: IroniqUITests
     dependencies:
-      - target: Forge
+      - target: Ironiq
         embed: false
     settings:
       base:
@@ -152,14 +152,14 @@ targets:
         CODE_SIGNING_ALLOWED: NO
 
   # ─── watchOS Unit Tests ────────────────────────────────────────────────────
-  ForgeWatchTests:
+  IroniqWatchTests:
     type: bundle.unit-test
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
-      - path: ForgeWatchTests
+      - path: IroniqWatchTests
     dependencies:
-      - target: ForgeWatch
+      - target: IroniqWatch
         embed: false
     settings:
       base:
@@ -171,16 +171,16 @@ targets:
 # ─── Schemes ─────────────────────────────────────────────────────────────────
 schemes:
 
-  Forge:
+  Ironiq:
     build:
       targets:
-        Forge: all
-        ForgeTests: [testing]
-        ForgeUITests: [testing]
+        Ironiq: all
+        IroniqTests: [testing]
+        IroniqUITests: [testing]
     test:
       targets:
-        - ForgeTests
-        - ForgeUITests
+        - IroniqTests
+        - IroniqUITests
       config: Debug
     run:
       config: Debug
@@ -191,15 +191,15 @@ schemes:
     archive:
       config: Release
 
-  ForgeWatch:
+  IroniqWatch:
     build:
       targets:
-        ForgeWatch: all
-        ForgeWatchComplication: all
-        ForgeWatchTests: [testing]
+        IroniqWatch: all
+        IroniqWatchComplication: all
+        IroniqWatchTests: [testing]
     test:
       targets:
-        - ForgeWatchTests
+        - IroniqWatchTests
       config: Debug
     run:
       config: Debug

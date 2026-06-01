@@ -2,6 +2,17 @@ default_platform(:ios)
 
 # ─── Shared helpers ──────────────────────────────────────────────────────────
 
+
+def xcode_auth_xcargs
+  [
+    "DEVELOPMENT_TEAM=$TEAM_ID",
+    "-allowProvisioningUpdates",
+    "-authenticationKeyPath $APP_STORE_CONNECT_API_KEY_PATH",
+    "-authenticationKeyID $APP_STORE_CONNECT_API_KEY_ID",
+    "-authenticationKeyIssuerID $APP_STORE_CONNECT_API_ISSUER_ID"
+  ].join(" ")
+end
+
 def api_key
   app_store_connect_api_key(
     key_id:       ENV["APP_STORE_CONNECT_API_KEY_ID"],
@@ -19,7 +30,7 @@ platform :ios do
   desc "Run all iOS tests on simulator"
   lane :test do
     run_tests(
-      scheme: "Forge",
+      scheme: "Ironiq",
       devices: ["iPhone 17 Pro"],
       clean: true,
       code_coverage: false,
@@ -30,7 +41,7 @@ platform :ios do
   desc "Run watchOS tests"
   lane :test_watch do
     run_tests(
-      scheme: "ForgeWatch",
+      scheme: "IroniqWatch",
       devices: ["Apple Watch Series 11 (46mm)"],
       clean: true,
       xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
@@ -39,15 +50,15 @@ platform :ios do
 
   # ── Build ────────────────────────────────────────────────────────────────
 
-  desc "Archive a Release build (no upload). Produces Forge.ipa in ./build/"
+  desc "Archive a Release build (no upload). Produces Ironiq.ipa in ./build/"
   lane :build do
     build_app(
-      scheme: "Forge",
+      scheme: "Ironiq",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "./build",
-      output_name: "Forge.ipa",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates",
+      output_name: "Ironiq.ipa",
+      xcargs: xcode_auth_xcargs,
       export_options: {
         method: "app-store-connect",
         teamID: ENV["TEAM_ID"],
@@ -63,15 +74,15 @@ platform :ios do
     ENV["APP_STORE_CONNECT_API_KEY_PATH"] = File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
     key = api_key
 
-    increment_build_number(xcodeproj: "Forge.xcodeproj")
+    increment_build_number(xcodeproj: "Ironiq.xcodeproj")
 
     build_app(
-      scheme: "Forge",
+      scheme: "Ironiq",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "./build",
-      output_name: "Forge.ipa",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates",
+      output_name: "Ironiq.ipa",
+      xcargs: xcode_auth_xcargs,
       export_options: {
         method: "app-store-connect",
         teamID: ENV["TEAM_ID"],
@@ -84,7 +95,7 @@ platform :ios do
       skip_waiting_for_build_processing: true,
       distribute_external: false,
       notify_external_testers: false,
-      changelog: "New Forge beta build."
+      changelog: "New Ironiq beta build."
     )
 
     slack_notify_if_configured(message: "Ironiq beta uploaded to TestFlight!")
@@ -97,15 +108,15 @@ platform :ios do
     ENV["APP_STORE_CONNECT_API_KEY_PATH"] = File.expand_path(ENV["APP_STORE_CONNECT_API_KEY_PATH"])
     key = api_key
 
-    increment_build_number(xcodeproj: "Forge.xcodeproj")
+    increment_build_number(xcodeproj: "Ironiq.xcodeproj")
 
     build_app(
-      scheme: "Forge",
+      scheme: "Ironiq",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "./build",
-      output_name: "Forge.ipa",
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates",
+      output_name: "Ironiq.ipa",
+      xcargs: xcode_auth_xcargs,
       export_options: {
         method: "app-store-connect",
         teamID: ENV["TEAM_ID"],

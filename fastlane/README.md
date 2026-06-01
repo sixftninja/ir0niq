@@ -37,7 +37,7 @@ Run watchOS tests
 [bundle exec] fastlane ios build
 ```
 
-Archive a Release build (no upload). Produces Forge.ipa in ./build/
+Archive a Release build (no upload). Produces Ironiq.ipa in ./build/
 
 ### ios beta
 
