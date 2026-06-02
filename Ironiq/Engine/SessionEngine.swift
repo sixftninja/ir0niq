@@ -590,7 +590,11 @@ actor SessionEngine {
         if let iCloudService,
            let dto = try await sessionRepository.fetchById(sessionId) {
             let model = SessionExportModel.make(from: dto)
-            _ = try? await iCloudService.exportSession(model, templateSlug: nil)
+            do {
+                _ = try await iCloudService.exportSession(model, templateSlug: nil)
+            } catch {
+                PendingExportQueue.shared.add(sessionId: sessionId)
+            }
         }
 
         await timerSystem.cancelAll()

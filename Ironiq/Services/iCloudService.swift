@@ -83,13 +83,10 @@ actor iCloudService: iCloudServiceProtocol {
   // MARK: - Helpers
 
   private func resolveDirectory(for date: Date, category: String) throws -> URL {
-    let baseURL: URL
-
-    if let iCloudURL = fileManager.url(forUbiquityContainerIdentifier: containerIdentifier) {
-      baseURL = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
-    } else {
-      baseURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    guard let iCloudURL = fileManager.url(forUbiquityContainerIdentifier: containerIdentifier) else {
+      throw iCloudError.containerUnavailable
     }
+    let baseURL = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
 
     let calendar = Calendar.current
     let year = calendar.component(.year, from: date)

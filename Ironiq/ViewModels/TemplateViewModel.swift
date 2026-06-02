@@ -144,9 +144,8 @@ final class TemplateViewModel {
     do {
       _ = try await iCloudService.shared.exportTemplate(model)
     } catch {
-      // Template sync failure should not block local template creation.
-      setAlert(
-        message: "Template saved locally. Cloud sync will retry when drive access is available.")
+      PendingExportQueue.shared.add(templateId: id)
+      setAlert(message: "Template saved. Will sync when drive is available.")
     }
   }
 

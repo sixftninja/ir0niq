@@ -23,6 +23,7 @@
 		1BA76E77E8BC0B70132A3815 /* SessionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D071584FD49D0024E05D6309 /* SessionEngine.swift */; };
 		275BADD1E2CA8C9EC5F30D00 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B8A937908F8160DBAD4D42 /* SettingsViewModel.swift */; };
 		290F973AA38C62D94BA3CAD8 /* WatchRestFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73ACC37DF11305CC81F4E799 /* WatchRestFaceView.swift */; };
+		3131CBB80BF36F81A196168E /* PendingExportQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC4B688F793CE5094CEB2B4 /* PendingExportQueue.swift */; };
 		348056BA014EBDA5D17D6180 /* SessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B5B6F3FD34E843C1EC9361 /* SessionViewModel.swift */; };
 		389C1F56AB31C7B1CE0F737E /* SessionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8297E774BF25DBEE88C81E8 /* SessionRepository.swift */; };
 		391FC2655DEF887CCCC7687F /* TemplateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062DDC3BE39B2F6503A898F0 /* TemplateViewModel.swift */; };
@@ -163,6 +164,7 @@
 		387251250D1DD666C6844AAC /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		390328042A93E5460BF3975F /* WatchActiveSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchActiveSessionView.swift; sourceTree = "<group>"; };
 		3B0400050EF952712E894C76 /* IroniqExercises.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = IroniqExercises.json; sourceTree = "<group>"; };
+		3EC4B688F793CE5094CEB2B4 /* PendingExportQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingExportQueue.swift; sourceTree = "<group>"; };
 		4526E5CA05F22113E8F944FE /* HealthKitServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceTests.swift; sourceTree = "<group>"; };
 		4A52165A302C4D28A9FA48BA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4BF3335E1284B9F127380A8B /* TimeInterval+Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Format.swift"; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				5B7DA69825197F97789D3CF9 /* HealthKitService.swift */,
 				1361A089FD7C2E49A0E14D60 /* iCloudService.swift */,
 				1008033AE101F0DF5A23BB40 /* ModelContainerFactory.swift */,
+				3EC4B688F793CE5094CEB2B4 /* PendingExportQueue.swift */,
 				A732CB8886C1F9AB3BDCB56D /* SeedDataService.swift */,
 				ADF1DA552648ECCD05618F51 /* StoreKitService.swift */,
 				EB86F378B5E04EA4CE1D0869 /* WatchSyncService.swift */,
@@ -921,6 +924,7 @@
 				6D35E397CA9F8AF63425695B /* ModelContainerFactory.swift in Sources */,
 				F17B375EC6CE0909CFB83572 /* OnboardingView.swift in Sources */,
 				BA0467C6C15A8465014EF0CA /* PausedFaceView.swift in Sources */,
+				3131CBB80BF36F81A196168E /* PendingExportQueue.swift in Sources */,
 				8166C8F7E42E5DCF70E8918B /* PreviewRepositories.swift in Sources */,
 				4A3EE550FB220CC99030689F /* ProGateView.swift in Sources */,
 				E8B8774EBDA56943A5D688A1 /* RestFaceView.swift in Sources */,
@@ -1282,7 +1286,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 35;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1367,7 +1371,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 35;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
