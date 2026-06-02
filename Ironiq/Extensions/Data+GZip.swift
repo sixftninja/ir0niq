@@ -1,5 +1,4 @@
 import Foundation
-import zlib
 
 // MARK: - GZip compression / decompression without a third-party dependency
 //
@@ -8,8 +7,9 @@ import zlib
 // same DEFLATE bitstream wrapped in a 10-byte gzip header and an 8-byte footer
 // (CRC-32 + original size). We strip the zlib envelope and re-wrap in gzip.
 //
-// gunzipped(): Strips the gzip envelope and inflates the raw DEFLATE payload
-// using the system zlib's inflateInit2 with windowBits=-15 (raw DEFLATE mode).
+// gunzipped(): Strips the gzip envelope, prepends a valid zlib header, and uses
+// NSData.decompressed(using: .zlib). Apple's Compression framework reads DEFLATE
+// to the end-of-stream marker without enforcing the trailing Adler-32 checksum.
 
 extension Data {
     /// Returns a gzip-compressed copy.
@@ -74,48 +74,19 @@ extension Data {
         if flags & 0x02 != 0 { offset += 2 }
         guard offset <= count - 8 else { throw GZipError.decompressionFailed }
 
-        // Original size is the last 4 bytes of the gzip footer, little-endian.
-        let sizeStart = count - 4
-        let originalSize = Int(self[sizeStart])
-            | (Int(self[sizeStart + 1]) << 8)
-            | (Int(self[sizeStart + 2]) << 16)
-            | (Int(self[sizeStart + 3]) << 24)
-
         let deflate = self[offset ..< count - 8]
-        let capacity = Swift.max(originalSize + 64, deflate.count * 4)
-        var output = Data(count: capacity)
-        var totalOut = 0
 
-        // Both inflateInit2_ and inflate must run within the same withUnsafeBytes scope
-        // so that stream.next_in remains a valid pointer throughout decompression.
-        let deflateBytes = Array(deflate)
-        var stream = z_stream()
-        var inflateStatus = Z_STREAM_ERROR
+        // Reconstruct a zlib stream: valid 2-byte header + raw DEFLATE payload.
+        // 0x78 0x9C = CMF (deflate, 32 KB window) + FLG (check bits satisfying mod-31 = 0).
+        // NSData.decompressed(using: .zlib) reads DEFLATE to its end-of-stream marker;
+        // it does not enforce the trailing 4-byte Adler-32 checksum.
+        var zlibStream = Data([0x78, 0x9C])
+        zlibStream.append(contentsOf: deflate)
 
-        try deflateBytes.withUnsafeBytes { (inBuf: UnsafeRawBufferPointer) throws in
-            guard let inBase = inBuf.baseAddress else { throw GZipError.decompressionFailed }
-            stream.next_in = UnsafeMutablePointer(mutating: inBase.assumingMemoryBound(to: Bytef.self))
-            stream.avail_in = uInt(deflateBytes.count)
-
-            // windowBits = -15 tells zlib to expect raw DEFLATE (no zlib/gzip header).
-            guard inflateInit2_(&stream, -15, ZLIB_VERSION, Int32(MemoryLayout<z_stream>.size)) == Z_OK else {
-                throw GZipError.decompressionFailed
-            }
-
-            inflateStatus = output.withUnsafeMutableBytes { (outBuf: UnsafeMutableRawBufferPointer) -> Int32 in
-                guard let outBase = outBuf.baseAddress else { return Z_STREAM_ERROR }
-                stream.next_out = outBase.assumingMemoryBound(to: Bytef.self)
-                stream.avail_out = uInt(capacity)
-                let r = inflate(&stream, Z_FINISH)
-                totalOut = Int(stream.total_out)
-                return r
-            }
-            inflateEnd(&stream)
+        guard let result = (zlibStream as NSData).decompressed(using: .zlib) else {
+            throw GZipError.decompressionFailed
         }
-
-        guard inflateStatus == Z_STREAM_END else { throw GZipError.decompressionFailed }
-        output.removeLast(capacity - totalOut)
-        return output
+        return result as Data
     }
 
     // MARK: - CRC-32 (ISO 3309 / ITU-T V.42)

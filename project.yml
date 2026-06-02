@@ -141,6 +141,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.tests
         CODE_SIGN_STYLE: Automatic
         GENERATE_INFOPLIST_FILE: YES
+        DEVELOPMENT_TEAM: ""
         ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
 
   # ─── iOS UI Tests ──────────────────────────────────────────────────────────
@@ -158,6 +159,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.uitests
         CODE_SIGN_STYLE: Automatic
         GENERATE_INFOPLIST_FILE: YES
+        DEVELOPMENT_TEAM: ""
 
   # ─── watchOS Unit Tests ────────────────────────────────────────────────────
   IroniqWatchTests:
