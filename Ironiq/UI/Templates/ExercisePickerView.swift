@@ -3,6 +3,7 @@ import SwiftUI
 struct ExercisePickerView: View {
     @Environment(TemplateViewModel.self) private var vm
     @Environment(\.dismiss) private var dismiss
+    var excludedExerciseIds: Set<UUID> = []
     let onSelect: (ExerciseDTO) -> Void
 
     @State private var searchText = ""
@@ -20,15 +21,24 @@ struct ExercisePickerView: View {
                         ForEach(item.exercises.filter {
                             searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText)
                         }) { exercise in
-                            Button {
-                                onSelect(exercise)
-                            } label: {
-                                ExerciseRowView(exercise: exercise)
-                            }
-                            .buttonStyle(.plain)
-                            .contentShape(Rectangle())
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityIdentifier("exercise_\(exercise.name.replacingOccurrences(of: " ", with: "_"))")
+                            let isExcluded = excludedExerciseIds.contains(exercise.id)
+                            ExerciseRowView(exercise: exercise)
+                                .opacity(isExcluded ? 0.38 : 1)
+                                .overlay(alignment: .trailing) {
+                                    if isExcluded {
+                                        Text("Added")
+                                            .font(.caption.weight(.bold))
+                                            .foregroundStyle(Color.ironiqGreen)
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .onTapGesture {
+                                    guard isExcluded == false else { return }
+                                    onSelect(exercise)
+                                }
+                                .accessibilityAddTraits(.isButton)
+                                .accessibilityIdentifier("exercise_\(exercise.name.replacingOccurrences(of: " ", with: "_"))")
                         }
                     }
                     .listRowBackground(Color(white: 0.1))

@@ -172,6 +172,19 @@ final class RegressionTests: XCTestCase {
         XCTAssertNotNil(ctx?.exercises[0].setContexts[0].setTimerStart)
     }
 
+    // MARK: - Template editor regression
+
+    func testTemplateEditorSetDuplicationCopiesPreviousTargets() {
+        let previous = SetEditorRow(targetType: .duration, targetReps: 12, targetDurationSeconds: 45)
+
+        let duplicate = previous.duplicated()
+
+        XCTAssertNotEqual(duplicate.id, previous.id)
+        XCTAssertEqual(duplicate.targetType, previous.targetType)
+        XCTAssertEqual(duplicate.targetReps, previous.targetReps)
+        XCTAssertEqual(duplicate.targetDurationSeconds, previous.targetDurationSeconds)
+    }
+
     // MARK: - Siri intents regression (Phase 5)
 
     func testPauseResumeIntentDoesNotCorruptState() async throws {

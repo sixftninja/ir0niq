@@ -304,7 +304,7 @@ private struct AddExerciseToWorkoutView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     ForEach(activeSetEntries) { entry in
-                        activeSetRow(index: entry.index)
+                        activeSetRow(id: entry.id)
                     }
 
                     HStack(spacing: 10) {
@@ -352,8 +352,8 @@ private struct AddExerciseToWorkoutView: View {
     }
 
     @ViewBuilder
-    private func activeSetRow(index: Int) -> some View {
-        if setRows.indices.contains(index) {
+    private func activeSetRow(id: UUID) -> some View {
+        if let index = activeSetIndex(id: id) {
             VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 Text("Set \(index + 1)")
@@ -361,14 +361,14 @@ private struct AddExerciseToWorkoutView: View {
                     .foregroundStyle(.white.opacity(0.55))
                     .frame(width: 44, alignment: .leading)
 
-                activeTargetTypeSwitch(index: index)
+                activeTargetTypeSwitch(id: id)
 
                 Spacer(minLength: 8)
 
                 if setRows.count > 1 {
                     Button {
-                        guard setRows.indices.contains(index) else { return }
-                        setRows.remove(at: index)
+                        guard let currentIndex = activeSetIndex(id: id) else { return }
+                        setRows.remove(at: currentIndex)
                     } label: {
                         Image(systemName: "minus.circle")
                             .font(.caption)
@@ -379,11 +379,11 @@ private struct AddExerciseToWorkoutView: View {
                 }
             }
 
-            if setRows[index].targetType == .duration {
-                targetNumberField(label: "Target duration", value: $setRows[index].targetDurationSeconds, placeholder: "30")
+            if activeSetTargetType(id: id) == .duration {
+                targetNumberField(label: "Target duration", value: activeIntBinding(id: id, keyPath: \.targetDurationSeconds), placeholder: "30")
                     .accessibilityIdentifier("active_target_duration_field")
             } else {
-                targetNumberField(label: "Target reps", value: $setRows[index].targetReps, placeholder: "10")
+                targetNumberField(label: "Target reps", value: activeIntBinding(id: id, keyPath: \.targetReps), placeholder: "10")
                     .accessibilityIdentifier("active_target_reps_field")
             }
         }
@@ -400,14 +400,21 @@ private struct AddExerciseToWorkoutView: View {
         }
     }
 
-    private func activeTargetTypeSwitch(index: Int) -> some View {
+    private func activeSetIndex(id: UUID) -> Int? {
+        setRows.firstIndex { $0.id == id }
+    }
+
+    private func activeSetTargetType(id: UUID) -> SetLoggingType? {
+        setRows.first { $0.id == id }?.targetType
+    }
+
+    private func activeTargetTypeSwitch(id: UUID) -> some View {
         let isDuration = Binding<Bool>(
             get: {
-                guard setRows.indices.contains(index) else { return false }
-                return setRows[index].targetType == .duration
+                activeSetTargetType(id: id) == .duration
             },
             set: {
-                guard setRows.indices.contains(index) else { return }
+                guard let index = activeSetIndex(id: id) else { return }
                 setRows[index].targetType = $0 ? .duration : .reps
             }
         )
@@ -429,6 +436,18 @@ private struct AddExerciseToWorkoutView: View {
         .padding(.vertical, 4)
         .background(Color.white.opacity(0.055))
         .clipShape(Capsule())
+    }
+
+    private func activeIntBinding(id: UUID, keyPath: WritableKeyPath<ActiveSetPlanRow, Int>) -> Binding<Int> {
+        Binding<Int>(
+            get: {
+                setRows.first { $0.id == id }?[keyPath: keyPath] ?? 0
+            },
+            set: { newValue in
+                guard let index = activeSetIndex(id: id) else { return }
+                setRows[index][keyPath: keyPath] = newValue
+            }
+        )
     }
 
     private func targetNumberField(label: String, value: Binding<Int>, placeholder: String) -> some View {

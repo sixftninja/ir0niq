@@ -42,7 +42,14 @@ struct TemplateEditorView: View {
                 }
             }
             .sheet(isPresented: $showExercisePicker) {
-                ExercisePickerView { exercise in
+                ExercisePickerView(excludedExerciseIds: Set(selectedExercises.map(\.exercise.id))) { exercise in
+                    guard selectedExercises.contains(where: { $0.exercise.id == exercise.id }) == false else {
+                        showExercisePicker = false
+                        if let existing = selectedExercises.first(where: { $0.exercise.id == exercise.id }) {
+                            expandedExerciseId = existing.id
+                        }
+                        return
+                    }
                     var newRow = ExerciseEditorRow(exercise: exercise)
                     newRow.isBeingEdited = true
                     selectedExercises.append(newRow)
@@ -78,15 +85,14 @@ struct TemplateEditorView: View {
             .opacity(name.trimmingCharacters(in: .whitespaces).isEmpty ? 0.45 : 1)
         }
     }
-
     private var exerciseStep: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Add Exercises")
                 .font(.largeTitle.weight(.black))
                 .foregroundStyle(.white)
 
-            ForEach($selectedExercises) { $row in
-                exerciseEditorRow($row)
+            ForEach(selectedExercises) { row in
+                exerciseEditorRow(row)
             }
 
             Button {
@@ -114,23 +120,23 @@ struct TemplateEditorView: View {
     }
 
     @ViewBuilder
-    private func exerciseEditorRow(_ row: Binding<ExerciseEditorRow>) -> some View {
-        let isExpanded = expandedExerciseId == row.wrappedValue.id
+    private func exerciseEditorRow(_ row: ExerciseEditorRow) -> some View {
+        let isExpanded = expandedExerciseId == row.id
         VStack(alignment: .leading, spacing: 0) {
-            // Header row — tap to expand/collapse
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) {
-                    expandedExerciseId = isExpanded ? nil : row.wrappedValue.id
+                    expandedExerciseId = isExpanded ? nil : row.id
                 }
             } label: {
                 HStack {
-                    Text(row.wrappedValue.exercise.name)
+                    Text(row.exercise.name)
                         .font(.body).bold()
                         .foregroundStyle(.white)
                     Spacer()
-                    Text("\(row.wrappedValue.setRows.count) sets")
+                    Text("\(row.setRows.count) sets")
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.6))
+                        .accessibilityIdentifier("template_exercise_set_count")
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.4))
@@ -144,43 +150,49 @@ struct TemplateEditorView: View {
             if isExpanded {
                 exerciseRestPicker(row)
 
-                ForEach(setEntries(for: row.wrappedValue)) { entry in
-                    setRow(index: entry.index, row: row)
+                ForEach(setEntries(for: row)) { entry in
+                    setRow(exerciseId: row.id, setId: entry.id)
                 }
 
-                HStack(spacing: 10) {
+                VStack(spacing: 10) {
                     Button {
-                        row.wrappedValue.isBeingEdited = true
-                        row.wrappedValue.setRows.append(SetEditorRow(targetType: row.wrappedValue.setRows.last?.targetType ?? .reps))
+                        addSet(to: row.id)
                     } label: {
                         Label("Set", systemImage: "plus")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(Color.ironiqOrange)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 9)
                             .background(Color.ironiqOrange.opacity(0.1))
                             .clipShape(Capsule())
                     }
-
-                    Spacer()
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Add set")
+                    .accessibilityIdentifier("template_add_set_button")
 
                     Button(role: .destructive) {
-                        selectedExercises.removeAll { $0.id == row.wrappedValue.id }
+                        selectedExercises.removeAll { $0.id == row.id }
                     } label: {
-                        Image(systemName: "trash")
-                            .font(.caption)
-                            .foregroundStyle(Color.ironiqRed.opacity(0.85))
-                            .frame(width: 30, height: 30)
+                        Label("Remove Exercise", systemImage: "trash")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.ironiqRed.opacity(0.88))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 9)
                             .background(Color.ironiqRed.opacity(0.08))
-                            .clipShape(Circle())
+                            .clipShape(Capsule())
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Remove exercise")
+                    .accessibilityIdentifier("template_remove_exercise_button")
                 }
-                .padding(.top, 8)
+                .padding(.top, 10)
             }
         }
         .padding(14)
         .background(Color.white.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("selected_exercise_\(row.exercise.name.replacingOccurrences(of: " ", with: "_"))")
     }
 
     private func setEntries(for row: ExerciseEditorRow) -> [SetRowEntry] {
@@ -190,8 +202,8 @@ struct TemplateEditorView: View {
     }
 
     @ViewBuilder
-    private func setRow(index: Int, row: Binding<ExerciseEditorRow>) -> some View {
-        if row.wrappedValue.setRows.indices.contains(index) {
+    private func setRow(exerciseId: UUID, setId: UUID) -> some View {
+        if let row = exerciseRow(id: exerciseId), let index = setIndex(id: setId, in: row) {
             VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 Text("Set \(index + 1)")
@@ -199,29 +211,32 @@ struct TemplateEditorView: View {
                     .foregroundStyle(.white.opacity(0.55))
                     .frame(width: 44, alignment: .leading)
 
-                targetTypeSwitch(row: row, index: index)
+                targetTypeSwitch(exerciseId: exerciseId, setId: setId)
 
                 Spacer(minLength: 8)
 
-                if row.wrappedValue.setRows.count > 1 {
+                if row.setRows.count > 1 {
                     Button {
-                        guard row.wrappedValue.setRows.indices.contains(index) else { return }
-                        row.wrappedValue.isBeingEdited = true
-                        row.wrappedValue.setRows.remove(at: index)
+                        removeSet(exerciseId: exerciseId, setId: setId)
                     } label: {
-                        Image(systemName: "minus.circle")
-                            .font(.caption)
-                            .foregroundStyle(Color.ironiqRed.opacity(0.8))
-                            .frame(width: 28, height: 28)
+                        Label("Remove set", systemImage: "minus.circle")
+                            .labelStyle(.iconOnly)
+                            .font(.body)
+                            .foregroundStyle(Color.ironiqRed.opacity(0.82))
+                            .frame(width: 44, height: 36)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Remove set")
+                    .accessibilityIdentifier("template_remove_set_button")
                 }
             }
 
-            if row.wrappedValue.setRows[index].targetType == .duration {
-                targetNumberField(label: "Target duration", value: dirtyIntBinding(row, index: index, keyPath: \.targetDurationSeconds), placeholder: "30")
+            if setTargetType(exerciseId: exerciseId, setId: setId) == .duration {
+                targetNumberField(label: "Target duration", value: dirtyIntBinding(exerciseId: exerciseId, setId: setId, keyPath: \.targetDurationSeconds), placeholder: "30")
                     .accessibilityIdentifier("target_duration_field")
             } else {
-                targetNumberField(label: "Target reps", value: dirtyIntBinding(row, index: index, keyPath: \.targetReps), placeholder: "10")
+                targetNumberField(label: "Target reps", value: dirtyIntBinding(exerciseId: exerciseId, setId: setId, keyPath: \.targetReps), placeholder: "10")
                     .accessibilityIdentifier("target_reps_field")
             }
         }
@@ -233,16 +248,46 @@ struct TemplateEditorView: View {
         }
     }
 
-    private func targetTypeSwitch(row: Binding<ExerciseEditorRow>, index: Int) -> some View {
+    private func exerciseIndex(id: UUID) -> Int? {
+        selectedExercises.firstIndex { $0.id == id }
+    }
+
+    private func exerciseRow(id: UUID) -> ExerciseEditorRow? {
+        selectedExercises.first { $0.id == id }
+    }
+
+    private func setIndex(id: UUID, in row: ExerciseEditorRow) -> Int? {
+        row.setRows.firstIndex { $0.id == id }
+    }
+
+    private func setTargetType(exerciseId: UUID, setId: UUID) -> SetLoggingType? {
+        exerciseRow(id: exerciseId)?.setRows.first { $0.id == setId }?.targetType
+    }
+
+    private func addSet(to exerciseId: UUID) {
+        guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
+        let previousSet = selectedExercises[exerciseIndex].setRows.last ?? SetEditorRow()
+        selectedExercises[exerciseIndex].isBeingEdited = true
+        selectedExercises[exerciseIndex].setRows.append(previousSet.duplicated())
+    }
+
+    private func removeSet(exerciseId: UUID, setId: UUID) {
+        guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
+        guard selectedExercises[exerciseIndex].setRows.count > 1 else { return }
+        selectedExercises[exerciseIndex].isBeingEdited = true
+        selectedExercises[exerciseIndex].setRows.removeAll { $0.id == setId }
+    }
+
+    private func targetTypeSwitch(exerciseId: UUID, setId: UUID) -> some View {
         let isDuration = Binding<Bool>(
             get: {
-                guard row.wrappedValue.setRows.indices.contains(index) else { return false }
-                return row.wrappedValue.setRows[index].targetType == .duration
+                setTargetType(exerciseId: exerciseId, setId: setId) == .duration
             },
             set: { newValue in
-                guard row.wrappedValue.setRows.indices.contains(index) else { return }
-                row.wrappedValue.isBeingEdited = true
-                row.wrappedValue.setRows[index].targetType = newValue ? .duration : .reps
+                guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
+                guard let setIndex = setIndex(id: setId, in: selectedExercises[exerciseIndex]) else { return }
+                selectedExercises[exerciseIndex].isBeingEdited = true
+                selectedExercises[exerciseIndex].setRows[setIndex].targetType = newValue ? .duration : .reps
             }
         )
         return HStack(spacing: 6) {
@@ -265,28 +310,28 @@ struct TemplateEditorView: View {
         .clipShape(Capsule())
     }
 
-    private func dirtyIntBinding(_ row: Binding<ExerciseEditorRow>, index: Int, keyPath: WritableKeyPath<SetEditorRow, Int>) -> Binding<Int> {
+    private func dirtyIntBinding(exerciseId: UUID, setId: UUID, keyPath: WritableKeyPath<SetEditorRow, Int>) -> Binding<Int> {
         Binding<Int>(
             get: {
-                guard row.wrappedValue.setRows.indices.contains(index) else { return 0 }
-                return row.wrappedValue.setRows[index][keyPath: keyPath]
+                exerciseRow(id: exerciseId)?.setRows.first { $0.id == setId }?[keyPath: keyPath] ?? 0
             },
             set: { newValue in
-                guard row.wrappedValue.setRows.indices.contains(index) else { return }
-                row.wrappedValue.isBeingEdited = true
-                row.wrappedValue.setRows[index][keyPath: keyPath] = newValue
+                guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
+                guard let setIndex = setIndex(id: setId, in: selectedExercises[exerciseIndex]) else { return }
+                selectedExercises[exerciseIndex].isBeingEdited = true
+                selectedExercises[exerciseIndex].setRows[setIndex][keyPath: keyPath] = newValue
             }
         )
     }
 
     @ViewBuilder
-    private func exerciseRestPicker(_ row: Binding<ExerciseEditorRow>) -> some View {
+    private func exerciseRestPicker(_ row: ExerciseEditorRow) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Rest target for \(row.wrappedValue.exercise.name)", systemImage: "timer")
+            Label("Rest target for \(row.exercise.name)", systemImage: "timer")
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white.opacity(0.72))
                 .lineLimit(1)
-            Stepper("\(row.wrappedValue.restSeconds)s between sets", value: dirtyRestBinding(row), in: 0...600, step: 5)
+            Stepper("\(row.restSeconds)s between sets", value: dirtyRestBinding(exerciseId: row.id), in: 0...600, step: 5)
                 .font(.caption.monospacedDigit().weight(.semibold))
                 .foregroundStyle(.white)
                 .tint(Color.ironiqOrange)
@@ -297,12 +342,13 @@ struct TemplateEditorView: View {
         .padding(.top, 12)
     }
 
-    private func dirtyRestBinding(_ row: Binding<ExerciseEditorRow>) -> Binding<Int> {
+    private func dirtyRestBinding(exerciseId: UUID) -> Binding<Int> {
         Binding<Int>(
-            get: { row.wrappedValue.restSeconds },
+            get: { exerciseRow(id: exerciseId)?.restSeconds ?? 30 },
             set: { newValue in
-                row.wrappedValue.isBeingEdited = true
-                row.wrappedValue.restSeconds = newValue
+                guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
+                selectedExercises[exerciseIndex].isBeingEdited = true
+                selectedExercises[exerciseIndex].restSeconds = newValue
             }
         )
     }
@@ -408,10 +454,21 @@ private struct SetRowEntry: Identifiable {
 // MARK: - Editor row models
 
 struct SetEditorRow: Identifiable {
-    let id = UUID()
-    var targetType: SetLoggingType = .reps
-    var targetReps: Int = 10
-    var targetDurationSeconds: Int = 30
+    let id: UUID
+    var targetType: SetLoggingType
+    var targetReps: Int
+    var targetDurationSeconds: Int
+
+    init(id: UUID = UUID(), targetType: SetLoggingType = .reps, targetReps: Int = 10, targetDurationSeconds: Int = 30) {
+        self.id = id
+        self.targetType = targetType
+        self.targetReps = targetReps
+        self.targetDurationSeconds = targetDurationSeconds
+    }
+
+    func duplicated() -> SetEditorRow {
+        SetEditorRow(targetType: targetType, targetReps: targetReps, targetDurationSeconds: targetDurationSeconds)
+    }
 }
 
 struct ExerciseEditorRow: Identifiable {
