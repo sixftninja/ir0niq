@@ -27,8 +27,20 @@ platform :ios do
 
   # ── Test ─────────────────────────────────────────────────────────────────
 
-  desc "Run unit tests on connected iPhone 15 Pro (UITests require separate signing setup)"
+  desc "Run unit tests on simulator (no device needed)"
   lane :test do
+    run_tests(
+      scheme: "Ironiq",
+      devices: ["iPhone 17 Pro"],
+      clean: true,
+      code_coverage: false,
+      only_testing: "IroniqTests",
+      xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
+    )
+  end
+
+  desc "Run unit tests on connected iPhone 15 Pro"
+  lane :test_device do
     run_tests(
       scheme: "Ironiq",
       destination: "id=00008130-001404EA3ED1001C",
@@ -39,7 +51,7 @@ platform :ios do
     )
   end
 
-  desc "Run UI tests on connected iPhone 15 Pro (requires development provisioning profile)"
+  desc "Run UI tests on connected iPhone 15 Pro"
   lane :test_ui do
     run_tests(
       scheme: "Ironiq",
