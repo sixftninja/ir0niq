@@ -36,6 +36,20 @@ final class CloudPhase2Tests: XCTestCase {
         }
     }
 
+    func testNSDataZlibHeaderForLargeInput() throws {
+        // Verify what CMF/FLG NSData actually produces for template-sized JSON.
+        let template = TemplateDTO(id: UUID(), name: "Leg Day", createdAt: Date(), exercises: [])
+        let model = TemplateExportModel(from: template)
+        let json = try model.jsonData()
+        let zlibData = try (json as NSData).compressed(using: .zlib) as Data
+        XCTAssertGreaterThanOrEqual(zlibData.count, 6, "Zlib output too short")
+        // CMF must be 0x78 (deflate, 32KB window) — check constraint: (CMF*256+FLG)%31==0
+        let headerCheck = (Int(zlibData[0]) * 256 + Int(zlibData[1])) % 31
+        XCTAssertEqual(headerCheck, 0, "zlib header check must be 0 mod 31")
+        // FDICT (bit 5 of FLG) must be 0 — NSData never uses a preset dictionary
+        XCTAssertEqual(zlibData[1] & 0x20, 0, "NSData must not set FDICT bit")
+    }
+
     func testGzipExtraFieldWrittenCorrectly() throws {
         let template = TemplateDTO(id: UUID(), name: "Leg Day", createdAt: Date(), exercises: [])
         let model = TemplateExportModel(from: template)

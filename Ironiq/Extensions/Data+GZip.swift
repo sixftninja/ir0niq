@@ -31,10 +31,10 @@ extension Data {
                |  UInt32(zlibData[zlibData.count - 2]) << 8
                |  UInt32(zlibData[zlibData.count - 1])
 
-        // Capture the exact CMF and FLG bytes NSData used. Clear FDICT (bit 5) since
-        // we don't embed a preset dictionary; the decompressor doesn't need it.
+        // Capture the exact CMF and FLG bytes NSData used — stored verbatim so
+        // gunzipped() can reconstruct an identical zlib header.
         let cmf = zlibData[0]
-        let flg = zlibData[1] & ~UInt8(0x20)
+        let flg = zlibData[1]
 
         let deflate = zlibData[headerLength ..< zlibData.count - 4]
 
