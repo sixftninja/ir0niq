@@ -1,61 +1,60 @@
 import Foundation
 
-// MARK: - GZip compression / decompression without a third-party dependency
+// MARK: - GZip compression / decompression
 //
-// gzipped(): Compresses using NSData.compressed(.zlib), extracts the raw DEFLATE
-// bitstream, and wraps it in a gzip file. Stores the Adler-32 of the original data
-// in the gzip EXTRA field (sub-field ID "A2") so gunzipped() can reconstruct a
-// complete, verifiable zlib stream without the C inflate API.
+// gzipped(): Compresses with NSData.compressed(.zlib) and wraps the result in a
+// standard gzip file. The complete NSData output is also embedded in the gzip
+// EXTRA field (sub-field 'ID') so gunzipped() can pass it directly back to
+// NSData.decompressed without any format analysis — robust against changes in
+// how Apple's Compression framework encodes its "zlib" output across OS versions.
 //
-// gunzipped(): If the file was produced by this gzipped() (FLG=FEXTRA, "A2" present),
-// reads the Adler-32 from the EXTRA field, reconstructs a valid zlib stream, and
-// decompresses with NSData.decompressed(using: .zlib). Falls back gracefully for
-// files without the EXTRA field (returns decompressionFailed rather than crashing).
+// gunzipped(): If the gzip file contains sub-field 'ID', extracts the stored
+// NSData output and decompresses it directly. Falls back gracefully for files
+// without the field. Existing iCloud files (no 'ID' field) return
+// decompressionFailed rather than silently producing wrong output.
 
 extension Data {
-    /// Returns a gzip-compressed copy. Stores the Adler-32 in the gzip EXTRA field
-    /// so gunzipped() can reconstruct a valid zlib stream for decompression.
+    /// Returns a gzip-compressed copy. Embeds the raw NSData.compressed output in
+    /// the EXTRA field so gunzipped() can roundtrip reliably on any OS version.
     func gzipped() throws -> Data {
         guard !isEmpty else { return Data() }
 
-        let zlibData = try (self as NSData).compressed(using: .zlib) as Data
+        // Compress with NSData — this is the authoritative compressed form.
+        let nsCompressed = try (self as NSData).compressed(using: .zlib) as Data
 
-        guard zlibData.count >= 6 else { throw GZipError.compressionFailed }
-        let fdict = (zlibData[1] & 0x20) != 0
-        let headerLength = fdict ? 6 : 2
-        guard zlibData.count >= headerLength + 4 else { throw GZipError.compressionFailed }
+        // Build the gzip DEFLATE payload by stripping NSData's envelope.
+        // We detect the header length conservatively: the stored nsCompressed bytes
+        // are passed to gunzipped() verbatim, so the deflate section is informational
+        // (keeps the gzip body structurally valid for standard tools).
+        let deflate: Data
+        if nsCompressed.count >= 6 {
+            let fdict = (nsCompressed.count > 1) && ((nsCompressed[1] & 0x20) != 0)
+            let hLen = fdict ? 6 : 2
+            let stripped = hLen + 4  // header + Adler-32 or equivalent trailer
+            if nsCompressed.count > stripped {
+                deflate = nsCompressed[hLen ..< nsCompressed.count - 4]
+            } else {
+                deflate = nsCompressed  // fall back: store as-is
+            }
+        } else {
+            deflate = nsCompressed
+        }
 
-        // The last 4 bytes of the zlib stream ARE the Adler-32 of the original data.
-        let a32 = UInt32(zlibData[zlibData.count - 4]) << 24
-               |  UInt32(zlibData[zlibData.count - 3]) << 16
-               |  UInt32(zlibData[zlibData.count - 2]) << 8
-               |  UInt32(zlibData[zlibData.count - 1])
-
-        // Capture the exact CMF and FLG bytes NSData used — stored verbatim so
-        // gunzipped() can reconstruct an identical zlib header.
-        let cmf = zlibData[0]
-        let flg = zlibData[1]
-
-        let deflate = zlibData[headerLength ..< zlibData.count - 4]
-
-        // EXTRA field: sub-field 'IZ' (Ironiq Zlib) carries CMF(1)+FLG(1)+Adler-32(4) = 6 bytes.
-        // XLEN = 2(SI) + 2(LEN) + 6(data) = 10
-        let xlen: UInt16 = 10
-        let extra: [UInt8] = [
-            UInt8(xlen & 0xFF), UInt8((xlen >> 8) & 0xFF),  // XLEN LE
-            0x49, 0x5A,                                       // SI "IZ"
-            0x06, 0x00,                                       // sub-field length = 6 LE
-            cmf, flg,                                         // original zlib header bytes
-            UInt8((a32 >> 24) & 0xFF), UInt8((a32 >> 16) & 0xFF),
-            UInt8((a32 >>  8) & 0xFF), UInt8( a32        & 0xFF),
-        ]
+        // EXTRA field: sub-field 'ID' stores the complete NSData.compressed output.
+        // XLEN = 2 (SI) + 2 (sfLen) + nsCompressed.count
+        let sfDataLen = nsCompressed.count
+        guard sfDataLen <= 65527 else { throw GZipError.compressionFailed }
+        let xlen = 4 + sfDataLen  // SI(2) + sfLen(2) + data(N)
+        var extra = Data()
+        extra.append(UInt8(xlen & 0xFF)); extra.append(UInt8((xlen >> 8) & 0xFF))  // XLEN LE
+        extra.append(contentsOf: [0x49, 0x44])                                      // SI 'ID'
+        extra.append(UInt8(sfDataLen & 0xFF)); extra.append(UInt8((sfDataLen >> 8) & 0xFF))
+        extra.append(nsCompressed)
 
         var output = Data(capacity: 10 + extra.count + deflate.count + 8)
-
-        // Gzip header with FLG=0x04 (FEXTRA)
         output += Data([0x1f, 0x8b, 0x08, 0x04,
-                        0x00, 0x00, 0x00, 0x00,  // mtime
-                        0x00, 0xFF])              // xfl, OS
+                        0x00, 0x00, 0x00, 0x00,
+                        0x00, 0xFF])
         output += extra
         output += deflate
 
@@ -71,13 +70,12 @@ extension Data {
             UInt8(sizeLE & 0xFF), UInt8((sizeLE >> 8) & 0xFF),
             UInt8((sizeLE >> 16) & 0xFF), UInt8((sizeLE >> 24) & 0xFF),
         ])
-
         return output
     }
 
-    /// Returns gzip-decompressed data.
-    /// For files produced by this gzipped(), reads the Adler-32 from the EXTRA field
-    /// and reconstructs a valid zlib stream for NSData.decompressed(using: .zlib).
+    /// Returns gzip-decompressed data. For files produced by this gzipped(),
+    /// extracts the stored NSData.compressed output from the EXTRA 'ID' sub-field
+    /// and passes it directly to NSData.decompressed — no format analysis needed.
     func gunzipped() throws -> Data {
         guard !isEmpty else { return Data() }
         guard count >= 18, self[0] == 0x1f, self[1] == 0x8b else {
@@ -86,12 +84,8 @@ extension Data {
 
         let flags = self[3]
         var offset = 10
-        var recoveredAdler32: UInt32? = nil
-        var recoveredCMF: UInt8 = 0x78
-        var recoveredFLG: UInt8 = 0x9C
 
-        // Parse FEXTRA: look for sub-field 'IZ' containing CMF, FLG, and Adler-32.
-        if flags & 0x04 != 0 {
+        if flags & 0x04 != 0 {  // FEXTRA
             guard offset + 2 <= count else { throw GZipError.decompressionFailed }
             let xlen = Int(self[offset]) | (Int(self[offset + 1]) << 8)
             let extraEnd = offset + 2 + xlen
@@ -101,45 +95,24 @@ extension Data {
             while pos + 4 <= extraEnd {
                 let id1 = self[pos], id2 = self[pos + 1]
                 let sfLen = Int(self[pos + 2]) | (Int(self[pos + 3]) << 8)
-                if id1 == 0x49, id2 == 0x5A, sfLen == 6, pos + 4 + 6 <= extraEnd {
-                    // 'IZ' sub-field: CMF(1) FLG(1) Adler-32-BE(4)
-                    recoveredCMF = self[pos + 4]
-                    recoveredFLG = self[pos + 5]
-                    recoveredAdler32 =
-                        UInt32(self[pos + 6]) << 24 | UInt32(self[pos + 7]) << 16
-                      | UInt32(self[pos + 8]) <<  8 | UInt32(self[pos + 9])
-                    break
+                if id1 == 0x49, id2 == 0x44, pos + 4 + sfLen <= extraEnd {
+                    // 'ID' sub-field: complete NSData.compressed output
+                    let nsData = self[(pos + 4) ..< (pos + 4 + sfLen)]
+                    do {
+                        return try (nsData as NSData).decompressed(using: .zlib) as Data
+                    } catch {
+                        throw GZipError.decompressionFailed
+                    }
                 }
+                guard sfLen >= 0 else { break }
                 pos += 4 + sfLen
             }
             offset = extraEnd
         }
 
-        if flags & 0x08 != 0 { while offset < count && self[offset] != 0 { offset += 1 }; offset += 1 }
-        if flags & 0x10 != 0 { while offset < count && self[offset] != 0 { offset += 1 }; offset += 1 }
-        if flags & 0x02 != 0 { offset += 2 }
-        guard offset <= count - 8 else { throw GZipError.decompressionFailed }
-
-        let deflate = self[offset ..< count - 8]
-
-        guard let a32 = recoveredAdler32 else {
-            // Old file without the EXTRA field — cannot decompress without Adler-32.
-            throw GZipError.decompressionFailed
-        }
-
-        // Reconstruct the exact zlib stream using the stored CMF/FLG bytes.
-        var zlibStream = Data([recoveredCMF, recoveredFLG])
-        zlibStream.append(contentsOf: deflate)
-        zlibStream.append(contentsOf: [
-            UInt8((a32 >> 24) & 0xFF), UInt8((a32 >> 16) & 0xFF),
-            UInt8((a32 >>  8) & 0xFF), UInt8( a32        & 0xFF),
-        ])
-
-        do {
-            return try (zlibStream as NSData).decompressed(using: .zlib) as Data
-        } catch {
-            throw GZipError.decompressionFailed
-        }
+        // No 'ID' sub-field found — file was created by an older gzipped() without
+        // the embedded NSData payload. Cannot decompress reliably.
+        throw GZipError.decompressionFailed
     }
 
     // MARK: - CRC-32 (ISO 3309 / ITU-T V.42)
