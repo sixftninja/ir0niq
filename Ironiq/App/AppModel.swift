@@ -24,7 +24,7 @@ final class AppModel {
 
         let engine = SessionEngine.make(modelContainer: modelContainer)
         self.engine = engine
-        SessionEngine.current = engine   // for AppIntents in-process access
+        SessionIntentBridge.shared.setEngine(engine)  // makes engine available to AppIntents
 
         let templateRepo = TemplateRepository(modelContainer: modelContainer)
         let exerciseRepo = ExerciseRepository(modelContainer: modelContainer)

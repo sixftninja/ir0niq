@@ -4,19 +4,6 @@ import Foundation
 struct ModelContainerFactory {
     private static let storeFileName = "Ironiq.sqlite"
 
-    private static var schema: Schema {
-        Schema([
-            Exercise.self,
-            Template.self,
-            TemplateExercise.self,
-            TemplateSet.self,
-            Session.self,
-            SessionExercise.self,
-            SessionSet.self,
-            PauseRecord.self
-        ])
-    }
-
     private static var storeURL: URL {
         FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -72,18 +59,18 @@ struct ModelContainerFactory {
 
     static func makeContainer(inMemory: Bool) throws -> ModelContainer {
         if inMemory {
-            let schema = Self.schema
+            let schema = Schema(versionedSchema: IroniqSchemaV1.self)
             let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
-            return try ModelContainer(for: schema, configurations: config)
+            return try ModelContainer(for: schema, migrationPlan: IroniqMigrationPlan.self, configurations: config)
         }
         return try makePersistentContainer(storeURL: storeURL)
     }
 
     static func makePersistentContainer(storeURL: URL) throws -> ModelContainer {
-        let schema = Self.schema
+        let schema = Schema(versionedSchema: IroniqSchemaV1.self)
         try preparePersistentStoreDirectory(for: storeURL)
         let config = ModelConfiguration(schema: schema, url: storeURL, cloudKitDatabase: .none)
-        return try ModelContainer(for: schema, configurations: config)
+        return try ModelContainer(for: schema, migrationPlan: IroniqMigrationPlan.self, configurations: config)
     }
 
     private static func preparePersistentStoreDirectory() throws {

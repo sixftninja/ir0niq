@@ -8,9 +8,8 @@ struct NextSetIntent: AppIntent {
     static let openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let engine = SessionEngine.current else {
-            return .result(dialog: "No active Ironiq session.")
-        }
+        let engine = await MainActor.run { SessionIntentBridge.shared.engine() }
+        guard let engine else { return .result(dialog: "No active Ironiq session.") }
         do {
             try await engine.advanceToNext()
             return .result(dialog: "Advanced to the next set.")
@@ -30,9 +29,8 @@ struct PreviousSetIntent: AppIntent {
     static let openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let engine = SessionEngine.current else {
-            return .result(dialog: "No active Ironiq session.")
-        }
+        let engine = await MainActor.run { SessionIntentBridge.shared.engine() }
+        guard let engine else { return .result(dialog: "No active Ironiq session.") }
         do {
             try await engine.goToPreviousSet()
             return .result(dialog: "Went back to the previous set.")
@@ -50,9 +48,8 @@ struct SkipSetIntent: AppIntent {
     static let openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let engine = SessionEngine.current else {
-            return .result(dialog: "No active Ironiq session.")
-        }
+        let engine = await MainActor.run { SessionIntentBridge.shared.engine() }
+        guard let engine else { return .result(dialog: "No active Ironiq session.") }
         do {
             try await engine.skipCurrentSet()
             return .result(dialog: "Set skipped.")
@@ -70,9 +67,8 @@ struct PauseSessionIntent: AppIntent {
     static let openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let engine = SessionEngine.current else {
-            return .result(dialog: "No active Ironiq session.")
-        }
+        let engine = await MainActor.run { SessionIntentBridge.shared.engine() }
+        guard let engine else { return .result(dialog: "No active Ironiq session.") }
         do {
             try await engine.pauseSession()
             return .result(dialog: "Workout paused.")
@@ -90,9 +86,8 @@ struct ResumeSessionIntent: AppIntent {
     static let openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let engine = SessionEngine.current else {
-            return .result(dialog: "No active Ironiq session.")
-        }
+        let engine = await MainActor.run { SessionIntentBridge.shared.engine() }
+        guard let engine else { return .result(dialog: "No active Ironiq session.") }
         do {
             try await engine.resumeSession()
             return .result(dialog: "Workout resumed.")
@@ -110,9 +105,8 @@ struct EndSessionIntent: AppIntent {
     static let openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard let engine = SessionEngine.current else {
-            return .result(dialog: "No active Ironiq session.")
-        }
+        let engine = await MainActor.run { SessionIntentBridge.shared.engine() }
+        guard let engine else { return .result(dialog: "No active Ironiq session.") }
         do {
             _ = try await engine.endSession()
             try await engine.confirmEnd()
@@ -123,7 +117,7 @@ struct EndSessionIntent: AppIntent {
     }
 }
 
-// MARK: - App Shortcuts (exposes intents to Siri / Shortcuts app)
+// MARK: - App Shortcuts
 
 struct IroniqShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {

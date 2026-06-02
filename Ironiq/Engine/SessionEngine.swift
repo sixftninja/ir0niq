@@ -84,9 +84,14 @@ struct ActiveSessionContext: Sendable {
 
 // MARK: - Global accessor for AppIntents (set once at app startup)
 
+// SessionEngine.current is kept for any remaining call sites but now delegates
+// to SessionIntentBridge so we have a single, isolation-safe registration point.
 extension SessionEngine {
-    /// Set by IroniqApp at launch. AppIntents call methods on this instance.
-    nonisolated(unsafe) static var current: SessionEngine?
+    /// Deprecated — use SessionIntentBridge.shared instead.
+    static var current: SessionEngine? {
+        get { MainActor.assumeIsolated { SessionIntentBridge.shared.engine() } }
+        set { if let e = newValue { MainActor.assumeIsolated { SessionIntentBridge.shared.setEngine(e) } } }
+    }
 }
 
 // MARK: - Unlogged set info (returned by endSession for review)
