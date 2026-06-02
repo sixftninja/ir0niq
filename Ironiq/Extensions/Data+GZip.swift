@@ -83,10 +83,12 @@ extension Data {
         var zlibStream = Data([0x78, 0x9C])
         zlibStream.append(contentsOf: deflate)
 
-        guard let result = (zlibStream as NSData).decompressed(using: .zlib) else {
+        do {
+            let result = try (zlibStream as NSData).decompressed(using: .zlib)
+            return result as Data
+        } catch {
             throw GZipError.decompressionFailed
         }
-        return result as Data
     }
 
     // MARK: - CRC-32 (ISO 3309 / ITU-T V.42)
