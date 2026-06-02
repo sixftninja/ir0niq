@@ -27,14 +27,13 @@ platform :ios do
 
   # ── Test ─────────────────────────────────────────────────────────────────
 
-  desc "Run all iOS tests on simulator"
+  desc "Run all iOS tests on connected iPhone 15 Pro"
   lane :test do
     run_tests(
       scheme: "Ironiq",
-      devices: ["iPhone 17 Pro"],
+      destination: "id=00008130-001404EA3ED1001C",
       clean: true,
-      code_coverage: false,
-      xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO'
+      code_coverage: false
     )
   end
 
