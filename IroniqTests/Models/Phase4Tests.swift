@@ -4,6 +4,7 @@ import SwiftData
 
 // Tests for Phase 4: architecture cleanup.
 
+@MainActor
 final class Phase4Tests: XCTestCase {
 
     // MARK: - SwiftData versioned schema
@@ -30,7 +31,7 @@ final class Phase4Tests: XCTestCase {
         let exercise = Exercise(
             name: "Squat", exerciseDescription: "Test",
             equipmentType: .barbell, isSingleHand: false,
-            muscleGroups: [.quads], iconName: "squat",
+            muscleGroups: [.fullBody], iconName: "squat",
             isCustom: false, isSeeded: true
         )
         context.insert(exercise)
@@ -41,19 +42,11 @@ final class Phase4Tests: XCTestCase {
 
     // MARK: - Intent bridge
 
-    func testIntentBridgeStartsEmpty() {
-        let bridge = SessionIntentBridge.shared
-        // The bridge may already have an engine from AppModel init in tests —
-        // we just verify it responds without crashing.
-        _ = bridge.engine()
-    }
-
-    func testIntentBridgeStoresAndReturnsEngine() async throws {
+    func testIntentBridgeReturnsEngineAfterSet() async throws {
         let container = try ModelContainerFactory.makeInMemoryContainer()
         let engine = SessionEngine.make(modelContainer: container)
-        let bridge = SessionIntentBridge.shared
-        bridge.setEngine(engine)
-        let retrieved = bridge.engine()
+        SessionIntentBridge.shared.setEngine(engine)
+        let retrieved = SessionIntentBridge.shared.engine()
         XCTAssertNotNil(retrieved)
     }
 
@@ -61,11 +54,10 @@ final class Phase4Tests: XCTestCase {
         let container = try ModelContainerFactory.makeInMemoryContainer()
         let engine = SessionEngine.make(modelContainer: container)
         SessionIntentBridge.shared.setEngine(engine)
-        // SessionEngine.current delegates to the bridge now.
         XCTAssertNotNil(SessionEngine.current)
     }
 
-    // MARK: - iCloud / Google Drive file split
+    // MARK: - Schema metadata
 
     func testIroniqSchemaV1ContainsAllModels() {
         let modelTypes = IroniqSchemaV1.models.map { ObjectIdentifier($0) }

@@ -3,6 +3,7 @@ import XCTest
 
 // Tests for Phase 2: cloud works as promised.
 
+@MainActor
 final class CloudPhase2Tests: XCTestCase {
 
     // MARK: - gunzipped roundtrip

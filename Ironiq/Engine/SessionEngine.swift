@@ -175,7 +175,7 @@ actor SessionEngine {
             break
         case .templateSelected:
             try? clearTemplate()
-        case .ending(let sessionId):
+        case .ending:
             try? await confirmEnd()
             if case .ended = state { await reset() }
         case .ended:

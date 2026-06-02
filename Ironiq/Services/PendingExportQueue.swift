@@ -19,10 +19,14 @@ struct PendingExportItem: Codable, Identifiable {
 final class PendingExportQueue: @unchecked Sendable {
     static let shared = PendingExportQueue()
 
-    private let key = "ironiq.pendingExports"
+    private let key: String
     private let lock = NSLock()
 
-    private init() {}
+    // Uses a fixed key for the shared singleton.
+    // Tests can create isolated instances with a unique key to avoid polluting shared state.
+    init(key: String = "ironiq.pendingExports") {
+        self.key = key
+    }
 
     func add(sessionId: UUID) {
         insert(PendingExportItem(id: sessionId, type: .session, addedAt: Date(), retryCount: 0))

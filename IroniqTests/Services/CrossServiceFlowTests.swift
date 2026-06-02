@@ -4,26 +4,22 @@ import SwiftData
 
 // Phase 5: cross-service data flow — engine → repository → history.
 
+@MainActor
 final class CrossServiceFlowTests: XCTestCase {
 
     private var container: ModelContainer!
     private var templateRepo: TemplateRepository!
     private var sessionRepo: SessionRepository!
-    private var exerciseRepo: ExerciseRepository!
     private var engine: SessionEngine!
 
     override func setUp() async throws {
         container = try ModelContainerFactory.makeInMemoryContainer()
         templateRepo = TemplateRepository(modelContainer: container)
         sessionRepo = SessionRepository(modelContainer: container)
-        exerciseRepo = ExerciseRepository(modelContainer: container)
         engine = SessionEngine(
             templateRepository: templateRepo,
             sessionRepository: sessionRepo
         )
-        // Seed exercises so templates can reference them.
-        let service = SeedDataService(exerciseRepo: exerciseRepo)
-        try await service.seedIfNeeded()
     }
 
     // Creating a template via the repo makes it appear in fetchAll.
@@ -51,18 +47,19 @@ final class CrossServiceFlowTests: XCTestCase {
             )]
         )
 
-        try engine.selectTemplate(templateId)
+        try await engine.selectTemplate(templateId)
         _ = try await engine.startSession()
 
         guard case .active(let sessionId) = await engine.state else {
             XCTFail("Expected active state"); return
         }
 
-        try await engine.requestEnd()
+        _ = try await engine.endSession()
         try await engine.confirmEnd()
 
         let sessions = try await sessionRepo.fetchAll()
-        XCTAssertTrue(sessions.contains(where: { $0.id == sessionId }), "Completed session must appear in history")
+        XCTAssertTrue(sessions.contains(where: { $0.id == sessionId }),
+                      "Completed session must appear in history")
     }
 
     // Deleting a session via the repo removes it from fetchAll.
@@ -75,19 +72,20 @@ final class CrossServiceFlowTests: XCTestCase {
             )]
         )
 
-        try engine.selectTemplate(templateId)
+        try await engine.selectTemplate(templateId)
         _ = try await engine.startSession()
 
         guard case .active(let sessionId) = await engine.state else {
             XCTFail("Expected active state"); return
         }
 
-        try await engine.requestEnd()
+        _ = try await engine.endSession()
         try await engine.confirmEnd()
 
         try await sessionRepo.delete(sessionId: sessionId)
         let sessions = try await sessionRepo.fetchAll()
-        XCTAssertFalse(sessions.contains(where: { $0.id == sessionId }), "Deleted session must not appear in history")
+        XCTAssertFalse(sessions.contains(where: { $0.id == sessionId }),
+                       "Deleted session must not appear in history")
     }
 
     // HistoryViewModel.loadSessions reflects sessions saved through the engine.
@@ -100,20 +98,20 @@ final class CrossServiceFlowTests: XCTestCase {
             )]
         )
 
-        try engine.selectTemplate(templateId)
+        try await engine.selectTemplate(templateId)
         _ = try await engine.startSession()
 
         guard case .active(let sessionId) = await engine.state else {
             XCTFail("Expected active state"); return
         }
 
-        try await engine.requestEnd()
+        _ = try await engine.endSession()
         try await engine.confirmEnd()
 
-        let appState = await AppState()
-        let historyVM = await HistoryViewModel(sessionRepo: sessionRepo, appState: appState)
+        let appState = AppState()
+        let historyVM = HistoryViewModel(sessionRepo: sessionRepo, appState: appState)
         await historyVM.loadSessions()
-        let sessions = await historyVM.sessions
-        XCTAssertTrue(sessions.contains(where: { $0.id == sessionId }), "HistoryViewModel must see the completed session")
+        XCTAssertTrue(historyVM.sessions.contains(where: { $0.id == sessionId }),
+                      "HistoryViewModel must see the completed session")
     }
 }

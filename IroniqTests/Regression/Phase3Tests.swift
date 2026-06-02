@@ -49,7 +49,7 @@ final class Phase3Tests: XCTestCase {
         let templateId = UUID()
         // Engine can only selectTemplate from idle — put it there first.
         guard case .idle = await engine.state else { XCTFail("Expected idle"); return }
-        try engine.selectTemplate(templateId)
+        try await engine.selectTemplate(templateId)
         guard case .templateSelected = await engine.state else { XCTFail("Expected templateSelected"); return }
 
         await engine.prepareForNewSession()

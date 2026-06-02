@@ -21,7 +21,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios test
 ```
 
-Run all iOS tests on simulator
+Run all iOS tests on connected iPhone 15 Pro
 
 ### ios test_watch
 

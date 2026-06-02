@@ -248,37 +248,32 @@ final class iCloudServiceTests: XCTestCase {
   }
 
   // MARK: - PendingExportQueue
+  // Each test uses a unique UserDefaults key to avoid cross-test pollution.
 
   func testPendingQueueAddsSession() {
-    let queue = PendingExportQueue()
+    let queue = PendingExportQueue(key: "test.queue.\(UUID().uuidString)")
     let id = UUID()
     queue.add(sessionId: id)
-    let items = queue.allItems()
-    XCTAssertTrue(items.contains(where: { $0.id == id && $0.type == .session }))
-    queue.remove(id: id)
+    XCTAssertTrue(queue.allItems().contains(where: { $0.id == id && $0.type == .session }))
   }
 
   func testPendingQueueAddsTemplate() {
-    let queue = PendingExportQueue()
+    let queue = PendingExportQueue(key: "test.queue.\(UUID().uuidString)")
     let id = UUID()
     queue.add(templateId: id)
-    let items = queue.allItems()
-    XCTAssertTrue(items.contains(where: { $0.id == id && $0.type == .template }))
-    queue.remove(id: id)
+    XCTAssertTrue(queue.allItems().contains(where: { $0.id == id && $0.type == .template }))
   }
 
   func testPendingQueueNoDuplicates() {
-    let queue = PendingExportQueue()
+    let queue = PendingExportQueue(key: "test.queue.\(UUID().uuidString)")
     let id = UUID()
     queue.add(sessionId: id)
     queue.add(sessionId: id)
-    let count = queue.allItems().filter { $0.id == id }.count
-    XCTAssertEqual(count, 1)
-    queue.remove(id: id)
+    XCTAssertEqual(queue.allItems().filter { $0.id == id }.count, 1)
   }
 
   func testPendingQueueRemoves() {
-    let queue = PendingExportQueue()
+    let queue = PendingExportQueue(key: "test.queue.\(UUID().uuidString)")
     let id = UUID()
     queue.add(sessionId: id)
     queue.remove(id: id)
@@ -286,35 +281,31 @@ final class iCloudServiceTests: XCTestCase {
   }
 
   func testPendingQueueIncrementRetry() {
-    let queue = PendingExportQueue()
+    let queue = PendingExportQueue(key: "test.queue.\(UUID().uuidString)")
     let id = UUID()
     queue.add(sessionId: id)
     queue.incrementRetry(id: id)
-    let item = queue.allItems().first(where: { $0.id == id })
-    XCTAssertEqual(item?.retryCount, 1)
-    queue.remove(id: id)
+    XCTAssertEqual(queue.allItems().first(where: { $0.id == id })?.retryCount, 1)
   }
 
-  // Export failure adds item to the pending queue.
+  // Export failure adds item to the shared pending queue.
   func testSessionEngineAddsSessionToPendingQueueOnExportFailure() async throws {
     let container = try ModelContainerFactory.makeInMemoryContainer()
     let mockCloud = MockiCloudService()
-    mockCloud.set(errorToThrow: iCloudError.containerUnavailable)
+    await mockCloud.set(errorToThrow: iCloudError.containerUnavailable)
 
-    let engine = SessionEngine.make(
-      modelContainer: container,
+    let engine = SessionEngine(
+      templateRepository: TemplateRepository(modelContainer: container),
+      sessionRepository: SessionRepository(modelContainer: container),
       iCloudService: mockCloud
     )
     let templateRepo = TemplateRepository(modelContainer: container)
-    let exerciseRepo = ExerciseRepository(modelContainer: container)
-    _ = try await exerciseRepo.fetchAll()
 
     let templateId = try await templateRepo.insert(
       name: "Pending Test",
       exercises: [CreateTemplateExerciseInput(
         exerciseId: UUID(),
-        equipmentTypeOverride: nil,
-        sets: [CreateTemplateSetInput(targetReps: 5, targetWeight: nil, restDuration: nil)]
+        sets: [CreateTemplateSetInput(targetReps: 5)]
       )]
     )
 
@@ -324,7 +315,7 @@ final class iCloudServiceTests: XCTestCase {
     guard case .active(let sessionId) = await engine.state else {
       XCTFail("Expected active state"); return
     }
-    try await engine.requestEnd()
+    _ = try await engine.endSession()
     try await engine.confirmEnd()
 
     let items = PendingExportQueue.shared.allItems()
@@ -335,10 +326,8 @@ final class iCloudServiceTests: XCTestCase {
   // MARK: - iCloud container unavailable throws, does not fall back
 
   func testExportSessionThrowsWhenContainerUnavailable() async throws {
-    // Write-path: if iCloud container is gone, exportSession must throw, not write locally.
-    // We verify this through the mock that simulates containerUnavailable.
     let mock = MockiCloudService()
-    mock.set(errorToThrow: iCloudError.containerUnavailable)
+    await mock.set(errorToThrow: iCloudError.containerUnavailable)
     let model = SessionExportModel.make(from: makeSessionDTO())
     do {
       _ = try await mock.exportSession(model, templateSlug: nil)
@@ -350,7 +339,7 @@ final class iCloudServiceTests: XCTestCase {
 
   func testExportTemplateThrowsWhenContainerUnavailable() async throws {
     let mock = MockiCloudService()
-    mock.set(errorToThrow: iCloudError.containerUnavailable)
+    await mock.set(errorToThrow: iCloudError.containerUnavailable)
     let template = TemplateDTO(
       id: UUID(), name: "T", createdAt: Date(), exercises: []
     )

@@ -33,7 +33,8 @@ platform :ios do
       scheme: "Ironiq",
       destination: "id=00008130-001404EA3ED1001C",
       clean: true,
-      code_coverage: false
+      code_coverage: false,
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic"
     )
   end
 
