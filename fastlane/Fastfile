@@ -27,14 +27,27 @@ platform :ios do
 
   # ── Test ─────────────────────────────────────────────────────────────────
 
-  desc "Run all iOS tests on connected iPhone 15 Pro"
+  desc "Run unit tests on connected iPhone 15 Pro (UITests require separate signing setup)"
   lane :test do
     run_tests(
       scheme: "Ironiq",
       destination: "id=00008130-001404EA3ED1001C",
       clean: true,
       code_coverage: false,
-      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic"
+      only_testing: "IroniqTests",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic CODE_SIGN_IDENTITY='Apple Development'"
+    )
+  end
+
+  desc "Run UI tests on connected iPhone 15 Pro (requires development provisioning profile)"
+  lane :test_ui do
+    run_tests(
+      scheme: "Ironiq",
+      destination: "id=00008130-001404EA3ED1001C",
+      clean: false,
+      code_coverage: false,
+      only_testing: "IroniqUITests",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} -allowProvisioningUpdates CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic CODE_SIGN_IDENTITY='Apple Development'"
     )
   end
 

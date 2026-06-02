@@ -45,6 +45,10 @@ targets:
           CODE_SIGN_IDENTITY: Apple Development
           CODE_SIGNING_REQUIRED: YES
           CODE_SIGNING_ALLOWED: YES
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGNING_REQUIRED: YES
+          CODE_SIGNING_ALLOWED: YES
     info:
       path: Ironiq/Info.plist
       properties:
@@ -135,9 +139,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.tests
-        CODE_SIGN_IDENTITY: ""
-        CODE_SIGNING_REQUIRED: NO
-        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
         ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
 
   # ─── iOS UI Tests ──────────────────────────────────────────────────────────
@@ -153,9 +156,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.uitests
-        CODE_SIGN_IDENTITY: ""
-        CODE_SIGNING_REQUIRED: NO
-        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
 
   # ─── watchOS Unit Tests ────────────────────────────────────────────────────
   IroniqWatchTests:
