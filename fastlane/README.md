@@ -21,7 +21,15 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios test
 ```
 
-Run unit tests on connected iPhone 15 Pro (UITests require separate signing setup)
+Run unit tests on simulator (no device needed)
+
+### ios test_device
+
+```sh
+[bundle exec] fastlane ios test_device
+```
+
+Run unit tests on connected iPhone 15 Pro
 
 ### ios test_ui
 
@@ -29,7 +37,7 @@ Run unit tests on connected iPhone 15 Pro (UITests require separate signing setu
 [bundle exec] fastlane ios test_ui
 ```
 
-Run UI tests on connected iPhone 15 Pro (requires development provisioning profile)
+Run UI tests on connected iPhone 15 Pro
 
 ### ios test_watch
 
