@@ -36,6 +36,24 @@ final class CloudPhase2Tests: XCTestCase {
         }
     }
 
+    func testGzipExtraFieldWrittenCorrectly() throws {
+        let template = TemplateDTO(id: UUID(), name: "Leg Day", createdAt: Date(), exercises: [])
+        let model = TemplateExportModel(from: template)
+        let json = try model.jsonData()
+        XCTAssertFalse(json.isEmpty, "JSON must not be empty")
+        let compressed = try json.gzipped()
+        XCTAssertGreaterThan(compressed.count, 22, "Gzip file too short")
+        XCTAssertEqual(compressed[0], 0x1f, "Bad magic byte 0")
+        XCTAssertEqual(compressed[1], 0x8b, "Bad magic byte 1")
+        XCTAssertEqual(compressed[3], 0x04, "FLG must be FEXTRA (0x04)")
+        let xlen = Int(compressed[10]) | (Int(compressed[11]) << 8)
+        XCTAssertEqual(xlen, 10, "XLEN must be 10")
+        XCTAssertEqual(compressed[12], 0x49, "SI1 must be 'I'")
+        XCTAssertEqual(compressed[13], 0x5A, "SI2 must be 'Z'")
+        let sfLen = Int(compressed[14]) | (Int(compressed[15]) << 8)
+        XCTAssertEqual(sfLen, 6, "Sub-field length must be 6")
+    }
+
     func testTemplateExportRoundtripThroughGzip() throws {
         let template = TemplateDTO(id: UUID(), name: "Leg Day", createdAt: Date(), exercises: [])
         let model = TemplateExportModel(from: template)
