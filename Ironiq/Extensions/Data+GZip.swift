@@ -1,11 +1,15 @@
 import Foundation
+import zlib
 
-// MARK: - GZip compression without a C dependency
+// MARK: - GZip compression / decompression without a third-party dependency
 //
-// NSData.compressed(using: .zlib) produces a DEFLATE stream with a 2-byte
-// zlib header and a 4-byte Adler-32 footer. A valid .gz file is the same
-// DEFLATE bitstream wrapped in a 10-byte gzip header and an 8-byte footer
+// gzipped(): NSData.compressed(using: .zlib) produces a DEFLATE stream with a
+// 2-byte zlib header and a 4-byte Adler-32 footer. A valid .gz file is the
+// same DEFLATE bitstream wrapped in a 10-byte gzip header and an 8-byte footer
 // (CRC-32 + original size). We strip the zlib envelope and re-wrap in gzip.
+//
+// gunzipped(): Strips the gzip envelope and inflates the raw DEFLATE payload
+// using the system zlib's inflateInit2 with windowBits=-15 (raw DEFLATE mode).
 
 extension Data {
     /// Returns a gzip-compressed copy.
@@ -47,6 +51,67 @@ extension Data {
             UInt8((sizeLE >> 16) & 0xFF), UInt8((sizeLE >> 24) & 0xFF)
         ])
 
+        return output
+    }
+
+    /// Returns gzip-decompressed data. Works with any valid .gz file.
+    func gunzipped() throws -> Data {
+        guard !isEmpty else { return Data() }
+        guard count >= 18, self[0] == 0x1f, self[1] == 0x8b else {
+            throw GZipError.decompressionFailed
+        }
+
+        // Parse gzip header to find where DEFLATE payload begins.
+        let flags = self[3]
+        var offset = 10
+        if flags & 0x04 != 0 {
+            guard offset + 2 <= count else { throw GZipError.decompressionFailed }
+            let xlen = Int(self[offset]) | (Int(self[offset + 1]) << 8)
+            offset += 2 + xlen
+        }
+        if flags & 0x08 != 0 { while offset < count && self[offset] != 0 { offset += 1 }; offset += 1 }
+        if flags & 0x10 != 0 { while offset < count && self[offset] != 0 { offset += 1 }; offset += 1 }
+        if flags & 0x02 != 0 { offset += 2 }
+        guard offset <= count - 8 else { throw GZipError.decompressionFailed }
+
+        // Original size is the last 4 bytes of the gzip footer, little-endian.
+        let sizeStart = count - 4
+        let originalSize = Int(self[sizeStart])
+            | (Int(self[sizeStart + 1]) << 8)
+            | (Int(self[sizeStart + 2]) << 16)
+            | (Int(self[sizeStart + 3]) << 24)
+
+        let deflate = self[offset ..< count - 8]
+        let capacity = Swift.max(originalSize + 64, deflate.count * 4)
+        var output = Data(count: capacity)
+        var totalOut = 0
+
+        let deflateBytes = Array(deflate)
+        var stream = z_stream()
+
+        try deflateBytes.withUnsafeBytes { (inBuf: UnsafeRawBufferPointer) throws in
+            guard let inBase = inBuf.baseAddress else { throw GZipError.decompressionFailed }
+            stream.next_in = UnsafeMutablePointer(mutating: inBase.assumingMemoryBound(to: Bytef.self))
+            stream.avail_in = uInt(deflate.count)
+
+            // windowBits = -15 tells zlib to expect raw DEFLATE (no zlib/gzip header).
+            guard inflateInit2_(&stream, -15, ZLIB_VERSION, Int32(MemoryLayout<z_stream>.size)) == Z_OK else {
+                throw GZipError.decompressionFailed
+            }
+        }
+
+        let status: Int32 = output.withUnsafeMutableBytes { (outBuf: UnsafeMutableRawBufferPointer) -> Int32 in
+            guard let outBase = outBuf.baseAddress else { return Z_STREAM_ERROR }
+            stream.next_out = outBase.assumingMemoryBound(to: Bytef.self)
+            stream.avail_out = uInt(capacity)
+            let r = inflate(&stream, Z_FINISH)
+            totalOut = Int(stream.total_out)
+            return r
+        }
+        inflateEnd(&stream)
+        guard status == Z_STREAM_END else { throw GZipError.decompressionFailed }
+
+        output.removeLast(capacity - totalOut)
         return output
     }
 

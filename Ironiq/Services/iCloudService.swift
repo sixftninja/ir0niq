@@ -392,6 +392,128 @@ final class GoogleDriveService: NSObject {
   private func urlEncode(_ value: String) -> String {
     value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? value
   }
+
+  // MARK: - Token refresh
+
+  /// Returns a fresh access token, refreshing via the stored refresh token if needed.
+  func validAccessToken() async throws -> String {
+    // Try stored access token first — if a request with it returns 401, the caller retries.
+    if let token = tokenStore.read(account: "access_token"), !token.isEmpty {
+      return token
+    }
+    return try await refreshAccessToken()
+  }
+
+  func refreshAccessToken() async throws -> String {
+    guard let refreshToken = tokenStore.read(account: "refresh_token"), !refreshToken.isEmpty else {
+      throw GoogleDriveError.tokenExchangeFailed
+    }
+    guard !config.clientID.isEmpty else { throw GoogleDriveError.missingConfiguration }
+
+    var request = URLRequest(url: URL(string: "https://oauth2.googleapis.com/token")!)
+    request.timeoutInterval = 20
+    request.httpMethod = "POST"
+    request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+    request.httpBody = formEncoded([
+      "client_id": config.clientID,
+      "grant_type": "refresh_token",
+      "refresh_token": refreshToken,
+    ])
+
+    let (data, response) = try await URLSession.shared.data(for: request)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw GoogleDriveError.tokenExchangeFailed
+    }
+    let token = try JSONDecoder().decode(GoogleTokenResponse.self, from: data)
+    try tokenStore.save(token.accessToken, account: "access_token")
+    if let newRefresh = token.refreshToken {
+      try tokenStore.save(newRefresh, account: "refresh_token")
+    }
+    return token.accessToken
+  }
+
+  // MARK: - File upload
+
+  /// Uploads gzip-compressed data as a file in the given Drive folder.
+  /// Returns the created file ID.
+  @discardableResult
+  func uploadFile(name: String, data: Data, folderId: String, accessToken: String) async throws -> String {
+    let boundary = "IroniqBoundary\(UUID().uuidString.replacingOccurrences(of: "-", with: ""))"
+    let metadata = "{\"name\":\"\(name)\",\"parents\":[\"\(folderId)\"]}"
+
+    var body = Data()
+    let metaPart = "--\(boundary)\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n\(metadata)\r\n"
+    let dataPart = "--\(boundary)\r\nContent-Type: application/gzip\r\n\r\n"
+    let closing = "\r\n--\(boundary)--"
+
+    body.append(Data(metaPart.utf8))
+    body.append(Data(dataPart.utf8))
+    body.append(data)
+    body.append(Data(closing.utf8))
+
+    var request = URLRequest(
+      url: URL(string: "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name")!
+    )
+    request.timeoutInterval = 60
+    request.httpMethod = "POST"
+    request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+    request.setValue("multipart/related; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+    request.httpBody = body
+
+    let (responseData, response) = try await URLSession.shared.data(for: request)
+    let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+
+    if statusCode == 401 {
+      // Token expired — refresh and retry once.
+      let fresh = try await refreshAccessToken()
+      request.setValue("Bearer \(fresh)", forHTTPHeaderField: "Authorization")
+      let (retryData, retryResponse) = try await URLSession.shared.data(for: request)
+      guard (retryResponse as? HTTPURLResponse)?.statusCode == 200 else {
+        throw GoogleDriveError.driveRequestFailed("Upload failed after token refresh.")
+      }
+      let file = try JSONDecoder().decode(GoogleDriveFileResponse.self, from: retryData)
+      return file.id
+    }
+
+    guard statusCode == 200 else {
+      throw GoogleDriveError.driveRequestFailed("Upload failed with status \(statusCode).")
+    }
+    let file = try JSONDecoder().decode(GoogleDriveFileResponse.self, from: responseData)
+    return file.id
+  }
+
+  // MARK: - File listing and download (used by restore)
+
+  func listFiles(folderId: String, accessToken: String) async throws -> [GoogleDriveFileResponse] {
+    var components = URLComponents(string: "https://www.googleapis.com/drive/v3/files")!
+    components.queryItems = [
+      URLQueryItem(name: "q", value: "'\(folderId)' in parents and trashed = false"),
+      URLQueryItem(name: "spaces", value: "drive"),
+      URLQueryItem(name: "fields", value: "files(id,name)"),
+      URLQueryItem(name: "pageSize", value: "1000"),
+    ]
+    var request = URLRequest(url: components.url!)
+    request.timeoutInterval = 20
+    request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+    let (data, response) = try await URLSession.shared.data(for: request)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw GoogleDriveError.driveRequestFailed("Could not list files.")
+    }
+    return (try JSONDecoder().decode(GoogleDriveFileListResponse.self, from: data)).files
+  }
+
+  func downloadFile(id: String, accessToken: String) async throws -> Data {
+    var components = URLComponents(string: "https://www.googleapis.com/drive/v3/files/\(id)")!
+    components.queryItems = [URLQueryItem(name: "alt", value: "media")]
+    var request = URLRequest(url: components.url!)
+    request.timeoutInterval = 30
+    request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+    let (data, response) = try await URLSession.shared.data(for: request)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+      throw GoogleDriveError.driveRequestFailed("Could not download file \(id).")
+    }
+    return data
+  }
 }
 
 extension GoogleDriveService: ASWebAuthenticationPresentationContextProviding {
@@ -417,11 +539,11 @@ private struct GoogleUserInfoResponse: Decodable {
   let email: String?
 }
 
-private struct GoogleDriveFileListResponse: Decodable {
+struct GoogleDriveFileListResponse: Decodable {
   let files: [GoogleDriveFileResponse]
 }
 
-private struct GoogleDriveFileResponse: Codable {
+struct GoogleDriveFileResponse: Codable {
   let id: String
   let name: String?
 }

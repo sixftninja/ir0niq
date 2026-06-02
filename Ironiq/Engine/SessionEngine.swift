@@ -155,7 +155,7 @@ actor SessionEngine {
             templateRepository: TemplateRepository(modelContainer: modelContainer),
             sessionRepository: SessionRepository(modelContainer: modelContainer),
             healthKitService: HealthKitService.shared,
-            iCloudService: Ironiq.iCloudService.shared
+            iCloudService: CloudStorageRouter.shared
         )
     }
 

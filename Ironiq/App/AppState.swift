@@ -14,6 +14,12 @@ enum SyncProvider: String, CaseIterable, Codable {
   }
 }
 
+enum SyncHealthState: Equatable {
+  case healthy
+  case failing(String)  // carries the last error message
+  case unknown          // not yet verified since launch
+}
+
 @MainActor
 @Observable
 final class AppState {
@@ -32,7 +38,7 @@ final class AppState {
   {
     didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding") }
   }
-  var useDarkMode: Bool = true  // default: dark (gym context)
+  var useDarkMode: Bool = true
   var restReminderSeconds: Int = 120
   var syncProvider: SyncProvider? = UserDefaults.standard.string(forKey: Keys.syncProvider).flatMap(
     SyncProvider.init(rawValue:))
@@ -40,6 +46,7 @@ final class AppState {
   var syncAccountLabel: String? = UserDefaults.standard.string(forKey: Keys.syncAccountLabel)
   var syncStatusMessage: String? = nil
   var syncEnabled: Bool = UserDefaults.standard.bool(forKey: Keys.syncEnabled)
+  var syncHealth: SyncHealthState = .unknown
   var isPreparingSync = false
   var showProviderSwitchWarning = false
 
@@ -54,6 +61,27 @@ final class AppState {
     return "\(syncProvider.displayName) Drive connected"
   }
 
+  var syncHealthLabel: String {
+    switch syncHealth {
+    case .healthy: return "Sync up to date"
+    case .failing(let msg): return "Sync issue: \(msg)"
+    case .unknown: return "Checking sync…"
+    }
+  }
+
+  var syncHealthIsOK: Bool {
+    if case .healthy = syncHealth { return true }
+    return false
+  }
+
+  func markSyncHealthy() {
+    syncHealth = .healthy
+  }
+
+  func markSyncFailing(_ reason: String) {
+    syncHealth = .failing(reason)
+  }
+
   func completeSync(provider: SyncProvider, accountId: String, accountLabel: String?) {
     syncProvider = provider
     syncAccountId = accountId
@@ -64,6 +92,7 @@ final class AppState {
     syncEnabled = true
     UserDefaults.standard.set(true, forKey: Keys.syncEnabled)
     syncStatusMessage = "\(provider.displayName) sync is ready."
+    syncHealth = .healthy
   }
 
   func clearSyncForProviderSwitch() {
@@ -76,6 +105,7 @@ final class AppState {
     syncEnabled = false
     UserDefaults.standard.set(false, forKey: Keys.syncEnabled)
     syncStatusMessage = nil
+    syncHealth = .unknown
   }
 
   // MARK: - Pro feature limits (nonisolated so they can be read from any context)

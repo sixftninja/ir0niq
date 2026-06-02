@@ -142,7 +142,7 @@ final class TemplateViewModel {
     guard let template = templates.first(where: { $0.id == id }) else { return }
     let model = TemplateExportModel(from: template)
     do {
-      _ = try await iCloudService.shared.exportTemplate(model)
+      _ = try await CloudStorageRouter.shared.exportTemplate(model)
     } catch {
       PendingExportQueue.shared.add(templateId: id)
       setAlert(message: "Template saved. Will sync when drive is available.")

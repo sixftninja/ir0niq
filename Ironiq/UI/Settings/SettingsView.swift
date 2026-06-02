@@ -19,18 +19,24 @@ struct SettingsView: View {
             )
             .foregroundStyle(.white)
             Spacer()
-            Image(
-              systemName: appState.hasCompletedRequiredSync
-                ? "checkmark.circle.fill" : "exclamationmark.circle.fill"
-            )
-            .foregroundStyle(
-              appState.hasCompletedRequiredSync ? Color.ironiqGreen : Color.ironiqOrange)
+            syncHealthIndicator
           }
 
           if let account = appState.syncAccountLabel, !account.isEmpty {
             Text(account)
               .font(.caption)
               .foregroundStyle(.white.opacity(0.55))
+          }
+
+          Text(appState.syncHealthLabel)
+            .font(.caption)
+            .foregroundStyle(appState.syncHealthIsOK ? Color.ironiqGreen : Color.ironiqOrange)
+            .accessibilityIdentifier("sync_health_label")
+
+          if !PendingExportQueue.shared.isEmpty {
+            Text("\(PendingExportQueue.shared.allItems().count) item(s) waiting to sync")
+              .font(.caption)
+              .foregroundStyle(Color.ironiqOrange)
           }
 
           Button("Switch Sync Provider") {
@@ -153,6 +159,20 @@ struct SettingsView: View {
       } message: {
         Text(purchaseErrorMessage)
       }
+    }
+  }
+  @ViewBuilder
+  private var syncHealthIndicator: some View {
+    switch appState.syncHealth {
+    case .healthy:
+      Image(systemName: "checkmark.circle.fill")
+        .foregroundStyle(Color.ironiqGreen)
+    case .failing:
+      Image(systemName: "exclamationmark.circle.fill")
+        .foregroundStyle(Color.ironiqOrange)
+    case .unknown:
+      Image(systemName: "clock.fill")
+        .foregroundStyle(.white.opacity(0.4))
     }
   }
 }
