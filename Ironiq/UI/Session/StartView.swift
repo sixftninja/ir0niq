@@ -143,57 +143,7 @@ struct StartView: View {
     }
 
     private var activeWorkoutSurface: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Button {
-                showWorkoutDashboard = true
-            } label: {
-                ActiveWorkoutCard()
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("active_workout_card")
-
-            if needsSetLogging {
-                Button {
-                    showLogOnDashboardOpen = true
-                    showWorkoutDashboard = true
-                } label: {
-                    Label("Log current set", systemImage: "square.and.pencil")
-                        .font(.headline.weight(.bold))
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color.ironiqGreen)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                }
-                .accessibilityIdentifier("return_to_log_set_button")
-            }
-
-            Button {
-                showExercisePicker = true
-            } label: {
-                Label("Add Exercise", systemImage: "plus")
-                    .font(.headline.weight(.bold))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(Color.white.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.ironiqOrange.opacity(0.45), lineWidth: 1)
-                    )
-            }
-            .accessibilityIdentifier("active_add_exercise_button")
-
-            Button("End Workout") {
-                showEndConfirm = true
-            }
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(Color.ironiqOrange)
-            .frame(maxWidth: .infinity)
-            .padding(.top, 4)
-            .accessibilityIdentifier("active_end_workout_button")
-        }
+        WorkoutSessionView()
     }
 
     private func startChoice(title: String, icon: String, action: @escaping () -> Void) -> some View {
@@ -258,6 +208,189 @@ struct StartView: View {
         if case .resting = set.lifecycleState { return true }
         if case .awaitingInput = set.lifecycleState { return true }
         return false
+    }
+}
+
+// MARK: - Workout Session View
+
+private struct WorkoutSessionView: View {
+    @Environment(SessionViewModel.self) private var sessionVM
+    @Environment(AppState.self) private var appState
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            summaryRow
+            if sessionVM.exercises.isEmpty {
+                trueEmptyState
+            } else {
+                exerciseList
+            }
+        }
+    }
+
+    // MARK: - Summary
+
+    private var summaryRow: some View {
+        HStack(spacing: 6) {
+            Text("\(loggedSetCount) of \(totalSetCount) sets logged")
+            Text("·")
+            Text("\(sessionVM.exercises.count) exercises")
+            Text("·")
+            Text(sessionVM.sessionElapsed.timerFormatted)
+                .monospacedDigit()
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.white.opacity(0.55))
+        .accessibilityIdentifier("workout_session_summary")
+    }
+
+    // MARK: - Empty state (no exercises added)
+
+    private var trueEmptyState: some View {
+        Text("Add an exercise from the workout dashboard to begin")
+            .font(.subheadline)
+            .foregroundStyle(.white.opacity(0.4))
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 32)
+    }
+
+    // MARK: - Exercise list
+
+    private var exerciseList: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            ForEach(Array(sessionVM.exercises.enumerated()), id: \.element.sessionExerciseId) { _, exercise in
+                exerciseSection(exercise)
+            }
+        }
+    }
+
+    private func exerciseSection(_ exercise: ActiveSessionContext.ExerciseContext) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Exercise header
+            HStack {
+                Text(exercise.exerciseName)
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .textCase(.uppercase)
+                    .tracking(0.5)
+                Spacer()
+                completionDot(for: exercise)
+            }
+
+            // Set rows
+            VStack(spacing: 6) {
+                ForEach(Array(exercise.setContexts.enumerated()), id: \.element.sessionSetId) { index, set in
+                    setRow(set: set, index: index, exercise: exercise)
+                }
+            }
+        }
+    }
+
+    private func setRow(
+        set: ActiveSessionContext.ExerciseContext.SetContext,
+        index: Int,
+        exercise: ActiveSessionContext.ExerciseContext
+    ) -> some View {
+        let isLogged: Bool
+        if case .logged = set.lifecycleState { isLogged = true } else { isLogged = false }
+        let isSkipped = set.lifecycleState == .notPerformed
+
+        return HStack(spacing: 8) {
+            Text("Set \(index + 1)")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white.opacity(isLogged ? 0.45 : 0.2))
+                .frame(width: 42, alignment: .leading)
+
+            Text(setDisplayText(set: set, exercise: exercise))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white.opacity(isLogged ? 1.0 : (isSkipped ? 0.3 : 0.22)))
+
+            Spacer()
+
+            if isLogged {
+                Circle()
+                    .fill(Color.ironiqGreen.opacity(0.75))
+                    .frame(width: 7, height: 7)
+            } else if isSkipped {
+                Image(systemName: "minus")
+                    .font(.caption2)
+                    .foregroundStyle(.white.opacity(0.25))
+            } else {
+                Circle()
+                    .stroke(Color.white.opacity(0.18), lineWidth: 1.5)
+                    .frame(width: 7, height: 7)
+            }
+        }
+    }
+
+    private func setDisplayText(
+        set: ActiveSessionContext.ExerciseContext.SetContext,
+        exercise: ActiveSessionContext.ExerciseContext
+    ) -> String {
+        switch set.lifecycleState {
+        case .logged(let reps, let durationSeconds, let weight):
+            let valueText = reps.map { "\($0) reps" } ?? durationSeconds.map { "\(Int($0)) sec" } ?? ""
+            if let w = weight {
+                return "\(valueText)  ·  \(WeightFormatter.format(w, unitSystem: appState.unitSystem))"
+            }
+            return valueText.isEmpty ? "Logged" : valueText
+
+        case .notPerformed:
+            return "Skipped"
+
+        default:
+            // Show target values so user has a mental picture of what's expected
+            let valueText: String
+            if exercise.defaultLoggingType == .duration, let t = set.targetDuration {
+                valueText = "\(Int(t)) sec"
+            } else if let r = set.targetReps {
+                valueText = "\(r) reps"
+            } else {
+                valueText = "—"
+            }
+            if let w = set.targetWeight {
+                return "\(valueText)  ·  \(WeightFormatter.format(w, unitSystem: appState.unitSystem))"
+            }
+            return valueText
+        }
+    }
+
+    private func completionDot(for exercise: ActiveSessionContext.ExerciseContext) -> some View {
+        let logged = exercise.setContexts.filter {
+            if case .logged = $0.lifecycleState { return true }
+            return false
+        }.count
+        let total = exercise.setContexts.count
+
+        let symbol: String
+        let color: Color
+        if logged == 0 {
+            symbol = "circle"
+            color = .white.opacity(0.25)
+        } else if logged == total {
+            symbol = "circle.fill"
+            color = Color.ironiqGreen.opacity(0.8)
+        } else {
+            symbol = "circle.lefthalf.filled"
+            color = .white.opacity(0.5)
+        }
+        return Image(systemName: symbol)
+            .font(.caption)
+            .foregroundStyle(color)
+    }
+
+    // MARK: - Computed helpers
+
+    private var loggedSetCount: Int {
+        sessionVM.exercises.flatMap(\.setContexts).filter {
+            if case .logged = $0.lifecycleState { return true }
+            return false
+        }.count
+    }
+
+    private var totalSetCount: Int {
+        sessionVM.exercises.flatMap(\.setContexts).count
     }
 }
 

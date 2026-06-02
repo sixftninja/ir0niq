@@ -137,6 +137,12 @@ final class SessionViewModel {
         await refreshStateAndContext()
     }
 
+    func skipCurrentSet() async {
+        do { try await engine.skipCurrentSet() }
+        catch { setAlert(error) }
+        await refreshStateAndContext()
+    }
+
     func pauseSession() async {
         do { try await engine.pauseSession() }
         catch { setAlert(error) }

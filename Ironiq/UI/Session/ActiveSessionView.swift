@@ -146,14 +146,14 @@ struct ActiveSessionView: View {
                 RoundedRectangle(cornerRadius: 3)
                     .fill(Color.white.opacity(0.72))
                     .frame(width: 46, height: 5)
-                Text("Swipe down")
+                Text("Workout Session")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.7))
             }
 
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(workoutName)
+                    Text(vm.workoutName)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.78))
                         .lineLimit(1)
@@ -180,23 +180,25 @@ struct ActiveSessionView: View {
     }
 
     private var emptyWorkoutView: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 20) {
+            Text("Add your first exercise")
+                .font(.title3.weight(.medium))
+                .foregroundStyle(.white.opacity(0.72))
+                .multilineTextAlignment(.center)
+
             Button(action: onAddExercise) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 72, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.18), radius: 14, y: 8)
+                Text("Add Exercise")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.black)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Add first exercise")
             .accessibilityIdentifier("dashboard_add_first_exercise_button")
-
-            Text("Workout Active")
-                .font(.largeTitle.weight(.black))
-                .foregroundStyle(.white)
-                .accessibilityIdentifier("workout_active_title")
         }
-        .padding(32)
+        .padding(.horizontal, 24)
         .offset(y: emptyHintOffset)
         .task(id: vm.exercises.isEmpty) {
             guard vm.exercises.isEmpty else { return }
@@ -225,10 +227,6 @@ struct ActiveSessionView: View {
             VStack(spacing: 10) {
                 metricRow(title: "Target", value: currentTargetText, icon: "scope")
                 metricRow(title: "Last set", value: previousSetText, icon: "checkmark.circle")
-                metricRow(title: "Previous rest", value: previousRestText, icon: "clock.arrow.circlepath", valueColor: previousRestColor)
-                if case .resting = vm.currentSet?.lifecycleState {
-                    restMetric
-                }
             }
             .padding(18)
             .background(Color.black.opacity(0.22))
@@ -258,83 +256,72 @@ struct ActiveSessionView: View {
         }
     }
 
-    private var restMetric: some View {
-        VStack(spacing: 6) {
-            HStack {
-                Label("Resting", systemImage: "pause.circle.fill")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.55))
-                Spacer()
-                Text(vm.restElapsed.timerFormatted)
-                    .font(.title2.weight(.black).monospacedDigit())
-                    .foregroundStyle(restOverage > 0 ? Color.ironiqOrange : Color.ironiqGreen)
-            }
-            HStack {
-                Text("Target \(restTarget.timerFormatted)")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.45))
-                Spacer()
-                if restOverage > 0 {
-                    Text("+\(restOverage.timerFormatted) over")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color.ironiqOrange)
-                }
-            }
-        }
-        .padding(.top, 6)
-    }
-
     private var primaryControls: some View {
-        VStack(spacing: 12) {
-            if vm.exercises.isEmpty {
-                EmptyView()
-            } else if let set = vm.currentSet {
-                switch set.lifecycleState {
-                case .pending, .inProgress:
-                    FinishSetButton(needsAttention: shouldShowRestPrompt) {
-                        Task { await finishSetAndLog() }
-                    }
-                    .accessibilityIdentifier("finish_set_button")
-                case .resting:
-                    IroniqButton("Log Set") {
-                        showLogInput = true
-                    }
-                    .accessibilityIdentifier("log_set_button")
-                case .awaitingInput:
-                    IroniqButton("Log Set") {
-                        showLogInput = true
-                    }
-                    .accessibilityIdentifier("log_set_button")
-                case .logged:
-                    IroniqButton(isLastSet ? "End" : "Next") {
-                        Task {
-                            if isLastSet {
-                                await endWorkout()
-                            } else {
-                                await vm.advanceToNext()
+        VStack(spacing: 0) {
+            // Set-level actions
+            if !vm.exercises.isEmpty, let set = vm.currentSet {
+                VStack(spacing: 10) {
+                    switch set.lifecycleState {
+                    case .pending, .inProgress:
+                        FinishSetButton(needsAttention: shouldShowRestPrompt) {
+                            Task { await finishSetAndLog() }
+                        }
+                        .accessibilityIdentifier("finish_set_button")
+
+                        Button("Skip Set") {
+                            Task { await vm.skipCurrentSet() }
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.55))
+                        .frame(maxWidth: .infinity)
+                        .accessibilityIdentifier("skip_set_button")
+
+                    case .resting, .awaitingInput:
+                        IroniqButton("Log Set") {
+                            showLogInput = true
+                        }
+                        .accessibilityIdentifier("log_set_button")
+
+                    case .logged:
+                        IroniqButton(isLastSet ? "End" : "Next") {
+                            Task {
+                                if isLastSet { await endWorkout() }
+                                else { await vm.advanceToNext() }
                             }
                         }
-                    }
-                    .accessibilityIdentifier(isLastSet ? "end_workout_button" : "advance_button")
-                case .notPerformed:
-                    IroniqButton(isLastSet ? "End" : "Next") {
-                        Task {
-                            if isLastSet {
-                                await endWorkout()
-                            } else {
-                                await vm.advanceToNext()
+                        .accessibilityIdentifier(isLastSet ? "end_workout_button" : "advance_button")
+
+                    case .notPerformed:
+                        IroniqButton(isLastSet ? "End" : "Next") {
+                            Task {
+                                if isLastSet { await endWorkout() }
+                                else { await vm.advanceToNext() }
                             }
                         }
                     }
                 }
-            } else {
+            } else if !vm.exercises.isEmpty {
                 IroniqButton("Finish Workout") {
                     Task { await endWorkout() }
                 }
             }
+
+            // Workout-level action — separated visually
+            Rectangle()
+                .fill(Color.white.opacity(0.1))
+                .frame(height: 1)
+                .padding(.vertical, 16)
+
+            Button(action: onAddExercise) {
+                Text("Add Exercise")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.ironiqOrange)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("dashboard_add_exercise_button")
         }
     }
-
 
     private func endWorkout() async {
         _ = await vm.endSession()
@@ -353,8 +340,11 @@ struct ActiveSessionView: View {
         showLogInput = true
     }
 
-    private var workoutName: String {
-        vm.workoutName
+    private var currentTargetText: String {
+        guard let set = vm.currentSet else { return "None" }
+        if let targetReps = set.targetReps { return "\(targetReps) reps" }
+        if let targetDuration = set.targetDuration { return "\(Int(targetDuration)) sec" }
+        return "Open"
     }
 
     private var previousSetText: String {
@@ -366,51 +356,11 @@ struct ActiveSessionView: View {
         return "\(resultText) | \(weightText)"
     }
 
-    private var currentTargetText: String {
-        guard let set = vm.currentSet else { return "None" }
-        if let targetReps = set.targetReps {
-            return "\(targetReps) reps"
-        }
-        if let targetDuration = set.targetDuration {
-            return "\(Int(targetDuration)) sec"
-        }
-        return "Open"
-    }
-
-    private var previousRestText: String {
-        guard let previous = previousSet, let actual = restDuration(for: previous) else { return "Unavailable" }
-        let target = previous.targetRestDuration ?? 30
-        let delta = actual - target
-        if delta > 0 {
-            return "\(actual.timerFormatted) | +\(delta.timerFormatted)"
-        }
-        return "\(actual.timerFormatted) | target \(target.timerFormatted)"
-    }
-
-    private var previousRestColor: Color {
-        guard let previous = previousSet, let actual = restDuration(for: previous) else { return .white.opacity(0.62) }
-        let target = previous.targetRestDuration ?? 30
-        return actual > target ? Color.ironiqOrange : Color.ironiqGreen
-    }
-
-    private func restDuration(for set: ActiveSessionContext.ExerciseContext.SetContext) -> TimeInterval? {
-        guard let start = set.restStart, let end = set.restEnd else { return nil }
-        return max(0, end.timeIntervalSince(start))
-    }
-
     private var previousSet: ActiveSessionContext.ExerciseContext.SetContext? {
         guard let exercise = vm.currentExercise else { return nil }
         let index = vm.currentSetIndex - 1
         guard index >= 0, index < exercise.setContexts.count else { return nil }
         return exercise.setContexts[index]
-    }
-
-    private var restTarget: TimeInterval {
-        vm.currentSet?.targetRestDuration ?? 30
-    }
-
-    private var restOverage: TimeInterval {
-        max(0, vm.restElapsed - restTarget)
     }
 
     private var shouldShowRestPrompt: Bool {
