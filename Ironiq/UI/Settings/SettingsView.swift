@@ -2,10 +2,12 @@ import SwiftUI
 
 struct SettingsView: View {
   @Environment(AppState.self) private var appState
+  @Environment(AppModel.self) private var appModel
   @Environment(SettingsViewModel.self) private var vm
   @Environment(StoreKitService.self) private var storeKit
   @State private var showPurchaseError = false
   @State private var purchaseErrorMessage = ""
+  @State private var isRestoring = false
 
   var body: some View {
     NavigationStack {
@@ -43,6 +45,26 @@ struct SettingsView: View {
             appState.showProviderSwitchWarning = true
           }
           .foregroundStyle(Color.ironiqOrange)
+
+          Button {
+            isRestoring = true
+            Task {
+              await appModel.performStartupSync()
+              isRestoring = false
+            }
+          } label: {
+            if isRestoring {
+              HStack(spacing: 8) {
+                ProgressView().tint(Color.ironiqOrange)
+                Text("Restoring…")
+              }
+            } else {
+              Text("Restore from Cloud")
+            }
+          }
+          .foregroundStyle(Color.ironiqOrange)
+          .disabled(isRestoring || !appState.hasCompletedRequiredSync)
+          .accessibilityIdentifier("restore_from_cloud_button")
         }
         .listRowBackground(Color.ironiqSurface)
 

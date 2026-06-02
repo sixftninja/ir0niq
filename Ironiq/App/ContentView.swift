@@ -17,6 +17,7 @@ struct ContentView: View {
 
 struct SyncGateView: View {
   @Environment(AppState.self) private var appState
+  @Environment(AppModel.self) private var appModel
   @State private var errorMessage: String?
   @State private var showGoogleUnavailable = false
 
@@ -118,6 +119,7 @@ struct SyncGateView: View {
     do {
       let account = try await GoogleDriveService.shared.connectAndPrepareSyncFolders()
       appState.completeSync(provider: .google, accountId: account.id, accountLabel: account.email)
+      Task { await appModel.performStartupSync() }
     } catch GoogleDriveError.authorizationCancelled {
       errorMessage = nil
     } catch {
@@ -144,6 +146,7 @@ struct SyncGateView: View {
       try await iCloudService.shared.prepareSyncFolders()
       let label = credential.email ?? credential.fullName?.formatted()
       appState.completeSync(provider: .apple, accountId: credential.user, accountLabel: label)
+      Task { await appModel.performStartupSync() }
     } catch iCloudError.containerUnavailable {
       errorMessage =
         "iCloud Drive is not available. Sign into iCloud and enable iCloud Drive, then try again."

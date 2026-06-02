@@ -43,31 +43,30 @@ final class AppModel {
         Task { await StoreKitService.shared.initialize(appState: appState) }
     }
 
-    // Called from IroniqApp after seed and load tasks complete.
+    // Called at startup and after sign-in. Always attempts cloud restore;
+    // name-based dedup in CloudRestoreService prevents duplicate templates.
     func performStartupSync() async {
         guard let provider = appState.syncProvider else { return }
 
-        // Restore from cloud if local database is empty (fresh install / data wipe).
         let restorer = CloudRestoreService(templateRepo: templateRepo, sessionRepo: sessionRepo)
-        if let result = await restorer.restoreIfNeeded(provider: provider) {
-            if result.templatesRestored > 0 || result.sessionsRestored > 0 {
-                await templateVM.loadAll()
-                await historyVM.loadSessions()
-            }
-            if result.errors.isEmpty {
-                appState.markSyncHealthy()
-            } else {
-                appState.markSyncFailing(result.errors.first ?? "Partial restore error")
-            }
-            return
+        let result = await restorer.restoreIfNeeded(provider: provider)
+
+        if result.templatesRestored > 0 || result.sessionsRestored > 0 {
+            await templateVM.loadAll()
+            await historyVM.loadSessions()
         }
 
-        // No restore needed — check pending queue and update health indicator.
-        if PendingExportQueue.shared.isEmpty {
+        if result.errors.isEmpty || result.templatesRestored > 0 {
             appState.markSyncHealthy()
         } else {
-            let count = PendingExportQueue.shared.allItems().count
-            appState.markSyncFailing("\(count) item(s) waiting to sync")
+            // All files errored — likely format issue or no files present yet.
+            // Mark healthy unless there are pending export failures.
+            if PendingExportQueue.shared.isEmpty {
+                appState.markSyncHealthy()
+            } else {
+                let count = PendingExportQueue.shared.allItems().count
+                appState.markSyncFailing("\(count) item(s) waiting to sync")
+            }
         }
     }
 }

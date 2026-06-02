@@ -3,8 +3,8 @@ import Foundation
 // Reads template and session export files from the user's chosen cloud drive
 // and inserts them into the local SwiftData store.
 //
-// Called at app startup when the local database is empty — covers the case
-// where the user deleted and reinstalled the app.
+// Called at app startup and after sign-in. Always runs; name-based deduplication
+// prevents creating duplicate templates if some already exist locally.
 
 struct CloudRestoreResult {
     let templatesRestored: Int
@@ -24,15 +24,9 @@ struct CloudRestoreService {
         self.sessionRepo = sessionRepo
     }
 
-    // Returns nil if the local database already has data (no restore needed).
-    func restoreIfNeeded(provider: SyncProvider) async -> CloudRestoreResult? {
-        do {
-            let existingTemplates = try await templateRepo.fetchAll()
-            if !existingTemplates.isEmpty { return nil }
-        } catch {
-            return nil
-        }
-
+    // Always runs restore; returns a result with counts and any per-file errors.
+    // Name-based dedup in insertTemplate() prevents creating duplicate templates.
+    func restoreIfNeeded(provider: SyncProvider) async -> CloudRestoreResult {
         switch provider {
         case .apple:
             return await restoreFromiCloud()
@@ -170,7 +164,8 @@ struct CloudRestoreService {
 
     private func insertTemplate(_ model: TemplateExportModel) async throws {
         let existing = try await templateRepo.fetchAll()
-        guard !existing.contains(where: { $0.id == model.id }) else { return }
+        // Skip by name (case-insensitive) — the user's template names are unique per account.
+        guard !existing.contains(where: { $0.name.lowercased() == model.name.lowercased() }) else { return }
 
         let exercises = model.exercises.sorted { $0.order < $1.order }.map { ex -> CreateTemplateExerciseInput in
             let sets = ex.sets.sorted { $0.order < $1.order }.map { s in

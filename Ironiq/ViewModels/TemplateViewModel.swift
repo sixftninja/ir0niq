@@ -58,7 +58,11 @@ final class TemplateViewModel {
     name: String,
     exercises exerciseInputs: [CreateTemplateExerciseInput]
   ) async throws -> UUID {
-    let id = try await templateRepo.insert(name: name, exercises: exerciseInputs)
+    let trimmed = name.trimmingCharacters(in: .whitespaces)
+    if templates.contains(where: { $0.name.lowercased() == trimmed.lowercased() }) {
+      throw TemplateError.duplicateName(trimmed)
+    }
+    let id = try await templateRepo.insert(name: trimmed, exercises: exerciseInputs)
     templates = try await templateRepo.fetchAll()
     await exportTemplateIfNeeded(id)
     return id
@@ -69,7 +73,11 @@ final class TemplateViewModel {
     name: String,
     exercises exerciseInputs: [CreateTemplateExerciseInput]
   ) async throws {
-    try await templateRepo.update(id: id, name: name, exercises: exerciseInputs)
+    let trimmed = name.trimmingCharacters(in: .whitespaces)
+    if templates.contains(where: { $0.name.lowercased() == trimmed.lowercased() && $0.id != id }) {
+      throw TemplateError.duplicateName(trimmed)
+    }
+    try await templateRepo.update(id: id, name: trimmed, exercises: exerciseInputs)
     templates = try await templateRepo.fetchAll()
     await exportTemplateIfNeeded(id)
   }
@@ -165,5 +173,18 @@ extension String {
     trimmingCharacters(in: .whitespacesAndNewlines)
       .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
       .lowercased()
+  }
+}
+
+// MARK: - Template errors
+
+enum TemplateError: LocalizedError {
+  case duplicateName(String)
+
+  var errorDescription: String? {
+    switch self {
+    case .duplicateName(let name):
+      return "A template named \"\(name)\" already exists. Choose a different name."
+    }
   }
 }
