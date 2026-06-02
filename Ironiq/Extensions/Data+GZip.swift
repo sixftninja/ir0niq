@@ -110,9 +110,15 @@ extension Data {
             offset = extraEnd
         }
 
-        // No 'ID' sub-field found — file was created by an older gzipped() without
-        // the embedded NSData payload. Cannot decompress reliably.
-        throw GZipError.decompressionFailed
+        // No 'ID' sub-field — file was produced by an earlier gzipped() before
+        // the EXTRA field was added. Try passing the complete gzip data to
+        // NSData.decompressed: iOS 26's Compression framework accepts gzip format
+        // directly when the "zlib" algorithm is selected.
+        do {
+            return try (self as NSData).decompressed(using: .zlib) as Data
+        } catch {
+            throw GZipError.decompressionFailed
+        }
     }
 
     // MARK: - CRC-32 (ISO 3309 / ITU-T V.42)
