@@ -154,37 +154,20 @@ struct TemplateEditorView: View {
                     setRow(exerciseId: row.id, setId: entry.id)
                 }
 
-                VStack(spacing: 10) {
-                    Button {
-                        addSet(to: row.id)
-                    } label: {
-                        Label("Set", systemImage: "plus")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(Color.ironiqOrange)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 9)
-                            .background(Color.ironiqOrange.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Add set")
-                    .accessibilityIdentifier("template_add_set_button")
-
-                    Button(role: .destructive) {
-                        selectedExercises.removeAll { $0.id == row.id }
-                    } label: {
-                        Label("Remove Exercise", systemImage: "trash")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(Color.ironiqRed.opacity(0.88))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 9)
-                            .background(Color.ironiqRed.opacity(0.08))
-                            .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Remove exercise")
-                    .accessibilityIdentifier("template_remove_exercise_button")
+                Button {
+                    addSet(to: row.id)
+                } label: {
+                    Label("Set", systemImage: "plus")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.ironiqOrange)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(Color.ironiqOrange.opacity(0.1))
+                        .clipShape(Capsule())
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Add set")
+                .accessibilityIdentifier("template_add_set_button")
                 .padding(.top, 10)
             }
         }
@@ -273,9 +256,13 @@ struct TemplateEditorView: View {
 
     private func removeSet(exerciseId: UUID, setId: UUID) {
         guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
-        guard selectedExercises[exerciseIndex].setRows.count > 1 else { return }
-        selectedExercises[exerciseIndex].isBeingEdited = true
         selectedExercises[exerciseIndex].setRows.removeAll { $0.id == setId }
+        // Deleting the last set removes the exercise entirely.
+        if selectedExercises[exerciseIndex].setRows.isEmpty {
+            selectedExercises.remove(at: exerciseIndex)
+        } else {
+            selectedExercises[exerciseIndex].isBeingEdited = true
+        }
     }
 
     private func targetTypeSwitch(exerciseId: UUID, setId: UUID) -> some View {

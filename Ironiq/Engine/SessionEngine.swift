@@ -159,6 +159,28 @@ actor SessionEngine {
         )
     }
 
+    // MARK: - New session preparation
+
+    /// Cleans up any leftover state from a previous session so the engine
+    /// is in `.idle` and ready to accept a new `selectTemplate` or `startAdHocSession`.
+    /// Safe to call from any state; returns without throwing.
+    func prepareForNewSession() async {
+        switch state {
+        case .idle:
+            break
+        case .templateSelected:
+            try? clearTemplate()
+        case .ending(let sessionId):
+            try? await confirmEnd()
+            if case .ended = state { await reset() }
+        case .ended:
+            await reset()
+        case .active, .paused:
+            // Already running — do not interrupt.
+            break
+        }
+    }
+
     // MARK: - Template selection
 
     func selectTemplate(_ templateId: UUID) throws {

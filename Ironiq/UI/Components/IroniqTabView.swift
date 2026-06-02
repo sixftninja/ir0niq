@@ -1,13 +1,38 @@
 import SwiftUI
 
+// MARK: - Session presentation state
+
+// Replaces five competing booleans with a single source of truth.
+// Only one session overlay can be active at a time.
+private enum SessionPresentation: Equatable {
+    case none
+    case dashboard(openLogOnAppear: Bool)
+    case summary
+    case exercisePicker
+
+    var showsDashboard: Bool {
+        if case .dashboard = self { return true }
+        return false
+    }
+    var openLogOnDashboardAppear: Bool {
+        if case .dashboard(let open) = self { return open }
+        return false
+    }
+    var showsSummary: Bool {
+        if case .summary = self { return true }
+        return false
+    }
+    var showsExercisePicker: Bool {
+        if case .exercisePicker = self { return true }
+        return false
+    }
+}
+
 struct IroniqTabView: View {
     @Environment(SessionViewModel.self) private var sessionVM
     @State private var selectedTab: AppTab = .templates
-    @State private var showWorkoutDashboard = false
+    @State private var sessionPresentation: SessionPresentation = .none
     @State private var showSettings = false
-    @State private var showLogOnDashboardOpen = false
-    @State private var showSessionSummary = false
-    @State private var showActiveExercisePicker = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,7 +41,24 @@ struct IroniqTabView: View {
                 case .templates:
                     HomeView()
                 case .start:
-                    StartView(showWorkoutDashboard: $showWorkoutDashboard, showLogOnDashboardOpen: $showLogOnDashboardOpen, showExercisePicker: $showActiveExercisePicker)
+                    StartView(
+                        showWorkoutDashboard: Binding(
+                            get: { sessionPresentation.showsDashboard },
+                            set: { if $0 { sessionPresentation = .dashboard(openLogOnAppear: false) } else { sessionPresentation = .none } }
+                        ),
+                        showLogOnDashboardOpen: Binding(
+                            get: { sessionPresentation.openLogOnDashboardAppear },
+                            set: { newVal in
+                                if case .dashboard = sessionPresentation {
+                                    sessionPresentation = .dashboard(openLogOnAppear: newVal)
+                                }
+                            }
+                        ),
+                        showExercisePicker: Binding(
+                            get: { sessionPresentation.showsExercisePicker },
+                            set: { if $0 { sessionPresentation = .exercisePicker } else { sessionPresentation = .none } }
+                        )
+                    )
                 case .history:
                     HistoryListView()
                 }
@@ -43,25 +85,43 @@ struct IroniqTabView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView()
         }
-        .fullScreenCover(isPresented: $showWorkoutDashboard) {
-            ActiveSessionView(openLogOnAppear: $showLogOnDashboardOpen) {
-                showWorkoutDashboard = false
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { sessionPresentation.showsDashboard },
+                set: { if !$0 { sessionPresentation = .none } }
+            )
+        ) {
+            ActiveSessionView(
+                openLogOnAppear: Binding(
+                    get: { sessionPresentation.openLogOnDashboardAppear },
+                    set: { newVal in
+                        if case .dashboard = sessionPresentation {
+                            sessionPresentation = .dashboard(openLogOnAppear: newVal)
+                        }
+                    }
+                )
+            ) {
                 selectedTab = .start
-                showActiveExercisePicker = true
+                sessionPresentation = .exercisePicker
             }
         }
-        .fullScreenCover(isPresented: $showSessionSummary) {
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { sessionPresentation.showsSummary },
+                set: { if !$0 { sessionPresentation = .none } }
+            )
+        ) {
             SessionSummaryView()
         }
         .onChange(of: sessionVM.completedSessionId) { _, sessionId in
-            showSessionSummary = sessionId != nil
+            if sessionId != nil { sessionPresentation = .summary }
         }
         .onChange(of: sessionVM.isSessionActive) { _, isActive in
             if isActive {
-                showWorkoutDashboard = true
+                sessionPresentation = .dashboard(openLogOnAppear: false)
                 selectedTab = .start
-            } else {
-                showWorkoutDashboard = false
+            } else if sessionPresentation.showsDashboard {
+                sessionPresentation = .none
             }
         }
     }
@@ -117,7 +177,7 @@ struct IroniqTabView: View {
         Button {
             selectedTab = tab
             if tab == .start, sessionVM.isSessionActive {
-                showWorkoutDashboard = true
+                sessionPresentation = .dashboard(openLogOnAppear: false)
             }
         } label: {
             HStack(spacing: 8) {

@@ -73,20 +73,9 @@ final class SessionViewModel {
         hasShownStartCountdown = false
         do {
             let currentState = await engine.state
-            switch currentState {
-            case .active, .paused:
-                await refreshStateAndContext()
-                return true
-            case .templateSelected:
-                try? await engine.clearTemplate()
-            case .ending:
-                try? await engine.confirmEnd()
-                await engine.reset()
-            case .ended:
-                await engine.reset()
-            case .idle:
-                break
-            }
+            if case .active = currentState { await refreshStateAndContext(); return true }
+            if case .paused = currentState { await refreshStateAndContext(); return true }
+            await engine.prepareForNewSession()
             try await engine.selectTemplate(templateId)
             _ = try await engine.startSession()
             await refreshStateAndContext()
@@ -103,20 +92,9 @@ final class SessionViewModel {
         hasShownStartCountdown = false
         do {
             let currentState = await engine.state
-            switch currentState {
-            case .active, .paused:
-                await refreshStateAndContext()
-                return true
-            case .templateSelected:
-                try? await engine.clearTemplate()
-            case .ending:
-                try? await engine.confirmEnd()
-                await engine.reset()
-            case .ended:
-                await engine.reset()
-            case .idle:
-                break
-            }
+            if case .active = currentState { await refreshStateAndContext(); return true }
+            if case .paused = currentState { await refreshStateAndContext(); return true }
+            await engine.prepareForNewSession()
             _ = try await engine.startAdHocSession()
             await refreshStateAndContext()
             return true

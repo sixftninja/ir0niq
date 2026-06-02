@@ -40,6 +40,7 @@
 		4A3EE550FB220CC99030689F /* ProGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CCE4C69BA908105F220973 /* ProGateView.swift */; };
 		50A70766DCBAA13CF6E74187 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C32F9371D92793E080643C /* Enums.swift */; };
 		53CC4B87FC80E1CD61C69638 /* Data+GZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ED28655EBA06C0703915B0 /* Data+GZip.swift */; };
+		53F72F244AA268F9B4ED861C /* Phase3Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E52A71C34B4834C6B66DDB /* Phase3Tests.swift */; };
 		54DFCD406754C3CD4178D931 /* TemplateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006324428AF2C299AEC89139 /* TemplateListView.swift */; };
 		5793B18AA8EE8BB2D9BB518F /* WeightFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5971FD9B2E205546E1933DE2 /* WeightFormatter.swift */; };
 		59540898DEE585609E433B35 /* IroniqWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20338929AB8FCA252E0E51EC /* IroniqWatchTests.swift */; };
@@ -230,6 +231,7 @@
 		C9F819B9C9BB2A034F4F7162 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		D071584FD49D0024E05D6309 /* SessionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEngine.swift; sourceTree = "<group>"; };
 		D2173740A038C9ECD080D93C /* iCloudServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudServiceTests.swift; sourceTree = "<group>"; };
+		D3E52A71C34B4834C6B66DDB /* Phase3Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phase3Tests.swift; sourceTree = "<group>"; };
 		D5D05EA76A8E755F92579400 /* WatchInputFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchInputFaceView.swift; sourceTree = "<group>"; };
 		D79BE6144853D40CA5D38FD1 /* ExercisePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExercisePickerView.swift; sourceTree = "<group>"; };
 		D8FA098104B268290ED22CE0 /* ModelContainerFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactoryTests.swift; sourceTree = "<group>"; };
@@ -355,6 +357,7 @@
 		2F02E730747F73EF8F359B11 /* Regression */ = {
 			isa = PBXGroup;
 			children = (
+				D3E52A71C34B4834C6B66DDB /* Phase3Tests.swift */,
 				12611D69D551924D2B7293B4 /* RegressionTests.swift */,
 			);
 			path = Regression;
@@ -1022,6 +1025,7 @@
 				A234D802F8FB0BA3DE54369A /* MockServices.swift in Sources */,
 				8512DA6C7BD5F50A4F3029CA /* ModelContainerFactoryTests.swift in Sources */,
 				602573A7D01CA9DF0F0A7C6F /* PerformanceTests.swift in Sources */,
+				53F72F244AA268F9B4ED861C /* Phase3Tests.swift in Sources */,
 				DD939C654D2C7FA21CD7637A /* RegressionTests.swift in Sources */,
 				8E5A80F164D7AEF99919A755 /* SeedDataTests.swift in Sources */,
 				B9D24BD183EA62F4B19DF941 /* SessionEngineTests.swift in Sources */,
