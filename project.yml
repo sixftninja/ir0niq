@@ -91,6 +91,11 @@ targets:
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGNING_REQUIRED: YES
+          CODE_SIGNING_ALLOWED: YES
     info:
       path: IroniqWatch/Info.plist
       properties:
@@ -118,6 +123,11 @@ targets:
         CODE_SIGN_IDENTITY: ""
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGNING_ALLOWED: NO
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGNING_REQUIRED: YES
+          CODE_SIGNING_ALLOWED: YES
     info:
       path: IroniqWatchComplication/Info.plist
       properties:
