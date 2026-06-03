@@ -221,7 +221,19 @@ private struct WorkoutSessionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            summaryRow
+            // Reorder button top-left — only when there are pending exercises
+            if hasPendingExercises || isReordering {
+                Button(isReordering ? "Done" : "↕  Reorder") {
+                    withAnimation(.easeInOut(duration: 0.2)) { isReordering.toggle() }
+                }
+                .font(.caption.weight(.bold))
+                .foregroundStyle(Color.ironiqOrange)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Color.ironiqOrange.opacity(0.12))
+                .clipShape(Capsule())
+            }
+
             if sessionVM.exercises.isEmpty {
                 trueEmptyState
             } else if isReordering {
@@ -230,36 +242,6 @@ private struct WorkoutSessionView: View {
                 normalView
             }
         }
-    }
-
-    // MARK: - Summary row with optional reorder toggle
-
-    private var summaryRow: some View {
-        HStack(spacing: 6) {
-            Text("\(loggedSetCount) of \(totalSetCount) sets logged")
-            Text("·")
-            Text("\(sessionVM.exercises.count) exercises")
-            Text("·")
-            Text(sessionVM.sessionElapsed.timerFormatted)
-                .monospacedDigit()
-        }
-        .font(.caption.weight(.semibold))
-        .foregroundStyle(.white.opacity(0.55))
-        .frame(maxWidth: .infinity, alignment: .center)
-        .overlay(alignment: .trailing) {
-            if hasPendingExercises {
-                Button(isReordering ? "Done" : "↕") {
-                    withAnimation(.easeInOut(duration: 0.2)) { isReordering.toggle() }
-                }
-                .font(.caption.weight(.bold))
-                .foregroundStyle(Color.ironiqOrange)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.ironiqOrange.opacity(0.12))
-                .clipShape(Capsule())
-            }
-        }
-        .accessibilityIdentifier("workout_session_summary")
     }
 
     // MARK: - Empty state

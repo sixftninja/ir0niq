@@ -12,6 +12,8 @@ struct TemplateEditorView: View {
     @State private var showExercisePicker = false
     @State private var isSaving = false
     @State private var step: EditorStep = .name
+    @State private var draggingExerciseId: UUID? = nil
+    @State private var draggingOffset: CGFloat = 0
 
     private var displayTitle: String {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
@@ -91,21 +93,61 @@ struct TemplateEditorView: View {
                 .font(.largeTitle.weight(.black))
                 .foregroundStyle(.white)
 
-            // List enables both drag-to-reorder (.onMove) and swipe-to-delete (.swipeActions)
-            List {
-                ForEach(selectedExercises) { row in
+            // VStack with long-press + drag gesture — no system drag handles
+            VStack(spacing: 8) {
+                ForEach(Array(selectedExercises.enumerated()), id: \.element.id) { index, row in
                     exerciseEditorRow(row)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .offset(y: draggingExerciseId == row.id ? draggingOffset : 0)
+                        .scaleEffect(draggingExerciseId == row.id ? 1.03 : 1.0)
+                        .zIndex(draggingExerciseId == row.id ? 1 : 0)
+                        .shadow(
+                            color: draggingExerciseId == row.id ? .black.opacity(0.3) : .clear,
+                            radius: 12, y: 6
+                        )
+                        .gesture(
+                            LongPressGesture(minimumDuration: 0.35)
+                                .sequenced(before: DragGesture(minimumDistance: 4))
+                                .onChanged { value in
+                                    switch value {
+                                    case .first(true):
+                                        // Auto-collapse if expanded, then begin drag
+                                        if expandedExerciseId == row.id {
+                                            withAnimation(.easeInOut(duration: 0.15)) {
+                                                expandedExerciseId = nil
+                                            }
+                                        }
+                                        withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
+                                            draggingExerciseId = row.id
+                                        }
+                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                    case .second(true, let drag?):
+                                        draggingOffset = drag.translation.height
+                                        // Live reorder as user drags
+                                        let rowHeight: CGFloat = 70
+                                        let delta = Int((draggingOffset / rowHeight).rounded())
+                                        let newIndex = max(0, min(selectedExercises.count - 1, index + delta))
+                                        if newIndex != index {
+                                            withAnimation(.easeInOut(duration: 0.15)) {
+                                                selectedExercises.move(
+                                                    fromOffsets: IndexSet([index]),
+                                                    toOffset: newIndex > index ? newIndex + 1 : newIndex
+                                                )
+                                            }
+                                            draggingOffset = 0
+                                        }
+                                    default:
+                                        break
+                                    }
+                                }
+                                .onEnded { _ in
+                                    withAnimation(.spring(response: 0.25, dampingFraction: 0.75)) {
+                                        draggingExerciseId = nil
+                                        draggingOffset = 0
+                                    }
+                                }
+                        )
                 }
-                .onMove { selectedExercises.move(fromOffsets: $0, toOffset: $1) }
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .scrollDisabled(true)
-            .frame(minHeight: CGFloat(selectedExercises.count) * 68)
-            .environment(\.editMode, .constant(.active))
 
             Button {
                 handleExercisePrimaryAction()
@@ -158,30 +200,42 @@ struct TemplateEditorView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .onLongPressGesture(minimumDuration: 0.4) {
-                // Brief scale pop to hint the row is draggable
-                withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) { }
-            }
 
             if isExpanded {
                 ForEach(setEntries(for: row)) { entry in
                     setRow(exerciseId: row.id, setId: entry.id)
                 }
 
-                Button {
-                    addSet(to: row.id)
-                } label: {
-                    Label("Set", systemImage: "plus")
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(Color.ironiqOrange)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 9)
-                        .background(Color.ironiqOrange.opacity(0.1))
-                        .clipShape(Capsule())
+                HStack(spacing: 10) {
+                    Button {
+                        addSet(to: row.id)
+                    } label: {
+                        Label("Set", systemImage: "plus")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(Color.ironiqOrange)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 9)
+                            .background(Color.ironiqOrange.opacity(0.1))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Add set")
+                    .accessibilityIdentifier("template_add_set_button")
+
+                    // Delete exercise — visible only when expanded
+                    Button(role: .destructive) {
+                        withAnimation { selectedExercises.removeAll { $0.id == row.id } }
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Color.ironiqRed.opacity(0.75))
+                            .frame(width: 36, height: 36)
+                            .background(Color.ironiqRed.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Remove exercise")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Add set")
-                .accessibilityIdentifier("template_add_set_button")
                 .padding(.top, 10)
             }
         }
@@ -190,13 +244,6 @@ struct TemplateEditorView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("selected_exercise_\(row.exercise.name.replacingOccurrences(of: " ", with: "_"))")
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button(role: .destructive) {
-                withAnimation { selectedExercises.removeAll { $0.id == row.id } }
-            } label: {
-                Label("Delete", systemImage: "trash")
-            }
-        }
     }
 
     private func setEntries(for row: ExerciseEditorRow) -> [SetRowEntry] {

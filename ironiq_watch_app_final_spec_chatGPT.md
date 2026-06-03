@@ -48,6 +48,7 @@ The watch app can:
 - display workout template list
 - start a selected workout
 - display active workout/set state
+- display live heart rate during active workouts
 - finish set
 - skip set
 - log set
@@ -167,13 +168,14 @@ Required content:
 
 - active set number
 - target reps or target duration
+- live heart rate badge when available
 - `Finish Set` button
 - `Skip Set` button
 
 Example for reps-based set:
 
 ```text
-Set 3/4
+Set 3/4          ♥ 142
 
 10 reps
 
@@ -185,7 +187,7 @@ Skip Set
 Example for duration-based set:
 
 ```text
-Set 2/3
+Set 2/3          ♥ 142
 
 45 sec
 
@@ -193,6 +195,24 @@ Finish Set
 
 Skip Set
 ```
+
+### Heart Rate
+
+Heart rate is a major watch advantage and should be visible during active workouts.
+
+Show it as a small badge with a heart icon and the current number only. Do not write `bpm`.
+
+Example:
+
+```text
+♥ 142
+```
+
+Preferred placement: top-right or another low-distraction corner of the active workout screen.
+
+Heart rate should never dominate the set target. The user is lifting; the heart rate is context, not the main task.
+
+If heart rate is unavailable, hide it silently. Do not show an error.
 
 ### Exercise Name and Workout Name
 
@@ -607,6 +627,7 @@ The phone and watch should behave like two views of one workout.
 - workout template list
 - selected/available workout metadata
 - active workout state
+- live heart rate availability/status if synced from phone, while direct watch measurement remains preferred during workout
 - paused state
 - active exercise/set position
 - target reps
@@ -676,6 +697,8 @@ Test these flows:
 - phone reflects workout started from watch
 - phone-started workout appears correctly on watch
 - active screen shows set number and reps/duration target
+- active screen shows heart icon plus number when heart rate is available
+- active screen hides heart rate silently when unavailable
 - active screen shows Finish Set and Skip Set
 - exercise name appears only if layout remains clean
 - workout name is not shown on active workout screen
