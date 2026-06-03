@@ -341,6 +341,7 @@ struct ActiveSessionView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.55))
                     .frame(maxWidth: .infinity)
+                    .padding(.top, 18)
                     .accessibilityIdentifier("skip_set_button")
 
                 case .resting, .awaitingInput:

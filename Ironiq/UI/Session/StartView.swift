@@ -217,62 +217,22 @@ struct StartView: View {
 private struct WorkoutSessionView: View {
     @Environment(SessionViewModel.self) private var sessionVM
     @Environment(AppState.self) private var appState
-    @State private var isEditingName = false
-    @State private var editedName = ""
-    @FocusState private var nameFocused: Bool
-    @State private var longPressedExerciseId: UUID? = nil
+    @State private var isReordering = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            workoutNameHeader
             summaryRow
             if sessionVM.exercises.isEmpty {
                 trueEmptyState
+            } else if isReordering {
+                reorderView
             } else {
-                exerciseList
+                normalView
             }
         }
     }
 
-    // MARK: - Renamable workout title
-
-    private var workoutNameHeader: some View {
-        Group {
-            if isEditingName {
-                TextField("Workout name", text: $editedName)
-                    .font(.title3.weight(.bold))
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.center)
-                    .focused($nameFocused)
-                    .onSubmit { commitRename() }
-                    .toolbar {
-                        ToolbarItemGroup(placement: .keyboard) {
-                            Spacer()
-                            Button("Done") { commitRename() }
-                                .foregroundStyle(Color.ironiqOrange)
-                        }
-                    }
-            } else {
-                Text(sessionVM.workoutName)
-                    .font(.title3.weight(.bold))
-                    .foregroundStyle(.white)
-                    .onTapGesture {
-                        editedName = sessionVM.workoutName
-                        isEditingName = true
-                        nameFocused = true
-                    }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .center)
-    }
-
-    private func commitRename() {
-        isEditingName = false
-        nameFocused = false
-        Task { await sessionVM.renameWorkout(editedName) }
-    }
-
-    // MARK: - Summary
+    // MARK: - Summary row with optional reorder toggle
 
     private var summaryRow: some View {
         HStack(spacing: 6) {
@@ -286,10 +246,23 @@ private struct WorkoutSessionView: View {
         .font(.caption.weight(.semibold))
         .foregroundStyle(.white.opacity(0.55))
         .frame(maxWidth: .infinity, alignment: .center)
+        .overlay(alignment: .trailing) {
+            if hasPendingExercises {
+                Button(isReordering ? "Done" : "↕") {
+                    withAnimation(.easeInOut(duration: 0.2)) { isReordering.toggle() }
+                }
+                .font(.caption.weight(.bold))
+                .foregroundStyle(Color.ironiqOrange)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.ironiqOrange.opacity(0.12))
+                .clipShape(Capsule())
+            }
+        }
         .accessibilityIdentifier("workout_session_summary")
     }
 
-    // MARK: - Empty state (no exercises added)
+    // MARK: - Empty state
 
     private var trueEmptyState: some View {
         Text("Add an exercise from the workout dashboard to begin")
@@ -300,23 +273,25 @@ private struct WorkoutSessionView: View {
             .padding(.vertical, 32)
     }
 
-    // MARK: - Exercise list
+    // MARK: - Normal view (plain VStack, no drag handles)
 
-    private func isExercisePending(_ exercise: ActiveSessionContext.ExerciseContext) -> Bool {
-        exercise.setContexts.allSatisfy {
-            if case .pending = $0.lifecycleState { return true }
-            return false
+    private var normalView: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            ForEach(Array(sessionVM.exercises.enumerated()), id: \.element.sessionExerciseId) { _, exercise in
+                exerciseSection(exercise)
+            }
         }
     }
 
-    private var exerciseList: some View {
-        // Use List for reorderable exercises, overlaid on the dark background
+    // MARK: - Reorder view (List, sets collapsed, drag handles on pending only)
+
+    private var reorderView: some View {
         List {
             ForEach(Array(sessionVM.exercises.enumerated()), id: \.element.sessionExerciseId) { _, exercise in
-                exerciseSection(exercise)
-                    .listRowBackground(Color.clear)
+                exerciseReorderRow(exercise)
+                    .listRowBackground(Color.white.opacity(0.05))
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 16, trailing: 0))
+                    .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
             }
             .onMove { source, destination in
                 Task { await sessionVM.reorderSessionExercises(from: source, to: destination) }
@@ -324,20 +299,40 @@ private struct WorkoutSessionView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .frame(minHeight: CGFloat(sessionVM.exercises.count) * 80)
-        .environment(\.editMode, .constant(.active))  // always in edit mode so drag handles show
+        .frame(minHeight: CGFloat(sessionVM.exercises.count) * 52)
+        .environment(\.editMode, .constant(.active))
     }
 
+    private func exerciseReorderRow(_ exercise: ActiveSessionContext.ExerciseContext) -> some View {
+        let isPending = exercise.setContexts.allSatisfy {
+            if case .pending = $0.lifecycleState { return true }; return false
+        }
+        let isDone = exercise.setContexts.allSatisfy {
+            if case .logged = $0.lifecycleState { return true }
+            if $0.lifecycleState == .notPerformed { return true }
+            return false
+        }
+        return HStack(spacing: 10) {
+            Text(exercise.exerciseName)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(isPending ? .white : .white.opacity(0.35))
+                .lineLimit(1)
+            Spacer()
+            if !isPending {
+                Text(isDone ? "done" : "in progress")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.3))
+            }
+            completionDot(for: exercise)
+        }
+        .contentShape(Rectangle())
+    }
+
+    // MARK: - Exercise section (normal view)
+
     private func exerciseSection(_ exercise: ActiveSessionContext.ExerciseContext) -> some View {
-        let isPending = isExercisePending(exercise)
-        return VStack(alignment: .leading, spacing: 8) {
-            // Exercise header
-            HStack(spacing: 8) {
-                if isPending {
-                    Image(systemName: "line.3.horizontal")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.25))
-                }
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
                 Text(exercise.exerciseName)
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.white.opacity(0.6))
@@ -346,8 +341,6 @@ private struct WorkoutSessionView: View {
                 Spacer()
                 completionDot(for: exercise)
             }
-
-            // Set rows
             VStack(spacing: 6) {
                 ForEach(Array(exercise.setContexts.enumerated()), id: \.element.sessionSetId) { index, set in
                     setRow(set: set, index: index, exercise: exercise)
@@ -450,6 +443,14 @@ private struct WorkoutSessionView: View {
     }
 
     // MARK: - Computed helpers
+
+    private var hasPendingExercises: Bool {
+        sessionVM.exercises.contains { ex in
+            ex.setContexts.allSatisfy {
+                if case .pending = $0.lifecycleState { return true }; return false
+            }
+        }
+    }
 
     private var loggedSetCount: Int {
         sessionVM.exercises.flatMap(\.setContexts).filter {

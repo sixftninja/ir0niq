@@ -91,9 +91,21 @@ struct TemplateEditorView: View {
                 .font(.largeTitle.weight(.black))
                 .foregroundStyle(.white)
 
-            ForEach(selectedExercises) { row in
-                exerciseEditorRow(row)
+            // List enables both drag-to-reorder (.onMove) and swipe-to-delete (.swipeActions)
+            List {
+                ForEach(selectedExercises) { row in
+                    exerciseEditorRow(row)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                }
+                .onMove { selectedExercises.move(fromOffsets: $0, toOffset: $1) }
             }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .scrollDisabled(true)
+            .frame(minHeight: CGFloat(selectedExercises.count) * 68)
+            .environment(\.editMode, .constant(.active))
 
             Button {
                 handleExercisePrimaryAction()
@@ -129,11 +141,6 @@ struct TemplateEditorView: View {
                 }
             } label: {
                 HStack(spacing: 10) {
-                    // Drag handle — always visible so user can discover reorder
-                    Image(systemName: "line.3.horizontal")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.3))
-
                     Text(row.exercise.name)
                         .font(.body).bold()
                         .foregroundStyle(.white)
