@@ -41,7 +41,7 @@ struct SettingsView: View {
               .foregroundStyle(Color.ironiqOrange)
           }
 
-          Button("Switch Sync Provider") {
+          Button("Switch Login") {
             appState.showProviderSwitchWarning = true
           }
           .foregroundStyle(Color.ironiqOrange)

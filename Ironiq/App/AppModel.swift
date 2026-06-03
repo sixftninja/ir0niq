@@ -43,11 +43,12 @@ final class AppModel {
         Task { await StoreKitService.shared.initialize(appState: appState) }
     }
 
-    // Called at startup and after sign-in. Always attempts cloud restore;
-    // name-based dedup in CloudRestoreService prevents duplicate templates.
+    // Called at startup and after sign-in. Restores from cloud and retries any
+    // previously failed exports (e.g. templates that didn't make it to iCloud).
     func performStartupSync() async {
         guard let provider = appState.syncProvider else { return }
 
+        // Restore cloud content first
         let restorer = CloudRestoreService(templateRepo: templateRepo, sessionRepo: sessionRepo)
         let result = await restorer.restoreIfNeeded(provider: provider)
 
@@ -56,16 +57,39 @@ final class AppModel {
             await historyVM.loadSessions()
         }
 
-        if result.errors.isEmpty || result.templatesRestored > 0 {
+        // Retry any pending exports (items that failed to reach cloud on a previous run)
+        await retryPendingExports()
+
+        if PendingExportQueue.shared.isEmpty {
             appState.markSyncHealthy()
         } else {
-            // All files errored — likely format issue or no files present yet.
-            // Mark healthy unless there are pending export failures.
-            if PendingExportQueue.shared.isEmpty {
-                appState.markSyncHealthy()
-            } else {
-                let count = PendingExportQueue.shared.allItems().count
-                appState.markSyncFailing("\(count) item(s) waiting to sync")
+            let count = PendingExportQueue.shared.allItems().count
+            appState.markSyncFailing("\(count) item(s) waiting to sync")
+        }
+    }
+
+    private func retryPendingExports() async {
+        let items = PendingExportQueue.shared.allItems()
+        guard !items.isEmpty else { return }
+
+        for item in items {
+            do {
+                switch item.type {
+                case .template:
+                    if let dto = try await templateRepo.fetchById(item.id) {
+                        let model = TemplateExportModel(from: dto)
+                        _ = try await CloudStorageRouter.shared.exportTemplate(model)
+                        PendingExportQueue.shared.remove(id: item.id)
+                    } else {
+                        // Template was deleted — remove from queue
+                        PendingExportQueue.shared.remove(id: item.id)
+                    }
+                case .session:
+                    // Session export requires the full DTO; skip silently for now
+                    PendingExportQueue.shared.incrementRetry(id: item.id)
+                }
+            } catch {
+                PendingExportQueue.shared.incrementRetry(id: item.id)
             }
         }
     }

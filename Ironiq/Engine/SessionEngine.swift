@@ -164,6 +164,14 @@ actor SessionEngine {
         )
     }
 
+    // MARK: - Rename current session
+
+    func renameCurrentSession(_ name: String) {
+        guard var context = sessionContext else { return }
+        context.workoutName = name
+        sessionContext = context
+    }
+
     // MARK: - New session preparation
 
     /// Cleans up any leftover state from a previous session so the engine

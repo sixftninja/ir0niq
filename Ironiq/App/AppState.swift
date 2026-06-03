@@ -31,13 +31,14 @@ final class AppState {
     static let hasCompletedOnboarding = "hasCompletedOnboarding"
   }
 
-  // iCloud KV store — persists across reinstalls on the same iCloud account.
+  // iCloud KV — used only for hasCompletedOnboarding so onboarding slides are
+  // skipped on reinstall. Sync credentials are NOT persisted to KV, so a
+  // reinstall always shows the login screen again.
   private static let kv = NSUbiquitousKeyValueStore.default
 
   var unitSystem: UnitSystem = .imperial
   var isProUser: Bool = false
 
-  // Read from UserDefaults OR iCloud KV — whichever is true survives reinstalls.
   var hasCompletedOnboarding: Bool =
     UserDefaults.standard.bool(forKey: Keys.hasCompletedOnboarding)
     || AppState.kv.bool(forKey: Keys.hasCompletedOnboarding)
@@ -52,25 +53,13 @@ final class AppState {
   var useDarkMode: Bool = true
   var restReminderSeconds: Int = 120
 
-  var syncProvider: SyncProvider? = (
-    UserDefaults.standard.string(forKey: Keys.syncProvider)
-    ?? AppState.kv.string(forKey: Keys.syncProvider)
-  ).flatMap(SyncProvider.init(rawValue:))
-
-  var syncAccountId: String? =
-    UserDefaults.standard.string(forKey: Keys.syncAccountId)
-    ?? AppState.kv.string(forKey: Keys.syncAccountId)
-
-  var syncAccountLabel: String? =
-    UserDefaults.standard.string(forKey: Keys.syncAccountLabel)
-    ?? AppState.kv.string(forKey: Keys.syncAccountLabel)
-
+  // Sync credentials — UserDefaults only. Cleared on reinstall so the user must log in again.
+  var syncProvider: SyncProvider? = UserDefaults.standard.string(forKey: Keys.syncProvider)
+    .flatMap(SyncProvider.init(rawValue:))
+  var syncAccountId: String? = UserDefaults.standard.string(forKey: Keys.syncAccountId)
+  var syncAccountLabel: String? = UserDefaults.standard.string(forKey: Keys.syncAccountLabel)
   var syncStatusMessage: String? = nil
-
-  var syncEnabled: Bool =
-    UserDefaults.standard.bool(forKey: Keys.syncEnabled)
-    || AppState.kv.bool(forKey: Keys.syncEnabled)
-
+  var syncEnabled: Bool = UserDefaults.standard.bool(forKey: Keys.syncEnabled)
   var syncHealth: SyncHealthState = .unknown
   var isPreparingSync = false
   var showProviderSwitchWarning = false
@@ -99,32 +88,18 @@ final class AppState {
     return false
   }
 
-  func markSyncHealthy() {
-    syncHealth = .healthy
-  }
-
-  func markSyncFailing(_ reason: String) {
-    syncHealth = .failing(reason)
-  }
+  func markSyncHealthy() { syncHealth = .healthy }
+  func markSyncFailing(_ reason: String) { syncHealth = .failing(reason) }
 
   func completeSync(provider: SyncProvider, accountId: String, accountLabel: String?) {
     syncProvider = provider
     syncAccountId = accountId
     syncAccountLabel = accountLabel
-
     UserDefaults.standard.set(provider.rawValue, forKey: Keys.syncProvider)
     UserDefaults.standard.set(accountId, forKey: Keys.syncAccountId)
     UserDefaults.standard.set(accountLabel, forKey: Keys.syncAccountLabel)
     syncEnabled = true
     UserDefaults.standard.set(true, forKey: Keys.syncEnabled)
-
-    // Mirror to iCloud KV so reinstalls on the same account skip onboarding.
-    AppState.kv.set(provider.rawValue, forKey: Keys.syncProvider)
-    AppState.kv.set(accountId, forKey: Keys.syncAccountId)
-    AppState.kv.set(accountLabel as Any, forKey: Keys.syncAccountLabel)
-    AppState.kv.set(true, forKey: Keys.syncEnabled)
-    AppState.kv.synchronize()
-
     syncStatusMessage = "\(provider.displayName) sync is ready."
     syncHealth = .healthy
   }
@@ -133,24 +108,16 @@ final class AppState {
     syncProvider = nil
     syncAccountId = nil
     syncAccountLabel = nil
-
     UserDefaults.standard.removeObject(forKey: Keys.syncProvider)
     UserDefaults.standard.removeObject(forKey: Keys.syncAccountId)
     UserDefaults.standard.removeObject(forKey: Keys.syncAccountLabel)
     syncEnabled = false
     UserDefaults.standard.set(false, forKey: Keys.syncEnabled)
-
-    AppState.kv.removeObject(forKey: Keys.syncProvider)
-    AppState.kv.removeObject(forKey: Keys.syncAccountId)
-    AppState.kv.removeObject(forKey: Keys.syncAccountLabel)
-    AppState.kv.set(false, forKey: Keys.syncEnabled)
-    AppState.kv.synchronize()
-
     syncStatusMessage = nil
     syncHealth = .unknown
   }
 
-  // MARK: - Pro feature limits (nonisolated so they can be read from any context)
+  // MARK: - Pro feature limits
   nonisolated static let freeTemplateLimit = 7
   nonisolated static let freeHistoryDays = 90
 }

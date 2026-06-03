@@ -143,6 +143,13 @@ final class SessionViewModel {
         await refreshStateAndContext()
     }
 
+    func renameWorkout(_ name: String) async {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        await engine.renameCurrentSession(trimmed)
+        await refreshStateAndContext()
+    }
+
     func pauseSession() async {
         do { try await engine.pauseSession() }
         catch { setAlert(error) }

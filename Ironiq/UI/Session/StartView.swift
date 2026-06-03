@@ -26,8 +26,9 @@ struct StartView: View {
                     .padding(.bottom, 90)
                 }
             }
-            .navigationTitle("Start")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle(sessionVM.isSessionActive ? "" : "Start")
+            .navigationBarTitleDisplayMode(sessionVM.isSessionActive ? .inline : .large)
+            .toolbar(sessionVM.isSessionActive ? .hidden : .visible, for: .navigationBar)
         }
         .sheet(isPresented: $showExercisePicker) {
             NavigationStack {
@@ -216,9 +217,13 @@ struct StartView: View {
 private struct WorkoutSessionView: View {
     @Environment(SessionViewModel.self) private var sessionVM
     @Environment(AppState.self) private var appState
+    @State private var isEditingName = false
+    @State private var editedName = ""
+    @FocusState private var nameFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            workoutNameHeader
             summaryRow
             if sessionVM.exercises.isEmpty {
                 trueEmptyState
@@ -226,6 +231,44 @@ private struct WorkoutSessionView: View {
                 exerciseList
             }
         }
+    }
+
+    // MARK: - Renamable workout title
+
+    private var workoutNameHeader: some View {
+        Group {
+            if isEditingName {
+                TextField("Workout name", text: $editedName)
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .focused($nameFocused)
+                    .onSubmit { commitRename() }
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") { commitRename() }
+                                .foregroundStyle(Color.ironiqOrange)
+                        }
+                    }
+            } else {
+                Text(sessionVM.workoutName)
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.white)
+                    .onTapGesture {
+                        editedName = sessionVM.workoutName
+                        isEditingName = true
+                        nameFocused = true
+                    }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    private func commitRename() {
+        isEditingName = false
+        nameFocused = false
+        Task { await sessionVM.renameWorkout(editedName) }
     }
 
     // MARK: - Summary
@@ -241,6 +284,7 @@ private struct WorkoutSessionView: View {
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(.white.opacity(0.55))
+        .frame(maxWidth: .infinity, alignment: .center)
         .accessibilityIdentifier("workout_session_summary")
     }
 
