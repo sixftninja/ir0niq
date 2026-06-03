@@ -72,6 +72,8 @@ targets:
             NSUbiquitousContainerIsDocumentScopePublic: true
             NSUbiquitousContainerName: Ironiq
             NSUbiquitousContainerSupportedFolderLevels: Any
+        LSApplicationLaunchProhibited: true
+        ITSWatchOnlyContainer: true
     dependencies:
       - target: IroniqWatch
         embed: true
