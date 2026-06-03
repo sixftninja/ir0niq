@@ -756,6 +756,28 @@ actor SessionEngine {
         scheduleIdleReset(sessionId: context.sessionId)
     }
 
+    // MARK: - Reorder exercises mid-session (pending only, does not affect template)
+
+    func reorderExercises(from source: IndexSet, to destination: Int) {
+        guard case .active = state else { return }
+        guard var context = sessionContext else { return }
+
+        // Only move exercises where no set has been started yet
+        let canMove = source.allSatisfy { index in
+            index < context.exercises.count &&
+            context.exercises[index].setContexts.allSatisfy { set in
+                if case .pending = set.lifecycleState { return true }
+                return false
+            }
+        }
+        guard canMove else { return }
+        // Don't move the currently active exercise
+        guard !source.contains(context.currentExerciseIndex) else { return }
+
+        context.exercises.move(fromOffsets: source, toOffset: destination)
+        sessionContext = context
+    }
+
     // MARK: - Reset
 
     func reset() async {

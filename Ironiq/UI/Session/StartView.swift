@@ -220,6 +220,7 @@ private struct WorkoutSessionView: View {
     @State private var isEditingName = false
     @State private var editedName = ""
     @FocusState private var nameFocused: Bool
+    @State private var longPressedExerciseId: UUID? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -301,18 +302,42 @@ private struct WorkoutSessionView: View {
 
     // MARK: - Exercise list
 
-    private var exerciseList: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            ForEach(Array(sessionVM.exercises.enumerated()), id: \.element.sessionExerciseId) { _, exercise in
-                exerciseSection(exercise)
-            }
+    private func isExercisePending(_ exercise: ActiveSessionContext.ExerciseContext) -> Bool {
+        exercise.setContexts.allSatisfy {
+            if case .pending = $0.lifecycleState { return true }
+            return false
         }
     }
 
+    private var exerciseList: some View {
+        // Use List for reorderable exercises, overlaid on the dark background
+        List {
+            ForEach(Array(sessionVM.exercises.enumerated()), id: \.element.sessionExerciseId) { _, exercise in
+                exerciseSection(exercise)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 16, trailing: 0))
+            }
+            .onMove { source, destination in
+                Task { await sessionVM.reorderSessionExercises(from: source, to: destination) }
+            }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .frame(minHeight: CGFloat(sessionVM.exercises.count) * 80)
+        .environment(\.editMode, .constant(.active))  // always in edit mode so drag handles show
+    }
+
     private func exerciseSection(_ exercise: ActiveSessionContext.ExerciseContext) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let isPending = isExercisePending(exercise)
+        return VStack(alignment: .leading, spacing: 8) {
             // Exercise header
-            HStack {
+            HStack(spacing: 8) {
+                if isPending {
+                    Image(systemName: "line.3.horizontal")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.25))
+                }
                 Text(exercise.exerciseName)
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.white.opacity(0.6))
@@ -378,7 +403,7 @@ private struct WorkoutSessionView: View {
             if let w = weight {
                 return "\(valueText)  ·  \(WeightFormatter.format(w, unitSystem: appState.unitSystem))"
             }
-            return valueText.isEmpty ? "Logged" : valueText
+            return valueText.isEmpty ? "Logged" : "\(valueText)  ·  Bodyweight"
 
         case .notPerformed:
             return "Skipped"
@@ -443,7 +468,6 @@ private struct AddExerciseToWorkoutView: View {
     let onAdd: ([CreateTemplateSetInput]) -> Void
     let onBack: () -> Void
     @State private var setRows: [ActiveSetPlanRow]
-    @State private var restSeconds = 30
 
     init(exercise: ExerciseDTO, onAdd: @escaping ([CreateTemplateSetInput]) -> Void, onBack: @escaping () -> Void) {
         self.exercise = exercise
@@ -466,20 +490,6 @@ private struct AddExerciseToWorkoutView: View {
                 }
 
                 VStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("Rest target for \(exercise.name)", systemImage: "timer")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(.white.opacity(0.72))
-                            .lineLimit(1)
-                        Stepper("\(restSeconds)s between sets", value: $restSeconds, in: 0...600, step: 5)
-                            .font(.caption.monospacedDigit().weight(.semibold))
-                            .foregroundStyle(.white)
-                            .tint(Color.ironiqOrange)
-                    }
-                    .padding(12)
-                    .background(Color.white.opacity(0.06))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-
                     ForEach(activeSetEntries) { entry in
                         activeSetRow(id: entry.id)
                     }
@@ -510,7 +520,7 @@ private struct AddExerciseToWorkoutView: View {
                         CreateTemplateSetInput(
                             targetReps: row.targetType == .reps ? row.targetReps : nil,
                             targetDuration: row.targetType == .duration ? Double(row.targetDurationSeconds) : nil,
-                            restDuration: Double(restSeconds)
+                            restDuration: nil
                         )
                     })
                 }
@@ -542,18 +552,20 @@ private struct AddExerciseToWorkoutView: View {
 
                 Spacer(minLength: 8)
 
-                if setRows.count > 1 {
-                    Button {
-                        guard let currentIndex = activeSetIndex(id: id) else { return }
+                Button {
+                    guard let currentIndex = activeSetIndex(id: id) else { return }
+                    if setRows.count == 1 {
+                        onBack()  // removing the only set cancels adding the exercise
+                    } else {
                         setRows.remove(at: currentIndex)
-                    } label: {
-                        Image(systemName: "minus.circle")
-                            .font(.caption)
-                            .foregroundStyle(Color.ironiqRed.opacity(0.8))
-                            .frame(width: 28, height: 28)
                     }
-                    .accessibilityIdentifier("active_remove_set_button")
+                } label: {
+                    Image(systemName: "minus.circle")
+                        .font(.caption)
+                        .foregroundStyle(Color.ironiqRed.opacity(0.8))
+                        .frame(width: 28, height: 28)
                 }
+                .accessibilityIdentifier("active_remove_set_button")
             }
 
             if activeSetTargetType(id: id) == .duration {

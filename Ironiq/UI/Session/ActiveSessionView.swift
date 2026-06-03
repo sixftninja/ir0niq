@@ -162,7 +162,7 @@ struct ActiveSessionView: View {
     }
 
     private var topControls: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 22) {
             VStack(spacing: 5) {
                 RoundedRectangle(cornerRadius: 3)
                     .fill(Color.white.opacity(0.72))
@@ -199,6 +199,26 @@ struct ActiveSessionView: View {
 
                 Spacer()
 
+                // Pause / Resume
+                Button {
+                    Task {
+                        if case .paused = vm.engineState {
+                            await vm.resumeSession()
+                        } else {
+                            await vm.pauseSession()
+                        }
+                    }
+                } label: {
+                    Image(systemName: isPaused ? "play.circle" : "pause.circle")
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                        .frame(width: 42, height: 42)
+                        .background(Color.black.opacity(0.22))
+                        .clipShape(Circle())
+                }
+                .accessibilityLabel(isPaused ? "Resume workout" : "Pause workout")
+
+                // Stop
                 Button {
                     Task { await endWorkout() }
                 } label: {
@@ -269,6 +289,20 @@ struct ActiveSessionView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 22)
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            )
+            .overlay(
+                Group {
+                    if isPaused {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 22)
+                                .fill(Color.black.opacity(0.62))
+                            Text("PAUSED")
+                                .font(.title.weight(.black))
+                                .foregroundStyle(.white.opacity(0.88))
+                                .tracking(4)
+                        }
+                    }
+                }
             )
             .padding(.horizontal, 20)
         }
@@ -376,6 +410,11 @@ struct ActiveSessionView: View {
         let index = vm.currentSetIndex - 1
         guard index >= 0, index < exercise.setContexts.count else { return nil }
         return exercise.setContexts[index]
+    }
+
+    private var isPaused: Bool {
+        if case .paused = vm.engineState { return true }
+        return false
     }
 
     private var shouldShowRestPrompt: Bool {

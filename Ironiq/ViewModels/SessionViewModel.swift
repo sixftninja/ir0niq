@@ -143,6 +143,11 @@ final class SessionViewModel {
         await refreshStateAndContext()
     }
 
+    func reorderSessionExercises(from source: IndexSet, to destination: Int) async {
+        await engine.reorderExercises(from: source, to: destination)
+        await refreshStateAndContext()
+    }
+
     func renameWorkout(_ name: String) async {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }

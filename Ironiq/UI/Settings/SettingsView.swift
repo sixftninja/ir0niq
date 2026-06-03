@@ -76,10 +76,6 @@ struct SettingsView: View {
           .foregroundStyle(.primary)
           .accessibilityIdentifier("unit_picker")
 
-          Toggle("Dark Mode", isOn: $state.useDarkMode)
-            .tint(Color.ironiqOrange)
-            .accessibilityIdentifier("dark_mode_toggle")
-
           Stepper(
             "Rest reminder: \(state.restReminderSeconds)s",
             value: $state.restReminderSeconds,

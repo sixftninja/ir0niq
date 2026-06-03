@@ -25,7 +25,7 @@ struct InputFaceView: View {
         self.onLog = onLog
         _loggingType = State(initialValue: defaultLoggingType)
         _reps = State(initialValue: set.targetReps ?? 10)
-        _durationSeconds = State(initialValue: set.targetDuration.map { Int($0) } ?? 30)
+        _durationSeconds = State(initialValue: 0)
         _noWeight = State(initialValue: false)
     }
 

@@ -128,7 +128,12 @@ struct TemplateEditorView: View {
                     expandedExerciseId = isExpanded ? nil : row.id
                 }
             } label: {
-                HStack {
+                HStack(spacing: 10) {
+                    // Drag handle — always visible so user can discover reorder
+                    Image(systemName: "line.3.horizontal")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.3))
+
                     Text(row.exercise.name)
                         .font(.body).bold()
                         .foregroundStyle(.white)
@@ -146,10 +151,12 @@ struct TemplateEditorView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .onLongPressGesture(minimumDuration: 0.4) {
+                // Brief scale pop to hint the row is draggable
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) { }
+            }
 
             if isExpanded {
-                exerciseRestPicker(row)
-
                 ForEach(setEntries(for: row)) { entry in
                     setRow(exerciseId: row.id, setId: entry.id)
                 }
@@ -176,6 +183,13 @@ struct TemplateEditorView: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("selected_exercise_\(row.exercise.name.replacingOccurrences(of: " ", with: "_"))")
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button(role: .destructive) {
+                withAnimation { selectedExercises.removeAll { $0.id == row.id } }
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 
     private func setEntries(for row: ExerciseEditorRow) -> [SetRowEntry] {
@@ -312,34 +326,6 @@ struct TemplateEditorView: View {
     }
 
     @ViewBuilder
-    private func exerciseRestPicker(_ row: ExerciseEditorRow) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Rest target for \(row.exercise.name)", systemImage: "timer")
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.white.opacity(0.72))
-                .lineLimit(1)
-            Stepper("\(row.restSeconds)s between sets", value: dirtyRestBinding(exerciseId: row.id), in: 0...600, step: 5)
-                .font(.caption.monospacedDigit().weight(.semibold))
-                .foregroundStyle(.white)
-                .tint(Color.ironiqOrange)
-        }
-        .padding(12)
-        .background(Color.white.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.top, 12)
-    }
-
-    private func dirtyRestBinding(exerciseId: UUID) -> Binding<Int> {
-        Binding<Int>(
-            get: { exerciseRow(id: exerciseId)?.restSeconds ?? 30 },
-            set: { newValue in
-                guard let exerciseIndex = exerciseIndex(id: exerciseId) else { return }
-                selectedExercises[exerciseIndex].isBeingEdited = true
-                selectedExercises[exerciseIndex].restSeconds = newValue
-            }
-        )
-    }
-
     private func targetNumberField(label: String, value: Binding<Int>, placeholder: String) -> some View {
         let defaultValue = Int(placeholder) ?? 0
         return HStack {
@@ -372,8 +358,7 @@ struct TemplateEditorView: View {
                         targetReps: s.targetReps ?? 10,
                         targetDurationSeconds: Int(s.targetDuration ?? 30)
                     )
-                },
-                restSeconds: Int(ex.sets.first?.restDuration ?? 30)
+                }
             )
         }
         expandedExerciseId = nil
@@ -409,7 +394,7 @@ struct TemplateEditorView: View {
                     CreateTemplateSetInput(
                         targetReps: s.targetType == .reps ? s.targetReps : nil,
                         targetDuration: s.targetType == .duration ? Double(s.targetDurationSeconds) : nil,
-                        restDuration: Double(row.restSeconds)
+                        restDuration: nil
                     )
                 }
                 return CreateTemplateExerciseInput(
@@ -462,7 +447,6 @@ struct ExerciseEditorRow: Identifiable {
     let id = UUID()
     var exercise: ExerciseDTO
     var setRows: [SetEditorRow] = [SetEditorRow()]
-    var restSeconds: Int = 30
     var isBeingEdited = false
 }
 
