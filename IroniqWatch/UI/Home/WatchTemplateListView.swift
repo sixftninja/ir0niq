@@ -10,7 +10,7 @@ struct WatchTemplateListView: View {
                     Image(systemName: "iphone")
                         .font(.system(size: 28))
                         .foregroundStyle(.secondary)
-                    Text("Open Ironiq\non iPhone")
+                    Text("Start a workout\non the Ironiq app")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
