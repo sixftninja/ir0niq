@@ -11,6 +11,7 @@ struct ActiveSessionView: View {
     @State private var showCountdown = true
     @State private var countdown = 5
     @State private var emptyHintOffset: CGFloat = 0
+    @State private var nudgeOffset: CGFloat = 0
     private let onAddExercise: () -> Void
 
     init(openLogOnAppear: Binding<Bool> = .constant(false), onAddExercise: @escaping () -> Void = {}) {
@@ -134,10 +135,30 @@ struct ActiveSessionView: View {
 
             Spacer(minLength: 18)
 
-            primaryControls
+            // Set-level actions — positioned in the flow
+            setLevelControls
+                .padding(.horizontal, 20)
+
+            // Flexible spacer creates clear visual separation from workout-level action
+            Spacer(minLength: 36)
+
+            // Workout-level action — only visible once exercises have been added
+            if !vm.exercises.isEmpty {
+                Button(action: onAddExercise) {
+                    Text("Add Exercise")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.ironiqOrange)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 26)
+                .accessibilityIdentifier("dashboard_add_exercise_button")
+            } else {
+                Spacer().frame(height: 26)
+            }
         }
+        .offset(y: nudgeOffset)
     }
 
     private var topControls: some View {
@@ -149,6 +170,20 @@ struct ActiveSessionView: View {
                 Text("Workout Session")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.7))
+            }
+            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity)
+            .onTapGesture {
+                // Subtle nudge-down hint so user discovers the drag-to-dismiss gesture
+                Task {
+                    withAnimation(.spring(response: 0.22, dampingFraction: 0.72)) {
+                        nudgeOffset = 22
+                    }
+                    try? await Task.sleep(for: .milliseconds(180))
+                    withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
+                        nudgeOffset = 0
+                    }
+                }
             }
 
             HStack(spacing: 14) {
@@ -256,47 +291,42 @@ struct ActiveSessionView: View {
         }
     }
 
-    private var primaryControls: some View {
-        VStack(spacing: 0) {
-            // Set-level actions
+    private var setLevelControls: some View {
+        VStack(spacing: 10) {
             if !vm.exercises.isEmpty, let set = vm.currentSet {
-                VStack(spacing: 10) {
-                    switch set.lifecycleState {
-                    case .pending, .inProgress:
-                        FinishSetButton(needsAttention: shouldShowRestPrompt) {
-                            Task { await finishSetAndLog() }
-                        }
-                        .accessibilityIdentifier("finish_set_button")
+                switch set.lifecycleState {
+                case .pending, .inProgress:
+                    FinishSetButton(needsAttention: shouldShowRestPrompt) {
+                        Task { await finishSetAndLog() }
+                    }
+                    .accessibilityIdentifier("finish_set_button")
 
-                        Button("Skip Set") {
-                            Task { await vm.skipCurrentSet() }
-                        }
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.55))
-                        .frame(maxWidth: .infinity)
-                        .accessibilityIdentifier("skip_set_button")
+                    Button("Skip Set") {
+                        Task { await vm.skipCurrentSet() }
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.55))
+                    .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier("skip_set_button")
 
-                    case .resting, .awaitingInput:
-                        IroniqButton("Log Set") {
-                            showLogInput = true
-                        }
+                case .resting, .awaitingInput:
+                    IroniqButton("Log Set") { showLogInput = true }
                         .accessibilityIdentifier("log_set_button")
 
-                    case .logged:
-                        IroniqButton(isLastSet ? "End" : "Next") {
-                            Task {
-                                if isLastSet { await endWorkout() }
-                                else { await vm.advanceToNext() }
-                            }
+                case .logged:
+                    IroniqButton(isLastSet ? "End" : "Next") {
+                        Task {
+                            if isLastSet { await endWorkout() }
+                            else { await vm.advanceToNext() }
                         }
-                        .accessibilityIdentifier(isLastSet ? "end_workout_button" : "advance_button")
+                    }
+                    .accessibilityIdentifier(isLastSet ? "end_workout_button" : "advance_button")
 
-                    case .notPerformed:
-                        IroniqButton(isLastSet ? "End" : "Next") {
-                            Task {
-                                if isLastSet { await endWorkout() }
-                                else { await vm.advanceToNext() }
-                            }
+                case .notPerformed:
+                    IroniqButton(isLastSet ? "End" : "Next") {
+                        Task {
+                            if isLastSet { await endWorkout() }
+                            else { await vm.advanceToNext() }
                         }
                     }
                 }
@@ -305,21 +335,6 @@ struct ActiveSessionView: View {
                     Task { await endWorkout() }
                 }
             }
-
-            // Workout-level action — separated visually
-            Rectangle()
-                .fill(Color.white.opacity(0.1))
-                .frame(height: 1)
-                .padding(.vertical, 16)
-
-            Button(action: onAddExercise) {
-                Text("Add Exercise")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.ironiqOrange)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("dashboard_add_exercise_button")
         }
     }
 
