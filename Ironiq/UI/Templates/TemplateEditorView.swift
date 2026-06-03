@@ -14,6 +14,8 @@ struct TemplateEditorView: View {
     @State private var step: EditorStep = .name
     @State private var draggingExerciseId: UUID? = nil
     @State private var draggingOffset: CGFloat = 0
+    @State private var currentDragIndex: Int? = nil
+    @State private var dragTranslationBaseline: CGFloat = 0
 
     private var displayTitle: String {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
@@ -154,20 +156,30 @@ struct TemplateEditorView: View {
                                         withAnimation(.easeInOut(duration: 0.15)) { expandedExerciseId = nil }
                                     }
                                     draggingExerciseId = row.id
+                                    currentDragIndex = dragIndex
+                                    dragTranslationBaseline = 0
                                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
                                 case .second(true, let drag?):
-                                    draggingOffset = drag.translation.height
-                                    let delta = Int((draggingOffset / 68).rounded())
-                                    let newIdx = max(0, min(selectedExercises.count - 1, dragIndex + delta))
-                                    if newIdx != dragIndex {
-                                        withAnimation(.easeInOut(duration: 0.12)) {
-                                            selectedExercises.move(
-                                                fromOffsets: IndexSet([dragIndex]),
-                                                toOffset: newIdx > dragIndex ? newIdx + 1 : newIdx
-                                            )
-                                        }
-                                        draggingOffset = 0
+                                    guard let current = currentDragIndex else { break }
+                                    // Relative offset from the last reorder position
+                                    let relative = drag.translation.height - dragTranslationBaseline
+                                    draggingOffset = relative
+                                    let delta = Int((relative / 68).rounded())
+                                    guard delta != 0 else { break }
+                                    let newIdx = max(0, min(selectedExercises.count - 1, current + delta))
+                                    guard newIdx != current else { break }
+                                    withAnimation(.easeInOut(duration: 0.12)) {
+                                        selectedExercises.move(
+                                            fromOffsets: IndexSet([current]),
+                                            toOffset: newIdx > current ? newIdx + 1 : newIdx
+                                        )
                                     }
+                                    // Advance baseline by exactly how far we moved
+                                    dragTranslationBaseline += CGFloat(delta) * 68
+                                    draggingOffset = relative - CGFloat(delta) * 68
+                                    currentDragIndex = newIdx
+
                                 default: break
                                 }
                             }
@@ -176,6 +188,8 @@ struct TemplateEditorView: View {
                                     draggingExerciseId = nil
                                     draggingOffset = 0
                                 }
+                                currentDragIndex = nil
+                                dragTranslationBaseline = 0
                             }
                     )
 
