@@ -72,6 +72,9 @@ targets:
             NSUbiquitousContainerIsDocumentScopePublic: true
             NSUbiquitousContainerName: Ironiq
             NSUbiquitousContainerSupportedFolderLevels: Any
+    dependencies:
+      - target: IroniqWatch
+        embed: true
 
   # ─── watchOS App ───────────────────────────────────────────────────────────
   IroniqWatch:
@@ -185,6 +188,8 @@ schemes:
     build:
       targets:
         Ironiq: all
+        IroniqWatch: all
+        IroniqWatchComplication: all
         IroniqTests: [testing]
         IroniqUITests: [testing]
     test:

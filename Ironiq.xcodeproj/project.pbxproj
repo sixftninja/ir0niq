@@ -22,6 +22,7 @@
 		17432195F5AAA6AE4BEB7943 /* IroniqUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BF140B18843850BCCCEAA7 /* IroniqUITests.swift */; };
 		1BA76E77E8BC0B70132A3815 /* SessionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D071584FD49D0024E05D6309 /* SessionEngine.swift */; };
 		1C9C979C16DFA2FF6ED9DC23 /* CloudRestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26FBCF97A9A747E03EBE0C1F /* CloudRestoreService.swift */; };
+		213EF94C78EF614C24AD7227 /* IroniqWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BBC81C59915BB058BCC762EF /* IroniqWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		275BADD1E2CA8C9EC5F30D00 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B8A937908F8160DBAD4D42 /* SettingsViewModel.swift */; };
 		3131CBB80BF36F81A196168E /* PendingExportQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC4B688F793CE5094CEB2B4 /* PendingExportQueue.swift */; };
 		348056BA014EBDA5D17D6180 /* SessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B5B6F3FD34E843C1EC9361 /* SessionViewModel.swift */; };
@@ -126,6 +127,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0E70A7DC24B61D4338C0DFAF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16618C087402DF341C28B176 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1738BF334A62C5C4BD72A940;
+			remoteInfo = IroniqWatch;
+		};
 		2263DF1BBE3D9536C1EC572E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 16618C087402DF341C28B176 /* Project object */;
@@ -148,6 +156,20 @@
 			remoteInfo = Ironiq;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0CB4B7C31F9E1ED9336AAB02 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				213EF94C78EF614C24AD7227 /* IroniqWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		005AC8EAD8B038D605BE280D /* SessionModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModelTests.swift; sourceTree = "<group>"; };
@@ -798,10 +820,12 @@
 			buildPhases = (
 				31BAED16B08BEF5821D4C46A /* Sources */,
 				BF8EB9F94FAB847B671E127B /* Resources */,
+				0CB4B7C31F9E1ED9336AAB02 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				55691BCD18F640FD1FEF83C0 /* PBXTargetDependency */,
 			);
 			name = Ironiq;
 			packageProductDependencies = (
@@ -1099,6 +1123,11 @@
 			isa = PBXTargetDependency;
 			target = 5C1880E4956898BA553B58CC /* Ironiq */;
 			targetProxy = 2263DF1BBE3D9536C1EC572E /* PBXContainerItemProxy */;
+		};
+		55691BCD18F640FD1FEF83C0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1738BF334A62C5C4BD72A940 /* IroniqWatch */;
+			targetProxy = 0E70A7DC24B61D4338C0DFAF /* PBXContainerItemProxy */;
 		};
 		A76A431125ECD74A4938C18A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -49,6 +49,34 @@
                ReferencedContainer = "container:Ironiq.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1738BF334A62C5C4BD72A940"
+               BuildableName = "IroniqWatch.app"
+               BlueprintName = "IroniqWatch"
+               ReferencedContainer = "container:Ironiq.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "57992F2F127DBBEE3C8AB2C3"
+               BuildableName = "IroniqWatchComplication.appex"
+               BlueprintName = "IroniqWatchComplication"
+               ReferencedContainer = "container:Ironiq.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
