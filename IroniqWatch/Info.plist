@@ -28,7 +28,5 @@
 	<string>Ironiq saves your workout to Apple Health.</string>
 	<key>WKApplication</key>
 	<true/>
-	<key>WKWatchOnly</key>
-	<true/>
 </dict>
 </plist>

@@ -35,10 +35,6 @@
 	<string>com.googleusercontent.apps.323802514528-f5inc1l6a4sgt7r067is6v8gghmc5aji</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>ITSWatchOnlyContainer</key>
-	<true/>
-	<key>LSApplicationLaunchProhibited</key>
-	<true/>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Ironiq reads your heart rate to enhance workout tracking.</string>
 	<key>NSHealthUpdateUsageDescription</key>
