@@ -222,25 +222,31 @@ private struct WorkoutSessionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Reorder button top-left — only when there are pending exercises
-            if hasPendingExercises || isReordering {
-                Button(isReordering ? "Done" : "↕  Reorder") {
-                    withAnimation(.easeInOut(duration: 0.2)) { isReordering.toggle() }
-                }
-                .font(.caption.weight(.bold))
-                .foregroundStyle(Color.ironiqOrange)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(Color.ironiqOrange.opacity(0.12))
-                .clipShape(Capsule())
+            if hasPendingExercises {
+                Button("↕  Reorder") { isReordering = true }
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.ironiqOrange)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.ironiqOrange.opacity(0.12))
+                    .clipShape(Capsule())
             }
 
             if sessionVM.exercises.isEmpty {
                 trueEmptyState
-            } else if isReordering {
-                reorderView
             } else {
                 normalView
             }
+        }
+        // Present reorder as a sheet — its own scroll context, no nested-List problem
+        .sheet(isPresented: $isReordering) {
+            ReorderExercisesSheet(
+                exercises: sessionVM.exercises,
+                onMove: { source, dest in
+                    Task { await sessionVM.reorderSessionExercises(from: source, to: dest) }
+                }
+            )
+            .environment(sessionVM)
         }
     }
 
@@ -265,50 +271,6 @@ private struct WorkoutSessionView: View {
         }
     }
 
-    // MARK: - Reorder view (List, sets collapsed, drag handles on pending only)
-
-    private var reorderView: some View {
-        List {
-            ForEach(Array(sessionVM.exercises.enumerated()), id: \.element.sessionExerciseId) { _, exercise in
-                exerciseReorderRow(exercise)
-                    .listRowBackground(Color.white.opacity(0.05))
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
-            }
-            .onMove { source, destination in
-                Task { await sessionVM.reorderSessionExercises(from: source, to: destination) }
-            }
-        }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .frame(minHeight: CGFloat(sessionVM.exercises.count) * 52)
-        .environment(\.editMode, .constant(.active))
-    }
-
-    private func exerciseReorderRow(_ exercise: ActiveSessionContext.ExerciseContext) -> some View {
-        let isPending = exercise.setContexts.allSatisfy {
-            if case .pending = $0.lifecycleState { return true }; return false
-        }
-        let isDone = exercise.setContexts.allSatisfy {
-            if case .logged = $0.lifecycleState { return true }
-            if $0.lifecycleState == .notPerformed { return true }
-            return false
-        }
-        return HStack(spacing: 10) {
-            Text(exercise.exerciseName)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(isPending ? .white : .white.opacity(0.35))
-                .lineLimit(1)
-            Spacer()
-            if !isPending {
-                Text(isDone ? "done" : "in progress")
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.3))
-            }
-            completionDot(for: exercise)
-        }
-        .contentShape(Rectangle())
-    }
 
     // MARK: - Exercise section (normal view)
 
@@ -771,6 +733,66 @@ private struct TemplateSelectView: View {
         }
     }
 
+}
+
+// MARK: - Reorder exercises sheet
+// Presented as a sheet so it has its own scroll context — no nested-List-in-ScrollView issue.
+
+private struct ReorderExercisesSheet: View {
+    @Environment(SessionViewModel.self) private var sessionVM
+    @Environment(\.dismiss) private var dismiss
+    let exercises: [ActiveSessionContext.ExerciseContext]
+    let onMove: (IndexSet, Int) -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(exercises, id: \.sessionExerciseId) { exercise in
+                    reorderRow(exercise)
+                        .listRowBackground(Color.ironiqDark)
+                        .listRowSeparator(.hidden)
+                }
+                .onMove(perform: onMove)
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Color.ironiqDark)
+            .environment(\.editMode, .constant(.active))
+            .navigationTitle("Reorder Exercises")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(Color.ironiqOrange)
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    private func reorderRow(_ exercise: ActiveSessionContext.ExerciseContext) -> some View {
+        let isPending = exercise.setContexts.allSatisfy {
+            if case .pending = $0.lifecycleState { return true }; return false
+        }
+        let isDone = exercise.setContexts.allSatisfy {
+            if case .logged = $0.lifecycleState { return true }
+            return $0.lifecycleState == .notPerformed
+        }
+        return HStack(spacing: 10) {
+            Text(exercise.exerciseName)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(isPending ? .white : .white.opacity(0.35))
+                .lineLimit(1)
+            Spacer()
+            if !isPending {
+                Text(isDone ? "done" : "active")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.3))
+            }
+        }
+        .contentShape(Rectangle())
+        .moveDisabled(!isPending)
+    }
 }
 
 #Preview {

@@ -93,58 +93,16 @@ struct TemplateEditorView: View {
                 .font(.largeTitle.weight(.black))
                 .foregroundStyle(.white)
 
-            // VStack with long-press + drag gesture — no system drag handles
+            // VStack with dedicated drag-handle gesture zone — avoids conflict with buttons
             VStack(spacing: 8) {
                 ForEach(Array(selectedExercises.enumerated()), id: \.element.id) { index, row in
-                    exerciseEditorRow(row)
+                    exerciseEditorRow(row, dragIndex: index)
                         .offset(y: draggingExerciseId == row.id ? draggingOffset : 0)
                         .scaleEffect(draggingExerciseId == row.id ? 1.03 : 1.0)
                         .zIndex(draggingExerciseId == row.id ? 1 : 0)
                         .shadow(
-                            color: draggingExerciseId == row.id ? .black.opacity(0.3) : .clear,
-                            radius: 12, y: 6
-                        )
-                        .gesture(
-                            LongPressGesture(minimumDuration: 0.35)
-                                .sequenced(before: DragGesture(minimumDistance: 4))
-                                .onChanged { value in
-                                    switch value {
-                                    case .first(true):
-                                        // Auto-collapse if expanded, then begin drag
-                                        if expandedExerciseId == row.id {
-                                            withAnimation(.easeInOut(duration: 0.15)) {
-                                                expandedExerciseId = nil
-                                            }
-                                        }
-                                        withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
-                                            draggingExerciseId = row.id
-                                        }
-                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                    case .second(true, let drag?):
-                                        draggingOffset = drag.translation.height
-                                        // Live reorder as user drags
-                                        let rowHeight: CGFloat = 70
-                                        let delta = Int((draggingOffset / rowHeight).rounded())
-                                        let newIndex = max(0, min(selectedExercises.count - 1, index + delta))
-                                        if newIndex != index {
-                                            withAnimation(.easeInOut(duration: 0.15)) {
-                                                selectedExercises.move(
-                                                    fromOffsets: IndexSet([index]),
-                                                    toOffset: newIndex > index ? newIndex + 1 : newIndex
-                                                )
-                                            }
-                                            draggingOffset = 0
-                                        }
-                                    default:
-                                        break
-                                    }
-                                }
-                                .onEnded { _ in
-                                    withAnimation(.spring(response: 0.25, dampingFraction: 0.75)) {
-                                        draggingExerciseId = nil
-                                        draggingOffset = 0
-                                    }
-                                }
+                            color: draggingExerciseId == row.id ? .black.opacity(0.25) : .clear,
+                            radius: 10, y: 4
                         )
                 }
             }
@@ -174,32 +132,78 @@ struct TemplateEditorView: View {
     }
 
     @ViewBuilder
-    private func exerciseEditorRow(_ row: ExerciseEditorRow) -> some View {
+    private func exerciseEditorRow(_ row: ExerciseEditorRow, dragIndex: Int) -> some View {
         let isExpanded = expandedExerciseId == row.id
         VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    expandedExerciseId = isExpanded ? nil : row.id
+            HStack(spacing: 0) {
+                // ── Drag handle ─────────────────────────────────────────────
+                // Gesture lives ONLY here — no button inside, so no conflict.
+                Image(systemName: "line.3.horizontal")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.28))
+                    .frame(width: 32)
+                    .frame(minHeight: 40)
+                    .contentShape(Rectangle())
+                    .gesture(
+                        LongPressGesture(minimumDuration: 0.3)
+                            .sequenced(before: DragGesture(minimumDistance: 0))
+                            .onChanged { value in
+                                switch value {
+                                case .first(true):
+                                    if expandedExerciseId == row.id {
+                                        withAnimation(.easeInOut(duration: 0.15)) { expandedExerciseId = nil }
+                                    }
+                                    draggingExerciseId = row.id
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                case .second(true, let drag?):
+                                    draggingOffset = drag.translation.height
+                                    let delta = Int((draggingOffset / 68).rounded())
+                                    let newIdx = max(0, min(selectedExercises.count - 1, dragIndex + delta))
+                                    if newIdx != dragIndex {
+                                        withAnimation(.easeInOut(duration: 0.12)) {
+                                            selectedExercises.move(
+                                                fromOffsets: IndexSet([dragIndex]),
+                                                toOffset: newIdx > dragIndex ? newIdx + 1 : newIdx
+                                            )
+                                        }
+                                        draggingOffset = 0
+                                    }
+                                default: break
+                                }
+                            }
+                            .onEnded { _ in
+                                withAnimation(.spring(response: 0.2)) {
+                                    draggingExerciseId = nil
+                                    draggingOffset = 0
+                                }
+                            }
+                    )
+
+                // ── Expand / collapse button ──────────────────────────────
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        expandedExerciseId = isExpanded ? nil : row.id
+                    }
+                } label: {
+                    HStack(spacing: 10) {
+                        Text(row.exercise.name)
+                            .font(.body).bold()
+                            .foregroundStyle(.white)
+                        Spacer()
+                        Text("\(row.setRows.count) sets")
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.6))
+                            .accessibilityIdentifier("template_exercise_set_count")
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.4))
+                            .padding(.leading, 4)
+                    }
+                    .padding(.vertical, 4)
+                    .contentShape(Rectangle())
                 }
-            } label: {
-                HStack(spacing: 10) {
-                    Text(row.exercise.name)
-                        .font(.body).bold()
-                        .foregroundStyle(.white)
-                    Spacer()
-                    Text("\(row.setRows.count) sets")
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.6))
-                        .accessibilityIdentifier("template_exercise_set_count")
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.4))
-                        .padding(.leading, 4)
-                }
-                .padding(.vertical, 4)
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             if isExpanded {
                 ForEach(setEntries(for: row)) { entry in
@@ -222,7 +226,6 @@ struct TemplateEditorView: View {
                     .accessibilityLabel("Add set")
                     .accessibilityIdentifier("template_add_set_button")
 
-                    // Delete exercise — visible only when expanded
                     Button(role: .destructive) {
                         withAnimation { selectedExercises.removeAll { $0.id == row.id } }
                     } label: {
@@ -239,7 +242,8 @@ struct TemplateEditorView: View {
                 .padding(.top, 10)
             }
         }
-        .padding(14)
+        .padding(.vertical, 12)
+        .padding(.trailing, 14)
         .background(Color.white.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .contain)
