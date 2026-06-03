@@ -115,6 +115,7 @@
 		E8B8774EBDA56943A5D688A1 /* RestFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864B1ABF402799E5E1502C20 /* RestFaceView.swift */; };
 		F0ADEEBDD629835809022896 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7DA69825197F97789D3CF9 /* HealthKitService.swift */; };
 		F17B375EC6CE0909CFB83572 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B9093924D899ED1068D9E8 /* OnboardingView.swift */; };
+		F1D196441904FB06EA4E7920 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 586E6A0D5EDAD8D00B9C2B94 /* Assets.xcassets */; };
 		F3717670996969CBAF88BEBD /* CloudPhase2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3FE31D24A6CDD24207C2921 /* CloudPhase2Tests.swift */; };
 		F54111BBE69A39BC304CF843 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BEE054C30BD219A381D97F /* HistoryViewModel.swift */; };
 		F5A97D17037E6B3672990733 /* WatchReminderNudgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809FB4D23E25901674143EA /* WatchReminderNudgeView.swift */; };
@@ -213,6 +214,7 @@
 		52BAC6D1CD0BB01DDDED61C8 /* TimerSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSystemTests.swift; sourceTree = "<group>"; };
 		5480D83564F05ADFF37BF07B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		56BF140B18843850BCCCEAA7 /* IroniqUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IroniqUITests.swift; sourceTree = "<group>"; };
+		586E6A0D5EDAD8D00B9C2B94 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5971FD9B2E205546E1933DE2 /* WeightFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightFormatter.swift; sourceTree = "<group>"; };
 		5A3788165789F6DF314DD328 /* ExerciseRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseRepositoryTests.swift; sourceTree = "<group>"; };
 		5B2CDD4379269568F132A7F9 /* DTOs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DTOs.swift; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 		3FCF2FC08A725D1E5817EF8F /* IroniqWatch */ = {
 			isa = PBXGroup;
 			children = (
+				586E6A0D5EDAD8D00B9C2B94 /* Assets.xcassets */,
 				D9FC86AE4E161F453D53D743 /* Info.plist */,
 				A09E4ED17D32463BFC13B104 /* App */,
 				07A840A0EA2037A95751B068 /* Extensions */,
@@ -785,6 +788,7 @@
 			buildConfigurationList = B88311C0D16A4E2D3AA4FE11 /* Build configuration list for PBXNativeTarget "IroniqWatch" */;
 			buildPhases = (
 				6422331907DCC61F56E9D11F /* Sources */,
+				1EFA69966B4561878C944F30 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -943,6 +947,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1EFA69966B4561878C944F30 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1D196441904FB06EA4E7920 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BF8EB9F94FAB847B671E127B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;

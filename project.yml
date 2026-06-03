@@ -83,11 +83,14 @@ targets:
     deploymentTarget: "10.0"
     sources:
       - path: IroniqWatch
+    resources:
+      - path: IroniqWatch/Assets.xcassets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ir0niq.app.watchkitapp
         TARGETED_DEVICE_FAMILY: "4"
         CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: IroniqWatch/Info.plist
       properties:
@@ -98,8 +101,7 @@ targets:
         WKWatchOnly: true
         NSHealthShareUsageDescription: "Ironiq reads heart rate during your workout."
         NSHealthUpdateUsageDescription: "Ironiq saves your workout to Apple Health."
-        UIBackgroundModes:
-          - workout-processing
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   # ─── watchOS Complication Extension ───────────────────────────────────────
   IroniqWatchComplication:
