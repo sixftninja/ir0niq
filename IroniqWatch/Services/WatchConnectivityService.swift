@@ -3,6 +3,12 @@ import WatchConnectivity
 
 // MARK: - Message types (mirror of iOS types — kept in sync)
 
+struct WatchTemplateInfo: Codable, Sendable {
+    let id: String
+    let name: String
+    let exerciseCount: Int
+}
+
 struct WatchSessionStateMessage: Codable, Sendable {
     let sessionId: String
     let engineState: String
@@ -10,15 +16,29 @@ struct WatchSessionStateMessage: Codable, Sendable {
     let setNumber: Int?
     let totalSets: Int?
     let setStatus: String?
-    let targetRestDuration: TimeInterval?
-    let unitSystem: String?   // "imperial" | "metric" — nil defaults to metric on watch
+    let targetReps: Int?
+    let targetDuration: TimeInterval?
+    let targetWeight: Double?
+    let loggingType: String?
+    let unitSystem: String?
+    let templates: [WatchTemplateInfo]?
+    let reminderFired: Bool?
+    let sessionDurationSeconds: TimeInterval?
+    let sessionVolumeKg: Double?
 }
 
 struct WatchSetCompletionMessage: Codable, Sendable {
     let sessionId: String
     let setId: String
     let reps: Int?
+    let durationSeconds: TimeInterval?
     let weight: Double?
+}
+
+struct WatchActionMessage: Codable, Sendable {
+    let action: String
+    let sessionId: String?
+    let templateId: String?
 }
 
 // MARK: - Service
@@ -42,12 +62,10 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
         WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
     }
 
-    func sendAction(_ action: String, sessionId: String) {
-        guard WCSession.default.isReachable else { return }
-        WCSession.default.sendMessage(
-            ["action": action, "sessionId": sessionId],
-            replyHandler: nil
-        ) { _ in }
+    func sendAction(_ message: WatchActionMessage) {
+        guard WCSession.default.isReachable,
+              let data = try? JSONEncoder().encode(message) else { return }
+        WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
     }
 }
 

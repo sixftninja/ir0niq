@@ -6,22 +6,24 @@ import SwiftUI
 struct IroniqComplicationEntry: TimelineEntry {
     let date: Date
     let isSessionActive: Bool
-    let sessionElapsed: TimeInterval?
+    let setNumber: Int?
+    let totalSets: Int?
+    let targetText: String?
 }
 
 // MARK: - Provider
 
 struct IroniqComplicationProvider: TimelineProvider {
     func placeholder(in context: Context) -> IroniqComplicationEntry {
-        IroniqComplicationEntry(date: Date(), isSessionActive: false, sessionElapsed: nil)
+        IroniqComplicationEntry(date: Date(), isSessionActive: false, setNumber: nil, totalSets: nil, targetText: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (IroniqComplicationEntry) -> Void) {
-        completion(IroniqComplicationEntry(date: Date(), isSessionActive: false, sessionElapsed: nil))
+        completion(IroniqComplicationEntry(date: Date(), isSessionActive: false, setNumber: nil, totalSets: nil, targetText: nil))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<IroniqComplicationEntry>) -> Void) {
-        let entry = IroniqComplicationEntry(date: Date(), isSessionActive: false, sessionElapsed: nil)
+        let entry = IroniqComplicationEntry(date: Date(), isSessionActive: false, setNumber: nil, totalSets: nil, targetText: nil)
         completion(Timeline(entries: [entry], policy: .never))
     }
 }
@@ -37,18 +39,34 @@ struct IroniqComplicationView: View {
         case .accessoryCircular:
             ZStack {
                 AccessoryWidgetBackground()
-                Image(systemName: "dumbbell.fill")
-                    .foregroundStyle(Color(hex: "E8680A"))
+                if entry.isSessionActive, let set = entry.setNumber, let total = entry.totalSets {
+                    VStack(spacing: 0) {
+                        Text("\(set)/\(total)")
+                            .font(.system(size: 14, weight: .bold, design: .monospaced))
+                        Text("SET")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    Image(systemName: "dumbbell.fill")
+                        .foregroundStyle(Color(hex: "E8680A"))
+                }
             }
         case .accessoryRectangular:
             HStack(spacing: 4) {
                 Image(systemName: "dumbbell.fill")
                     .foregroundStyle(Color(hex: "E8680A"))
                     .font(.caption)
-                if let elapsed = entry.sessionElapsed {
-                    Text(timerString(elapsed))
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(.white)
+                if entry.isSessionActive, let set = entry.setNumber, let total = entry.totalSets {
+                    Group {
+                        Text("Set \(set)/\(total)")
+                            .font(.system(.body, design: .monospaced).weight(.bold))
+                        if let target = entry.targetText {
+                            Text("· \(target)")
+                                .font(.system(.body, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 } else {
                     Text("Ironiq")
                         .font(.headline)
@@ -63,16 +81,9 @@ struct IroniqComplicationView: View {
                 .foregroundStyle(Color(hex: "E8680A"))
         }
     }
-
-    private func timerString(_ t: TimeInterval) -> String {
-        let total = Int(t)
-        let m = (total % 3600) / 60
-        let s = total % 60
-        return String(format: "%d:%02d", m, s)
-    }
 }
 
-// MARK: - Color helper (duplicated — no shared framework in Phase 4)
+// MARK: - Color helper
 
 extension Color {
     init(hex: String) {

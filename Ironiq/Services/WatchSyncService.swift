@@ -1,7 +1,13 @@
 import Foundation
 import WatchConnectivity
 
-// MARK: - Message types
+// MARK: - Shared types (phone ↔ watch)
+
+struct WatchTemplateInfo: Codable, Sendable {
+    let id: String
+    let name: String
+    let exerciseCount: Int
+}
 
 struct WatchSessionStateMessage: Codable, Sendable {
     let sessionId: String
@@ -10,8 +16,15 @@ struct WatchSessionStateMessage: Codable, Sendable {
     let setNumber: Int?
     let totalSets: Int?
     let setStatus: String?
-    let targetRestDuration: TimeInterval?
-    let unitSystem: String?   // "imperial" | "metric"
+    let targetReps: Int?
+    let targetDuration: TimeInterval?
+    let targetWeight: Double?
+    let loggingType: String?              // "reps" | "duration"
+    let unitSystem: String?               // "imperial" | "metric"
+    let templates: [WatchTemplateInfo]?  // sent when engineState == "idle"
+    let reminderFired: Bool?
+    let sessionDurationSeconds: TimeInterval?
+    let sessionVolumeKg: Double?
 }
 
 struct WatchSetCompletionMessage: Codable, Sendable {
@@ -22,9 +35,18 @@ struct WatchSetCompletionMessage: Codable, Sendable {
     let weight: Double?
 }
 
-// MARK: - Received message handler
+// MARK: - Watch action message (watch → phone)
+
+struct WatchActionMessage: Codable, Sendable {
+    let action: String       // "skipSet" | "startTemplate" | "save" | "discard" | "pause" | "resume" | "end" | etc.
+    let sessionId: String?
+    let templateId: String?
+}
+
+// MARK: - Handlers
 
 typealias WatchMessageHandler = @Sendable (WatchSetCompletionMessage) -> Void
+typealias WatchActionHandler = @Sendable (WatchActionMessage) -> Void
 
 // MARK: - Protocol
 
@@ -33,6 +55,7 @@ protocol WatchSyncServiceProtocol: Sendable {
     var isReachable: Bool { get async }
     func sendSessionState(_ message: WatchSessionStateMessage) async
     func onSetCompletion(_ handler: @escaping WatchMessageHandler) async
+    func onWatchAction(_ handler: @escaping WatchActionHandler) async
 }
 
 // MARK: - Production implementation
@@ -41,6 +64,7 @@ protocol WatchSyncServiceProtocol: Sendable {
 final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sendable {
     private(set) var isReachable: Bool = false
     private var completionHandler: WatchMessageHandler?
+    private var actionHandler: WatchActionHandler?
     private var activationContinuation: CheckedContinuation<Void, Never>?
 
     static let shared = WatchSyncService()
@@ -65,6 +89,10 @@ final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sen
     func onSetCompletion(_ handler: @escaping WatchMessageHandler) async {
         completionHandler = handler
     }
+
+    func onWatchAction(_ handler: @escaping WatchActionHandler) async {
+        actionHandler = handler
+    }
 }
 
 // MARK: - WCSessionDelegate
@@ -75,7 +103,6 @@ extension WatchSyncService: WCSessionDelegate {
         activationDidCompleteWith activationState: WCSessionActivationState,
         error: Error?
     ) {
-        // Extract Sendable values before crossing actor boundary
         let reachable = (activationState == .activated && session.isReachable)
         Task { @MainActor in
             self.isReachable = reachable
@@ -86,22 +113,20 @@ extension WatchSyncService: WCSessionDelegate {
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         let reachable = session.isReachable
-        Task { @MainActor in
-            self.isReachable = reachable
+        Task { @MainActor in self.isReachable = reachable }
+    }
+
+    nonisolated func session(_ session: WCSession, didReceiveMessageData messageData: Data) {
+        // Try set completion first, then action message
+        if let msg = try? JSONDecoder().decode(WatchSetCompletionMessage.self, from: messageData) {
+            Task { @MainActor in self.completionHandler?(msg) }
+            return
+        }
+        if let msg = try? JSONDecoder().decode(WatchActionMessage.self, from: messageData) {
+            Task { @MainActor in self.actionHandler?(msg) }
         }
     }
 
-    nonisolated func session(
-        _ session: WCSession,
-        didReceiveMessageData messageData: Data
-    ) {
-        guard let message = try? JSONDecoder().decode(WatchSetCompletionMessage.self, from: messageData) else { return }
-        Task { @MainActor in
-            self.completionHandler?(message)
-        }
-    }
-
-    // Required on iOS — watchOS counterpart not needed here
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {}
     nonisolated func sessionDidDeactivate(_ session: WCSession) {
         WCSession.default.activate()

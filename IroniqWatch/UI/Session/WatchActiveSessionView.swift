@@ -2,43 +2,40 @@ import SwiftUI
 
 struct WatchActiveSessionView: View {
     @Environment(WatchSessionViewModel.self) private var vm
+    @State private var selectedPage: Int = 1  // 0=controls, 1=set face, 2=music
 
     var body: some View {
-        TabView {
-            // Main session face (swipe left for music)
-            sessionFace
+        TabView(selection: $selectedPage) {
+            // Page 0: Workout controls (swipe left→right from set face)
+            WatchWorkoutControlsView()
                 .tag(0)
 
-            // Music controls (swipe right)
-            WatchMusicControlsView()
+            // Page 1: Active set face (default)
+            WatchSetFaceView()
                 .tag(1)
+
+            // Page 2: Music controls (swipe right→left from set face)
+            WatchMusicControlsView()
+                .tag(2)
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .sheet(isPresented: Binding(
+            get: { vm.showInputFace },
+            set: { vm.showInputFace = $0 }
+        )) {
+            WatchInputFaceView()
+        }
+        .sheet(isPresented: Binding(
             get: { vm.showEndConfirm },
-            set: { _ in }
+            set: { vm.showEndConfirm = $0 }
         )) {
             WatchEndConfirmView()
         }
-    }
-
-    @ViewBuilder
-    private var sessionFace: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            if vm.isPaused {
-                WatchPausedView()
-            } else {
-                switch vm.setStatus {
-                case "resting":
-                    WatchRestFaceView()
-                case "awaitingInput":
-                    WatchInputFaceView()
-                default:
-                    WatchSetFaceView()
-                }
-            }
+        .sheet(isPresented: Binding(
+            get: { vm.showReminderNudge },
+            set: { vm.showReminderNudge = $0 }
+        )) {
+            WatchReminderNudgeView()
         }
     }
 }

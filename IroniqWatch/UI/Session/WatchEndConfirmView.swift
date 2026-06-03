@@ -6,22 +6,18 @@ struct WatchEndConfirmView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("End Session?")
+            Text("End workout?")
                 .font(.headline)
                 .foregroundStyle(.white)
-
-            Text("Your progress will be saved.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
-            Button("End Session") {
-                vm.confirmEndSession()
+            Button("End Workout") {
+                vm.requestEnd()
                 dismiss()
             }
             .buttonStyle(.borderedProminent)
-            .tint(Color.ironiqRed)
-            .font(.subheadline)
+            .tint(.red)
+            .font(.subheadline.weight(.bold))
             .accessibilityIdentifier("watch_confirm_end_button")
 
             Button("Cancel") { dismiss() }

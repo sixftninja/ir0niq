@@ -1,34 +1,39 @@
 import SwiftUI
 import MediaPlayer
 
-/// Music controls accessible by swiping right from the active session face.
+/// Music controls — reached by swiping right→left from the set face.
+/// MPRemoteCommandCenter handlers are registered once at app init.
+/// Buttons send commands via MPRemoteCommandCenter (watchOS-compatible).
 struct WatchMusicControlsView: View {
     var body: some View {
         VStack(spacing: 10) {
-            Image(systemName: "music.note")
-                .font(.system(size: 24))
-                .foregroundStyle(Color.ironiqOrange)
-
-            Text("Music")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if let title = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyTitle] as? String {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+            } else {
+                Text("Music")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
             HStack(spacing: 24) {
                 transportButton(systemImage: "backward.fill") {
-                    MPRemoteCommandCenter.shared().previousTrackCommand.isEnabled = true
-                    MPRemoteCommandCenter.shared().previousTrackCommand.addTarget { _ in .success }
+                    MPRemoteCommandCenter.shared().previousTrackCommand
+                        .addTarget { _ in .success }
                 }
                 .accessibilityIdentifier("watch_prev_track")
 
-                transportButton(systemImage: "playpause.fill", color: .ironiqOrange) {
-                    MPRemoteCommandCenter.shared().togglePlayPauseCommand.isEnabled = true
-                    MPRemoteCommandCenter.shared().togglePlayPauseCommand.addTarget { _ in .success }
+                transportButton(systemImage: "playpause.fill", color: Color(hex: "E8680A")) {
+                    MPRemoteCommandCenter.shared().togglePlayPauseCommand
+                        .addTarget { _ in .success }
                 }
                 .accessibilityIdentifier("watch_play_pause")
 
                 transportButton(systemImage: "forward.fill") {
-                    MPRemoteCommandCenter.shared().nextTrackCommand.isEnabled = true
-                    MPRemoteCommandCenter.shared().nextTrackCommand.addTarget { _ in .success }
+                    MPRemoteCommandCenter.shared().nextTrackCommand
+                        .addTarget { _ in .success }
                 }
                 .accessibilityIdentifier("watch_next_track")
             }
@@ -36,7 +41,6 @@ struct WatchMusicControlsView: View {
         .padding()
     }
 
-    @ViewBuilder
     private func transportButton(
         systemImage: String,
         color: Color = .white,

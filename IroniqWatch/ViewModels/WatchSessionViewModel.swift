@@ -1,13 +1,18 @@
 import Foundation
 import SwiftUI
 import WatchKit
+import WidgetKit
 
 /// Watch-side session state — mirrors the iPhone engine via WatchConnectivity.
 @MainActor
 @Observable
 final class WatchSessionViewModel {
 
-    // MARK: - Mirrored state (from iPhone)
+    // MARK: - Template list (shown when idle)
+
+    private(set) var templates: [WatchTemplateInfo] = []
+
+    // MARK: - Active session state (mirrored from phone)
 
     private(set) var sessionId: String? = nil
     private(set) var engineState: String = "idle"
@@ -15,14 +20,16 @@ final class WatchSessionViewModel {
     private(set) var setNumber: Int = 1
     private(set) var totalSets: Int = 1
     private(set) var setStatus: String = "pending"
-    private(set) var targetRestDuration: TimeInterval? = nil
+    private(set) var targetReps: Int? = nil
+    private(set) var targetDuration: TimeInterval? = nil
+    private(set) var targetWeight: Double? = nil
+    private(set) var loggingType: String = "reps"
+    private(set) var unitSystem: String = "metric"
 
-    // MARK: - Live timers (updated every 500 ms)
+    // MARK: - End summary
 
-    private(set) var setElapsed: TimeInterval = 0
-    private(set) var restElapsed: TimeInterval = 0
-    private(set) var restRemaining: TimeInterval = 0
-    private(set) var hasRestTarget = false
+    private(set) var sessionDurationSeconds: TimeInterval = 0
+    private(set) var sessionVolumeKg: Double = 0
 
     // MARK: - Heart rate (from HKWorkoutSession)
 
@@ -32,7 +39,8 @@ final class WatchSessionViewModel {
 
     var showInputFace = false
     var showEndConfirm = false
-    var showCelebration = false
+    var showEndSummary = false
+    var showReminderNudge = false
 
     // MARK: - Derived
 
@@ -45,9 +53,6 @@ final class WatchSessionViewModel {
 
     private let connectivity: WatchConnectivityService
     private let healthKit: WatchHealthKitService
-    private var tickerTask: Task<Void, Never>?
-    var statusChangedAt = Date()       // internal for @testable
-    private var lastHapticSecond = -1
 
     init(
         connectivity: WatchConnectivityService = .shared,
@@ -71,132 +76,128 @@ final class WatchSessionViewModel {
         }
     }
 
-    // MARK: - Apply iPhone state
+    // MARK: - Apply phone state
 
-    func apply(message: WatchSessionStateMessage) {  // internal for @testable
-        sessionId = message.sessionId
-        let prevStatus = setStatus
+    func apply(message: WatchSessionStateMessage) {
+        sessionId = message.sessionId.isEmpty ? nil : message.sessionId
         engineState = message.engineState
         exerciseName = message.exerciseName
         setNumber = message.setNumber ?? 1
         totalSets = message.totalSets ?? 1
-        let newStatus = message.setStatus ?? "pending"
-        targetRestDuration = message.targetRestDuration
-        hasRestTarget = message.targetRestDuration != nil
+        setStatus = message.setStatus ?? "pending"
+        targetReps = message.targetReps
+        targetDuration = message.targetDuration
+        targetWeight = message.targetWeight
+        loggingType = message.loggingType ?? "reps"
+        if let us = message.unitSystem { unitSystem = us }
+        if let tpls = message.templates { templates = tpls }
 
-        if newStatus != prevStatus {
-            setStatus = newStatus
-            statusChangedAt = Date()
-            lastHapticSecond = -1
-            showCelebration = false
+        if message.reminderFired == true {
+            WKInterfaceDevice.current().play(.notification)
+            showReminderNudge = true
         }
 
-        // Manage HK session lifecycle
+        if let dur = message.sessionDurationSeconds { sessionDurationSeconds = dur }
+        if let vol = message.sessionVolumeKg { sessionVolumeKg = vol }
+        if engineState == "ended" && sessionDurationSeconds > 0 {
+            showEndSummary = true
+        }
+
         if isSessionActive && !healthKit.isSessionActive {
             Task { try? await healthKit.startSession() }
         } else if !isSessionActive && healthKit.isSessionActive {
             Task { try? await healthKit.endSession() }
         }
 
-        isSessionActive ? startTicker() : stopTicker()
-    }
-
-    // MARK: - Timer tick
-
-    private func startTicker() {
-        guard tickerTask == nil || tickerTask!.isCancelled else { return }
-        tickerTask = Task { @MainActor [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .milliseconds(500))
-                self?.tick()
-            }
-        }
-    }
-
-    private func stopTicker() {
-        tickerTask?.cancel()
-        tickerTask = nil
-    }
-
-    private func tick() {
-        let elapsed = Date().timeIntervalSince(statusChangedAt)
-        switch setStatus {
-        case "inProgress":
-            setElapsed = elapsed
-        case "resting":
-            restElapsed = elapsed
-            if let target = targetRestDuration {
-                let remaining = max(0, target - elapsed)
-                restRemaining = remaining
-                triggerHapticCountdown(remaining: remaining)
-            }
-        default:
-            break
-        }
-    }
-
-    // MARK: - Haptic countdown (edge case 1: 5-second countdown before rest ends)
-
-    func triggerHapticCountdown(remaining: TimeInterval) {
-        guard hasRestTarget else { return }
-        let secondsLeft = Int(ceil(remaining))
-
-        if remaining <= 0 && lastHapticSecond != 0 {
-            // Rest ended — celebration haptic + green ring
-            WKInterfaceDevice.current().play(.success)
-            lastHapticSecond = 0
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                showCelebration = true
-            }
-            // Auto-dismiss celebration after 2 seconds
-            Task {
-                try? await Task.sleep(for: .seconds(2))
-                withAnimation { self.showCelebration = false }
-            }
-            return
-        }
-
-        guard secondsLeft > 0 && secondsLeft <= 5 && secondsLeft != lastHapticSecond else { return }
-        lastHapticSecond = secondsLeft
-        WKInterfaceDevice.current().play(.click)  // countdown tick
+        WidgetCenter.shared.reloadTimelines(ofKind: "IroniqComplication")
     }
 
     // MARK: - User actions → sent to iPhone
 
-    func sendBeginSet() {
-        guard let sid = sessionId else { return }
-        connectivity.sendAction("beginSet", sessionId: sid)
+    func sendStartTemplate(id: String) {
+        connectivity.sendAction(WatchActionMessage(action: "startTemplate", sessionId: nil, templateId: id))
+        WKInterfaceDevice.current().play(.start)
     }
 
-    func sendRest() {
-        guard let sid = sessionId else { return }
-        connectivity.sendAction("tapRest", sessionId: sid)
+    func sendFinishSet() {
+        showInputFace = true
+        WKInterfaceDevice.current().play(.click)
     }
 
-    func logCurrentSet(reps: Int, weight: Double) {
+    func logCurrentSet(reps: Int, durationSeconds: TimeInterval, weight: Double) {
         guard let sid = sessionId else { return }
+        let repsVal: Int? = loggingType == "reps" ? reps : nil
+        let durVal: TimeInterval? = loggingType == "duration" && durationSeconds > 0 ? durationSeconds : nil
         connectivity.sendSetCompletion(WatchSetCompletionMessage(
             sessionId: sid,
             setId: UUID().uuidString,
-            reps: reps > 0 ? reps : nil,
+            reps: repsVal,
+            durationSeconds: durVal,
             weight: weight > 0 ? weight : nil
         ))
+        WKInterfaceDevice.current().play(.success)
         showInputFace = false
+    }
+
+    func sendSkipSet() {
+        guard let sid = sessionId else { return }
+        connectivity.sendAction(WatchActionMessage(action: "skipSet", sessionId: sid, templateId: nil))
     }
 
     func sendPause() {
         guard let sid = sessionId else { return }
-        connectivity.sendAction("pause", sessionId: sid)
+        connectivity.sendAction(WatchActionMessage(action: "pause", sessionId: sid, templateId: nil))
+        WKInterfaceDevice.current().play(.click)
     }
 
     func sendResume() {
         guard let sid = sessionId else { return }
-        connectivity.sendAction("resume", sessionId: sid)
+        connectivity.sendAction(WatchActionMessage(action: "resume", sessionId: sid, templateId: nil))
+        WKInterfaceDevice.current().play(.success)
     }
 
-    func confirmEndSession() {
+    func requestEnd() {
         guard let sid = sessionId else { return }
-        connectivity.sendAction("end", sessionId: sid)
         showEndConfirm = false
+        connectivity.sendAction(WatchActionMessage(action: "end", sessionId: sid, templateId: nil))
+        WKInterfaceDevice.current().play(.success)
+    }
+
+    func sendSave() {
+        guard let sid = sessionId else { return }
+        connectivity.sendAction(WatchActionMessage(action: "save", sessionId: sid, templateId: nil))
+        WKInterfaceDevice.current().play(.success)
+        showEndSummary = false
+        engineState = "idle"
+    }
+
+    func sendDiscard() {
+        guard let sid = sessionId else { return }
+        connectivity.sendAction(WatchActionMessage(action: "discard", sessionId: sid, templateId: nil))
+        showEndSummary = false
+        engineState = "idle"
+    }
+
+    // MARK: - Display helpers
+
+    var targetDisplayText: String {
+        if loggingType == "duration", let d = targetDuration {
+            let secs = Int(d)
+            return secs >= 60 ? "\(secs / 60)m \(secs % 60)s" : "\(secs) sec"
+        }
+        if let r = targetReps { return "\(r) reps" }
+        return "—"
+    }
+
+    func weightText(kg: Double) -> String {
+        if kg <= 0 { return "Bodyweight" }
+        if unitSystem == "imperial" {
+            return String(format: "%.0f lb", kg * 2.20462)
+        }
+        return String(format: "%.1f kg", kg)
+    }
+
+    var targetWeightText: String {
+        weightText(kg: targetWeight ?? 0)
     }
 }

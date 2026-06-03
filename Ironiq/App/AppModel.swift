@@ -24,7 +24,7 @@ final class AppModel {
 
         let engine = SessionEngine.make(modelContainer: modelContainer)
         self.engine = engine
-        SessionIntentBridge.shared.setEngine(engine)  // makes engine available to AppIntents
+        SessionIntentBridge.shared.setEngine(engine)
 
         let templateRepo = TemplateRepository(modelContainer: modelContainer)
         let exerciseRepo = ExerciseRepository(modelContainer: modelContainer)
@@ -39,16 +39,88 @@ final class AppModel {
         self.settingsVM = SettingsViewModel()
         self.storeKit = StoreKitService.shared
 
-        // Initialize StoreKit (non-blocking — happens in background)
         Task { await StoreKitService.shared.initialize(appState: appState) }
     }
 
-    // Called at startup and after sign-in. Restores from cloud and retries any
-    // previously failed exports (e.g. templates that didn't make it to iCloud).
+    // MARK: - Watch action handling
+
+    // Called from IroniqApp once the engine and templateVM are ready.
+    func startWatchSync() async {
+        await WatchSyncService.shared.activate()
+
+        // Handle set completions from watch (log a set)
+        await WatchSyncService.shared.onSetCompletion { [weak self] msg in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.sessionVM.logCurrentSet(
+                    reps: msg.reps,
+                    durationSeconds: msg.durationSeconds,
+                    weight: msg.weight
+                )
+                await self.sessionVM.advanceToNext()
+            }
+        }
+
+        // Handle action messages from watch
+        await WatchSyncService.shared.onWatchAction { [weak self] msg in
+            guard let self else { return }
+            Task { @MainActor in await self.handleWatchAction(msg) }
+        }
+
+        // Send current template list to watch
+        await sendTemplateListToWatch()
+    }
+
+    private func handleWatchAction(_ msg: WatchActionMessage) async {
+        switch msg.action {
+        case "startTemplate":
+            guard let idStr = msg.templateId, let id = UUID(uuidString: idStr) else { return }
+            let started = await sessionVM.startTemplateSession(id)
+            if started { await sendTemplateListToWatch() }  // clears list on watch when active
+        case "skipSet":
+            await sessionVM.skipCurrentSet()
+        case "pause":
+            await sessionVM.pauseSession()
+        case "resume":
+            await sessionVM.resumeSession()
+        case "end":
+            _ = await sessionVM.endSession()
+        case "confirmEnd":
+            await sessionVM.confirmEnd()
+        case "save":
+            // Session already saved via confirmEnd; just send updated idle state with templates
+            await sendTemplateListToWatch()
+        case "discard":
+            await sendTemplateListToWatch()
+        default:
+            break
+        }
+    }
+
+    // Sends current template list to watch (called on idle state and after save/discard)
+    func sendTemplateListToWatch() async {
+        guard WatchSyncService.shared.isReachable else { return }
+        let templates = templateVM.templates.map {
+            WatchTemplateInfo(id: $0.id.uuidString, name: $0.name, exerciseCount: $0.exercises.count)
+        }
+        let msg = WatchSessionStateMessage(
+            sessionId: "",
+            engineState: "idle",
+            exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
+            targetReps: nil, targetDuration: nil, targetWeight: nil,
+            loggingType: nil,
+            unitSystem: appState.unitSystem == .imperial ? "imperial" : "metric",
+            templates: templates,
+            reminderFired: nil, sessionDurationSeconds: nil, sessionVolumeKg: nil
+        )
+        await WatchSyncService.shared.sendSessionState(msg)
+    }
+
+    // MARK: - Cloud sync
+
     func performStartupSync() async {
         guard let provider = appState.syncProvider else { return }
 
-        // Restore cloud content first
         let restorer = CloudRestoreService(templateRepo: templateRepo, sessionRepo: sessionRepo)
         let result = await restorer.restoreIfNeeded(provider: provider)
 
@@ -57,7 +129,6 @@ final class AppModel {
             await historyVM.loadSessions()
         }
 
-        // Retry any pending exports (items that failed to reach cloud on a previous run)
         await retryPendingExports()
 
         if PendingExportQueue.shared.isEmpty {
@@ -81,11 +152,9 @@ final class AppModel {
                         _ = try await CloudStorageRouter.shared.exportTemplate(model)
                         PendingExportQueue.shared.remove(id: item.id)
                     } else {
-                        // Template was deleted — remove from queue
                         PendingExportQueue.shared.remove(id: item.id)
                     }
                 case .session:
-                    // Session export requires the full DTO; skip silently for now
                     PendingExportQueue.shared.incrementRetry(id: item.id)
                 }
             } catch {

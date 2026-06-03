@@ -156,11 +156,14 @@ actor SessionEngine {
     }
 
     static func make(modelContainer: ModelContainer) -> SessionEngine {
-        SessionEngine(
+        // WatchSyncService.shared is @MainActor — accessed at call site which is already MainActor
+        let watchSync = MainActor.assumeIsolated { WatchSyncService.shared }
+        return SessionEngine(
             templateRepository: TemplateRepository(modelContainer: modelContainer),
             sessionRepository: SessionRepository(modelContainer: modelContainer),
             healthKitService: HealthKitService.shared,
-            iCloudService: CloudStorageRouter.shared
+            iCloudService: CloudStorageRouter.shared,
+            watchSyncService: watchSync
         )
     }
 
@@ -901,7 +904,9 @@ actor SessionEngine {
                 sessionId: context?.sessionId.uuidString ?? "",
                 engineState: stateName,
                 exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
-                targetRestDuration: nil, unitSystem: nil
+                targetReps: nil, targetDuration: nil, targetWeight: nil,
+                loggingType: nil, unitSystem: nil, templates: nil,
+                reminderFired: nil, sessionDurationSeconds: nil, sessionVolumeKg: nil
             )
         }
 
@@ -921,10 +926,8 @@ actor SessionEngine {
             setStatusName = nil
         }
 
-        // Extract targetRestDuration if the set is currently resting
-        var targetRestDuration: TimeInterval? = nil
-        if let set = context.currentSet, case .resting(_, let t) = set.lifecycleState {
-            targetRestDuration = t
+        let loggingType = exercise.map { ex in
+            ex.defaultLoggingType == .duration ? "duration" : "reps"
         }
 
         return WatchSessionStateMessage(
@@ -934,8 +937,15 @@ actor SessionEngine {
             setNumber: context.currentSetIndex + 1,
             totalSets: exercise?.setContexts.count,
             setStatus: setStatusName,
-            targetRestDuration: targetRestDuration,
-            unitSystem: nil   // set by AppModel in Phase 7 via engine.currentUnitSystem
+            targetReps: set?.targetReps,
+            targetDuration: set?.targetDuration,
+            targetWeight: set?.targetWeight,
+            loggingType: loggingType,
+            unitSystem: nil,
+            templates: nil,
+            reminderFired: nil,
+            sessionDurationSeconds: nil,
+            sessionVolumeKg: nil
         )
     }
 

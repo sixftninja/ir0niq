@@ -1,29 +1,6 @@
+// WatchHomeView.swift — replaced by WatchTemplateListView.
+// Retained as an empty type to avoid project.yml source reference errors.
 import SwiftUI
-
 struct WatchHomeView: View {
-    @Environment(WatchSessionViewModel.self) private var vm
-
-    var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "dumbbell.fill")
-                .font(.system(size: 32))
-                .foregroundStyle(Color.ironiqOrange)
-
-            Text("Ironiq")
-                .font(.headline)
-                .foregroundStyle(.white)
-
-            Text("Start a workout on\nyour iPhone")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .accessibilityIdentifier("watch_home_view")
-    }
-}
-
-#Preview {
-    WatchHomeView()
-        .environment(WatchSessionViewModel())
+    var body: some View { WatchTemplateListView() }
 }

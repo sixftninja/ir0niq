@@ -28,7 +28,7 @@ struct IroniqApp: App {
             await appModel.templateVM.loadAll()
             await appModel.historyVM.loadSessions()
             await appModel.performStartupSync()
-            // UI test helper: auto-start an ad-hoc session for session UI verification
+            await appModel.startWatchSync()
             if CommandLine.arguments.contains("--start-adhoc-session") {
               await appModel.sessionVM.startAdHocSession()
             }
