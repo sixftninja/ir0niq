@@ -2,43 +2,50 @@ import SwiftUI
 import MediaPlayer
 
 /// Music controls — reached by swiping right→left from the set face.
-/// MPRemoteCommandCenter handlers are registered once at app init.
-/// Buttons send commands via MPRemoteCommandCenter (watchOS-compatible).
+/// Controls send WCSession actions to the phone, which forwards them to the
+/// system music player. Track title is read from the watch system's Now Playing.
 struct WatchMusicControlsView: View {
+    @Environment(WatchSessionViewModel.self) private var vm
+
     var body: some View {
-        VStack(spacing: 10) {
-            if let title = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyTitle] as? String {
-                Text(title)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-            } else {
-                Text("Music")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+        VStack(spacing: 12) {
+            nowPlayingTitle
 
             HStack(spacing: 24) {
                 transportButton(systemImage: "backward.fill") {
-                    MPRemoteCommandCenter.shared().previousTrackCommand
-                        .addTarget { _ in .success }
+                    vm.sendMediaAction("mediaPrev")
                 }
                 .accessibilityIdentifier("watch_prev_track")
 
                 transportButton(systemImage: "playpause.fill", color: Color(hex: "E8680A")) {
-                    MPRemoteCommandCenter.shared().togglePlayPauseCommand
-                        .addTarget { _ in .success }
+                    vm.sendMediaAction("mediaPlayPause")
                 }
                 .accessibilityIdentifier("watch_play_pause")
 
                 transportButton(systemImage: "forward.fill") {
-                    MPRemoteCommandCenter.shared().nextTrackCommand
-                        .addTarget { _ in .success }
+                    vm.sendMediaAction("mediaNext")
                 }
                 .accessibilityIdentifier("watch_next_track")
             }
         }
         .padding()
+    }
+
+    private var nowPlayingTitle: some View {
+        Group {
+            if let title = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyTitle] as? String,
+               !title.isEmpty {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+            } else {
+                Text("Music")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 
     private func transportButton(

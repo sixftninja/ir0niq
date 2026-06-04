@@ -44,7 +44,7 @@ struct WatchInputFaceView: View {
                     from: 0,
                     through: vm.loggingType == "duration" ? 3600 : 100,
                     by: vm.loggingType == "duration" ? 5 : 1,
-                    sensitivity: .low,
+                    sensitivity: .medium,
                     isContinuous: false,
                     isHapticFeedbackEnabled: true
                 )
@@ -103,7 +103,7 @@ struct WatchInputFaceView: View {
                         from: 0,
                         through: isImperial ? 500 : 250,
                         by: isImperial ? 5 : 2.5,
-                        sensitivity: .low,
+                        sensitivity: .medium,
                         isContinuous: false,
                         isHapticFeedbackEnabled: true
                     )

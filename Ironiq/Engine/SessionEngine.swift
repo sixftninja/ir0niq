@@ -135,6 +135,8 @@ actor SessionEngine {
 
     func updateUnitSystem(_ system: String) { unitSystem = system }
     func updateLoggingReminderInterval(_ seconds: TimeInterval) { loggingReminderInterval = seconds }
+    /// Push current state to watch immediately — called when watch becomes reachable.
+    func broadcastCurrentState() { notifyWatch(state: state) }
 
     // MARK: - State stream (observed by UI in Phase 3)
 
@@ -486,8 +488,14 @@ actor SessionEngine {
                 context.currentExerciseIndex = nextExerciseIndex
                 context.currentSetIndex = 0
                 beginCurrentSet(in: &context)
+                sessionContext = context
+            } else {
+                // All exercises complete — auto-save and end the workout
+                sessionContext = context
+                _ = try await endSession()
+                try await confirmEnd()
+                return
             }
-            sessionContext = context
         }
         scheduleIdleReset(sessionId: context.sessionId)
         notifyWatch(state: state)
@@ -544,7 +552,12 @@ actor SessionEngine {
             restEnd: set.restEnd,
             isUnrecorded: set.isUnrecorded
         )
-        try await advanceAfterSkippingSet()
+        let workoutDone = try await advanceAfterSkippingSet()
+        if workoutDone {
+            _ = try await endSession()
+            try await confirmEnd()
+            return
+        }
         scheduleIdleReset(sessionId: context.sessionId)
         notifyWatch(state: state)
     }
@@ -855,7 +868,8 @@ actor SessionEngine {
         await handleIdleTimeout()
     }
 
-    private func advanceAfterSkippingSet() async throws {
+    /// Returns true if all exercises are complete (workout should end).
+    private func advanceAfterSkippingSet() async throws -> Bool {
         guard var context = sessionContext else { throw SessionEngineError.setNotFound }
         let exercise = context.exercises[context.currentExerciseIndex]
         let nextSetIndex = context.currentSetIndex + 1
@@ -863,7 +877,7 @@ actor SessionEngine {
         if nextSetIndex < exercise.setContexts.count {
             context.currentSetIndex = nextSetIndex
             sessionContext = context
-            return
+            return false
         }
 
         let finished = exercise.setContexts.allSatisfy { set in
@@ -883,8 +897,11 @@ actor SessionEngine {
         if nextExerciseIndex < context.exercises.count {
             context.currentExerciseIndex = nextExerciseIndex
             context.currentSetIndex = 0
+            sessionContext = context
+            return false
         }
         sessionContext = context
+        return true  // all exercises done
     }
 
     // MARK: - Private: timer management

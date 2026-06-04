@@ -60,16 +60,19 @@ struct WatchSetFaceView: View {
             .frame(maxWidth: .infinity)
             .accessibilityIdentifier("watch_finish_set_button")
 
-            // Skip is intentionally small — half the visual weight of Finish Set
+            // Skip: same readable font as before but minimal button footprint
             Button("Skip") {
                 vm.sendSkipSet()
             }
-            .font(.system(size: 10))
-            .foregroundStyle(.tertiary)
+            .font(.system(size: 12))
+            .foregroundStyle(.secondary)
+            .buttonStyle(.plain)
+            .padding(.vertical, 2)
             .accessibilityIdentifier("watch_skip_set_button")
         }
         .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.top, 8)  // separation from the watch clock
+        .padding(.bottom, 4)
     }
 
     private var pausedContent: some View {

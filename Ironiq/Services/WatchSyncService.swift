@@ -58,6 +58,7 @@ final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sen
     private(set) var isReachable: Bool = false
     private var completionHandler: WatchMessageHandler?
     private var actionHandler: WatchActionHandler?
+    var onBecameReachable: (() -> Void)?
     private var activationContinuation: CheckedContinuation<Void, Never>?
 
     static let shared = WatchSyncService()
@@ -110,7 +111,13 @@ extension WatchSyncService: WCSessionDelegate {
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         let reachable = session.isReachable
-        Task { @MainActor in self.isReachable = reachable }
+        Task { @MainActor in
+            let wasReachable = self.isReachable
+            self.isReachable = reachable
+            if reachable && !wasReachable {
+                self.onBecameReachable?()
+            }
+        }
     }
 
     nonisolated func session(_ session: WCSession, didReceiveMessageData messageData: Data) {

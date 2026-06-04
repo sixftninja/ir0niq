@@ -185,6 +185,10 @@ final class WatchSessionViewModel {
         WKInterfaceDevice.current().play(.success)
     }
 
+    func sendMediaAction(_ action: String) {
+        connectivity.sendAction(WatchActionMessage(action: action, sessionId: nil, templateId: nil))
+    }
+
     /// Discard workout — sent from WatchEndChoiceView when engine is in "ending" state
     func discardFromWatch() {
         guard let sid = sessionId else { return }

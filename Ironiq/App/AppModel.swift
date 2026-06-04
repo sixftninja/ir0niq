@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import Observation
+import MediaPlayer
 
 /// Top-level dependency container. Created once at app startup and injected
 /// via @Environment throughout the view hierarchy.
@@ -50,6 +51,13 @@ final class AppModel {
         await engine.updateUnitSystem(appState.unitSystem == .imperial ? "imperial" : "metric")
         await engine.updateLoggingReminderInterval(TimeInterval(appState.restReminderSeconds))
 
+        // Immediately broadcast current engine state when watch becomes reachable
+        // (covers the case where watch opens after a workout has already started)
+        WatchSyncService.shared.onBecameReachable = { [weak self] in
+            guard let self else { return }
+            Task { await self.engine.broadcastCurrentState() }
+        }
+
         // Handle set completions from watch (log a set)
         await WatchSyncService.shared.onSetCompletion { [weak self] msg in
             guard let self else { return }
@@ -84,6 +92,13 @@ final class AppModel {
             await sessionVM.confirmEnd()
         case "discard":
             await sessionVM.discardSession()
+        case "mediaPrev":
+            MPMusicPlayerController.systemMusicPlayer.skipToPreviousItem()
+        case "mediaPlayPause":
+            let player = MPMusicPlayerController.systemMusicPlayer
+            if player.playbackState == .playing { player.pause() } else { player.play() }
+        case "mediaNext":
+            MPMusicPlayerController.systemMusicPlayer.skipToNextItem()
         default:
             break
         }
