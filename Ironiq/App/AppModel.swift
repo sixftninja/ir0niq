@@ -1,7 +1,6 @@
 import Foundation
 import SwiftData
 import Observation
-import MediaPlayer
 
 /// Top-level dependency container. Created once at app startup and injected
 /// via @Environment throughout the view hierarchy.
@@ -92,13 +91,6 @@ final class AppModel {
             await sessionVM.confirmEnd()
         case "discard":
             await sessionVM.discardSession()
-        case "mediaPrev":
-            MPMusicPlayerController.systemMusicPlayer.skipToPreviousItem()
-        case "mediaPlayPause":
-            let player = MPMusicPlayerController.systemMusicPlayer
-            if player.playbackState == .playing { player.pause() } else { player.play() }
-        case "mediaNext":
-            MPMusicPlayerController.systemMusicPlayer.skipToNextItem()
         default:
             break
         }

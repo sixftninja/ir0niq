@@ -1,5 +1,30 @@
 import SwiftUI
 
+/// Simple acknowledgment shown whenever a workout ends (saved, discarded, or ending state).
+/// No choices — phone handles save/discard. User just taps Done to return to idle.
+struct WatchWorkoutEndedView: View {
+    @Environment(WatchSessionViewModel.self) private var vm
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Workout\nEnded")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+
+            Button("Done") {
+                vm.dismissWorkoutEnded()
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(Color(hex: "E8680A"))
+            .font(.system(size: 15, weight: .bold))
+            .frame(maxWidth: .infinity)
+            .accessibilityIdentifier("watch_workout_ended_done_button")
+        }
+        .padding(.horizontal, 8)
+    }
+}
+
 /// Shown after a workout is saved — displays duration + volume, then returns to idle.
 struct WatchEndSummaryView: View {
     @Environment(WatchSessionViewModel.self) private var vm

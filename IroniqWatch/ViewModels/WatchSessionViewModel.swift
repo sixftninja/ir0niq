@@ -115,7 +115,9 @@ final class WatchSessionViewModel {
 
         if let dur = message.sessionDurationSeconds { sessionDurationSeconds = dur }
         if let vol = message.sessionVolumeKg { sessionVolumeKg = vol }
-        if engineState == "ended" && sessionDurationSeconds > 0 {
+        // Only show the end screen if we haven't already dismissed it locally
+        // (previousEngineState == "idle" means user already tapped Done)
+        if engineState == "ended" && previousEngineState != "idle" && sessionDurationSeconds > 0 {
             showEndSummary = true
         }
 
@@ -203,21 +205,18 @@ final class WatchSessionViewModel {
         connectivity.sendAction(WatchActionMessage(action: "discard", sessionId: sid, templateId: nil))
     }
 
-    /// Dismisses end summary after save — returns watch to idle without any phone action
-    func dismissEndSummary() {
+    /// Dismisses the unified "Workout Ended" screen — returns watch to idle.
+    func dismissWorkoutEnded() {
         showEndSummary = false
-        engineState = "idle"
-        healthKit.stopExtendedSession()
-        Task { try? await healthKit.endSession() }
-    }
-
-    /// Dismisses discarded screen — returns watch to idle
-    func dismissDiscarded() {
         showDiscarded = false
         engineState = "idle"
         healthKit.stopExtendedSession()
         Task { try? await healthKit.endSession() }
     }
+
+    // Keep legacy dismissals for any remaining callers (safety)
+    func dismissEndSummary() { dismissWorkoutEnded() }
+    func dismissDiscarded() { dismissWorkoutEnded() }
 
     // MARK: - Display helpers
 
