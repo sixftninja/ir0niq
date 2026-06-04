@@ -101,8 +101,8 @@ struct WatchInputFaceView: View {
                     .digitalCrownRotation(
                         $weightValue,
                         from: 0,
-                        through: isImperial ? 500 : 200,
-                        by: isImperial ? 5 : 0.5,
+                        through: isImperial ? 500 : 250,
+                        by: isImperial ? 5 : 2.5,
                         sensitivity: .low,
                         isContinuous: false,
                         isHapticFeedbackEnabled: true
@@ -157,13 +157,13 @@ struct WatchInputFaceView: View {
     private func loadDefaults() {
         primaryValue = 0
         if isImperial {
-            // Round to nearest 5 lb
+            // Round to nearest 5 lb; default 45 lb
             let raw = vm.targetWeight.map { $0 * 2.20462 } ?? 45
             weightValue = (raw / 5).rounded() * 5
         } else {
-            // Round to nearest 0.5 kg
-            let raw = vm.targetWeight ?? 20
-            weightValue = (raw * 2).rounded() / 2
+            // Round to nearest 2.5 kg; default 22.5 kg
+            let raw = vm.targetWeight ?? 22.5
+            weightValue = (raw / 2.5).rounded() * 2.5
         }
         if let tw = vm.targetWeight, tw <= 0 { isBodyweight = true }
     }

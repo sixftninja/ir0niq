@@ -90,7 +90,6 @@ actor HealthKitService: HealthKitServiceProtocol {
             start: date,
             end: date
         )
-        // Bridge completion handler to async/await
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             builder.add([sample]) { _, error in
                 if let error { continuation.resume(throwing: error) }
