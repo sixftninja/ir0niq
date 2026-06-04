@@ -61,16 +61,6 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
         WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
     }
 
-    /// Pull current state from phone — sent on activation so the watch always
-    /// reflects the phone's live engine state, bypassing applicationContext timing issues.
-    func requestCurrentStateFromPhone() {
-        guard WCSession.default.isReachable else { return }
-        WCSession.default.sendMessage(["action": "getState"], replyHandler: { [weak self] reply in
-            guard let base64 = reply["state"] as? String else { return }
-            Task { @MainActor in self?.applyStateBase64(base64) }
-        }) { _ in }  // silently ignore if phone unreachable
-    }
-
     private func applyStateBase64(_ base64: String) {
         guard let data = Data(base64Encoded: base64),
               let msg = try? JSONDecoder().decode(WatchSessionStateMessage.self, from: data) else { return }
@@ -88,20 +78,13 @@ extension WatchConnectivityService: WCSessionDelegate {
         let base64 = session.receivedApplicationContext["state"] as? String
         Task { @MainActor in
             self.isReachable = reachable
-            // Apply stored applicationContext (covers offline-start case)
             if let base64 { self.applyStateBase64(base64) }
-            // Also pull live state from phone if reachable (covers mid-workout open case)
-            if reachable { self.requestCurrentStateFromPhone() }
         }
     }
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
         let reachable = session.isReachable
-        Task { @MainActor in
-            self.isReachable = reachable
-            // Pull fresh state whenever the phone becomes reachable
-            if reachable { self.requestCurrentStateFromPhone() }
-        }
+        Task { @MainActor in self.isReachable = reachable }
     }
 
     // Real-time push from phone during active session

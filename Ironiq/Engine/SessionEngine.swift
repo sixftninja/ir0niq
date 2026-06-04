@@ -138,11 +138,6 @@ actor SessionEngine {
     /// Push current state to watch immediately — called when watch becomes reachable.
     func broadcastCurrentState() { notifyWatch(state: state) }
 
-    /// Build and return the current state message (for pull-based state requests from watch).
-    func buildCurrentStateMessage() -> WatchSessionStateMessage {
-        buildWatchMessage(for: state, context: sessionContext)
-    }
-
     // MARK: - State stream (observed by UI in Phase 3)
 
     nonisolated let stateUpdates: AsyncStream<SessionEngineState>
@@ -493,14 +488,8 @@ actor SessionEngine {
                 context.currentExerciseIndex = nextExerciseIndex
                 context.currentSetIndex = 0
                 beginCurrentSet(in: &context)
-                sessionContext = context
-            } else {
-                // All exercises complete — auto-save and end the workout
-                sessionContext = context
-                _ = try await endSession()
-                try await confirmEnd()
-                return
             }
+            sessionContext = context
         }
         scheduleIdleReset(sessionId: context.sessionId)
         notifyWatch(state: state)
@@ -557,12 +546,7 @@ actor SessionEngine {
             restEnd: set.restEnd,
             isUnrecorded: set.isUnrecorded
         )
-        let workoutDone = try await advanceAfterSkippingSet()
-        if workoutDone {
-            _ = try await endSession()
-            try await confirmEnd()
-            return
-        }
+        try await advanceAfterSkippingSet()
         scheduleIdleReset(sessionId: context.sessionId)
         notifyWatch(state: state)
     }
@@ -873,8 +857,7 @@ actor SessionEngine {
         await handleIdleTimeout()
     }
 
-    /// Returns true if all exercises are complete (workout should end).
-    private func advanceAfterSkippingSet() async throws -> Bool {
+    private func advanceAfterSkippingSet() async throws {
         guard var context = sessionContext else { throw SessionEngineError.setNotFound }
         let exercise = context.exercises[context.currentExerciseIndex]
         let nextSetIndex = context.currentSetIndex + 1
@@ -882,7 +865,7 @@ actor SessionEngine {
         if nextSetIndex < exercise.setContexts.count {
             context.currentSetIndex = nextSetIndex
             sessionContext = context
-            return false
+            return
         }
 
         let finished = exercise.setContexts.allSatisfy { set in
@@ -902,11 +885,8 @@ actor SessionEngine {
         if nextExerciseIndex < context.exercises.count {
             context.currentExerciseIndex = nextExerciseIndex
             context.currentSetIndex = 0
-            sessionContext = context
-            return false
         }
         sessionContext = context
-        return true  // all exercises done
     }
 
     // MARK: - Private: timer management
@@ -1064,18 +1044,6 @@ actor SessionEngine {
         context.exercises[exIdx].setContexts[context.currentSetIndex].lifecycleState = .inProgress(startedAt: startedAt)
         context.exercises[exIdx].status = .inProgress
         context.lastInteractionAt = startedAt
-
-        // Schedule a logging reminder so the watch reminds the user if they haven't
-        // logged this set within loggingReminderInterval * nudgeMultiplier seconds.
-        // tapRest() will replace this timer with a rest-based one if the user taps Rest.
-        let setId = context.exercises[exIdx].setContexts[context.currentSetIndex].sessionSetId
-        let nudgeDelay = loggingReminderInterval * Self.nudgeMultiplier
-        Task { [weak self] in
-            guard let self else { return }
-            await self.timerSystem.schedule(.nudge(setId: setId), after: nudgeDelay) { [weak self] in
-                await self?.handleRestNudge(setId: setId)
-            }
-        }
     }
 
     private func clearEndedSessionIfNeeded() {

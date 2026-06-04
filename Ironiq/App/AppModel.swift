@@ -57,20 +57,6 @@ final class AppModel {
             Task { await self.engine.broadcastCurrentState() }
         }
 
-        // Reply to watch's "getState" pull requests with the current encoded state.
-        // This is the primary reliability mechanism: watch asks on activation,
-        // phone replies directly — no silent-failure paths.
-        WatchSyncService.shared.stateProvider = { [weak self] replyHandler in
-            guard let self else { replyHandler([:]); return }
-            Task {
-                let msg = await self.engine.buildCurrentStateMessage()
-                guard let data = try? JSONEncoder().encode(msg) else {
-                    replyHandler([:])
-                    return
-                }
-                replyHandler(["state": data.base64EncodedString()])
-            }
-        }
 
         // Handle set completions from watch (log a set)
         await WatchSyncService.shared.onSetCompletion { [weak self] msg in
