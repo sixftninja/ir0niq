@@ -59,6 +59,8 @@ final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sen
     private var completionHandler: WatchMessageHandler?
     private var actionHandler: WatchActionHandler?
     var onBecameReachable: (() -> Void)?
+    /// Called when watch sends "getState" — receives the WCSession reply handler and must call it.
+    var stateProvider: ((@escaping ([String: Any]) -> Void) -> Void)?
     private var activationContinuation: CheckedContinuation<Void, Never>?
 
     static let shared = WatchSyncService()
@@ -128,6 +130,26 @@ extension WatchSyncService: WCSessionDelegate {
         }
         if let msg = try? JSONDecoder().decode(WatchActionMessage.self, from: messageData) {
             Task { @MainActor in self.actionHandler?(msg) }
+        }
+    }
+
+    // Watch pulls current state on activation — reply with encoded current state.
+    nonisolated func session(
+        _ session: WCSession,
+        didReceiveMessage message: [String: Any],
+        replyHandler: @escaping ([String: Any]) -> Void
+    ) {
+        guard (message["action"] as? String) == "getState" else { replyHandler([:]); return }
+        // WCSession replyHandlers are thread-safe per Apple docs; box it as @unchecked Sendable
+        // so it can cross the actor boundary to access stateProvider on @MainActor.
+        struct Box: @unchecked Sendable { let reply: ([String: Any]) -> Void }
+        let box = Box(reply: replyHandler)
+        Task { @MainActor in
+            if let provider = self.stateProvider {
+                provider(box.reply)
+            } else {
+                box.reply([:])
+            }
         }
     }
 

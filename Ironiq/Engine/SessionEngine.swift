@@ -138,6 +138,11 @@ actor SessionEngine {
     /// Push current state to watch immediately — called when watch becomes reachable.
     func broadcastCurrentState() { notifyWatch(state: state) }
 
+    /// Build and return the current state message (for pull-based state requests from watch).
+    func buildCurrentStateMessage() -> WatchSessionStateMessage {
+        buildWatchMessage(for: state, context: sessionContext)
+    }
+
     // MARK: - State stream (observed by UI in Phase 3)
 
     nonisolated let stateUpdates: AsyncStream<SessionEngineState>
