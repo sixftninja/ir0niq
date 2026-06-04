@@ -36,6 +36,8 @@ struct WatchRootView: View {
     var body: some View {
         if vm.showEndSummary {
             WatchEndSummaryView()
+        } else if vm.engineState == "ending" {
+            WatchEndChoiceView()
         } else if vm.isSessionActive {
             WatchActiveSessionView()
         } else {

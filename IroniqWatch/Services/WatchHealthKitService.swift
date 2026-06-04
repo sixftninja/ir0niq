@@ -1,5 +1,6 @@
 import Foundation
 @preconcurrency import HealthKit
+import WatchKit
 
 @MainActor
 final class WatchHealthKitService: NSObject, @unchecked Sendable {
@@ -8,9 +9,29 @@ final class WatchHealthKitService: NSObject, @unchecked Sendable {
     private let healthStore = HKHealthStore()
     private var workoutSession: HKWorkoutSession?
     private var workoutBuilder: HKLiveWorkoutBuilder?
+    private var extendedRuntimeSession: WKExtendedRuntimeSession?
     private(set) var isSessionActive = false
 
     var onHeartRateUpdate: ((Double) -> Void)?
+
+    // MARK: - Extended runtime (keeps watch app in foreground during workout)
+    // WKExtendedRuntimeSession brings the app back to foreground on wrist-raise,
+    // independent of HealthKit authorization. Belt-and-suspenders alongside HK.
+
+    func startExtendedSession() {
+        guard extendedRuntimeSession?.state != .running else { return }
+        let s = WKExtendedRuntimeSession()
+        s.delegate = self
+        s.start()
+        extendedRuntimeSession = s
+    }
+
+    func stopExtendedSession() {
+        extendedRuntimeSession?.invalidate()
+        extendedRuntimeSession = nil
+    }
+
+    // MARK: - HealthKit workout session (heart rate + calories)
 
     func requestAuthorization() async throws {
         guard HKHealthStore.isHealthDataAvailable() else { return }
@@ -41,7 +62,7 @@ final class WatchHealthKitService: NSObject, @unchecked Sendable {
         self.workoutSession = session
         self.workoutBuilder = builder
 
-        // startActivity and stopActivity are synchronous on watchOS 10+
+        // startActivity is synchronous on watchOS 10+
         session.startActivity(with: Date())
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             builder.beginCollection(withStart: Date()) { _, error in
@@ -61,6 +82,37 @@ final class WatchHealthKitService: NSObject, @unchecked Sendable {
         isSessionActive = false
     }
 }
+
+// MARK: - WKExtendedRuntimeSessionDelegate
+
+extension WatchHealthKitService: WKExtendedRuntimeSessionDelegate {
+    nonisolated func extendedRuntimeSessionDidStart(_ session: WKExtendedRuntimeSession) {}
+
+    nonisolated func extendedRuntimeSessionWillExpire(_ session: WKExtendedRuntimeSession) {
+        // Restart immediately to maintain continuous foreground coverage
+        Task { @MainActor in
+            self.extendedRuntimeSession = nil
+            self.startExtendedSession()
+        }
+    }
+
+    nonisolated func extendedRuntimeSession(
+        _ session: WKExtendedRuntimeSession,
+        didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason,
+        error: Error?
+    ) {
+        // ObjectIdentifier is Sendable; WKExtendedRuntimeSession is not
+        let invalidatedId = ObjectIdentifier(session)
+        Task { @MainActor in
+            if let current = self.extendedRuntimeSession,
+               ObjectIdentifier(current) == invalidatedId {
+                self.extendedRuntimeSession = nil
+            }
+        }
+    }
+}
+
+// MARK: - HKLiveWorkoutBuilderDelegate
 
 extension WatchHealthKitService: HKLiveWorkoutBuilderDelegate {
     nonisolated func workoutBuilder(

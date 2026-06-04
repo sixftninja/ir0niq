@@ -129,6 +129,8 @@ actor SessionEngine {
     var iCloudService: (any iCloudServiceProtocol)?
     var watchSyncService: (any WatchSyncServiceProtocol)?
     var unitSystem: String = "metric"
+    private var lastEndedDurationSeconds: TimeInterval = 0
+    private var lastEndedVolumeKg: Double = 0
 
     func updateUnitSystem(_ system: String) { unitSystem = system }
 
@@ -641,6 +643,17 @@ actor SessionEngine {
             }
         }
 
+        // Capture summary stats for watch end screen before clearing context
+        if let context = sessionContext {
+            let elapsed = endedAt.timeIntervalSince(context.sessionStartedAt) - context.totalPauseDuration
+            lastEndedDurationSeconds = max(0, elapsed)
+            lastEndedVolumeKg = context.exercises.flatMap(\.setContexts).compactMap { set -> Double? in
+                guard case .logged(let reps, _, let weight) = set.lifecycleState,
+                      let w = weight, let r = reps, r > 0 else { return nil }
+                return w * Double(r)
+            }.reduce(0, +)
+        }
+
         await timerSystem.cancelAll()
         transition(to: .ended(sessionId: sessionId))
     }
@@ -651,6 +664,17 @@ actor SessionEngine {
         }
         scheduleIdleReset(sessionId: sessionId)
         transition(to: .active(sessionId: sessionId))
+    }
+
+    /// Discards the session from .ending state — marks as incomplete and returns to idle.
+    func discardSession() async throws {
+        guard case .ending(let sessionId) = state else {
+            throw SessionEngineError.invalidTransition(from: state, action: "discardSession")
+        }
+        try await sessionRepository.updateStatus(sessionId: sessionId, status: .incomplete, endedAt: Date())
+        await timerSystem.cancelAll()
+        sessionContext = nil
+        transition(to: .idle)
     }
 
     // MARK: - Unplanned exercise (edge case 7: requires >= 1 set)
@@ -911,13 +935,22 @@ actor SessionEngine {
         default: isDetailedState = false
         }
         guard isDetailedState, let context else {
+            // Include summary stats on "ended" so watch can show duration/volume
+            var endedDuration: TimeInterval? = nil
+            var endedVolume: Double? = nil
+            if case .ended = state {
+                endedDuration = lastEndedDurationSeconds > 0 ? lastEndedDurationSeconds : nil
+                endedVolume = lastEndedVolumeKg
+            }
             return WatchSessionStateMessage(
                 sessionId: context?.sessionId.uuidString ?? "",
                 engineState: stateName,
                 exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
                 targetReps: nil, targetDuration: nil, targetWeight: nil,
                 loggingType: nil, unitSystem: unitSystem,
-                reminderFired: nil, sessionDurationSeconds: nil, sessionVolumeKg: nil
+                reminderFired: nil,
+                sessionDurationSeconds: endedDuration,
+                sessionVolumeKg: endedVolume
             )
         }
 

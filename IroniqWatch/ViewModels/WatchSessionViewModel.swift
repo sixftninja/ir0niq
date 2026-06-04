@@ -98,10 +98,22 @@ final class WatchSessionViewModel {
             showEndSummary = true
         }
 
-        if isSessionActive && !healthKit.isSessionActive {
-            Task { try? await healthKit.startSession() }
-        } else if !isSessionActive && healthKit.isSessionActive {
-            Task { try? await healthKit.endSession() }
+        // Keep-alive: start extended runtime session so app stays in foreground
+        // and wrist-raise brings it back. End HK workout when no longer active.
+        let keepAlive = isSessionActive || engineState == "ending" || engineState == "ended"
+        if keepAlive {
+            healthKit.startExtendedSession()
+            if isSessionActive && !healthKit.isSessionActive {
+                Task { try? await healthKit.startSession() }
+            } else if !isSessionActive && healthKit.isSessionActive {
+                Task { try? await healthKit.endSession() }
+            }
+        } else {
+            // Transitioned to idle — stop everything
+            healthKit.stopExtendedSession()
+            if healthKit.isSessionActive {
+                Task { try? await healthKit.endSession() }
+            }
         }
 
         WidgetCenter.shared.reloadTimelines(ofKind: "IroniqComplication")
@@ -150,22 +162,28 @@ final class WatchSessionViewModel {
         guard let sid = sessionId else { return }
         showEndConfirm = false
         connectivity.sendAction(WatchActionMessage(action: "end", sessionId: sid, templateId: nil))
-        WKInterfaceDevice.current().play(.success)
+        WKInterfaceDevice.current().play(.click)
     }
 
-    func sendSave() {
+    /// Save workout — sent from WatchEndChoiceView when engine is in "ending" state
+    func saveFromWatch() {
         guard let sid = sessionId else { return }
-        connectivity.sendAction(WatchActionMessage(action: "save", sessionId: sid, templateId: nil))
+        connectivity.sendAction(WatchActionMessage(action: "confirmEnd", sessionId: sid, templateId: nil))
         WKInterfaceDevice.current().play(.success)
-        showEndSummary = false
-        engineState = "idle"
     }
 
-    func sendDiscard() {
+    /// Discard workout — sent from WatchEndChoiceView when engine is in "ending" state
+    func discardFromWatch() {
         guard let sid = sessionId else { return }
         connectivity.sendAction(WatchActionMessage(action: "discard", sessionId: sid, templateId: nil))
+    }
+
+    /// Dismisses end summary after save — returns watch to idle without any phone action
+    func dismissEndSummary() {
         showEndSummary = false
         engineState = "idle"
+        healthKit.stopExtendedSession()
+        Task { try? await healthKit.endSession() }
     }
 
     // MARK: - Display helpers

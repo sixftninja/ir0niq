@@ -194,6 +194,12 @@ final class SessionViewModel {
         }
     }
 
+    func discardSession() async {
+        do { try await engine.discardSession() }
+        catch { setAlert(error) }
+        await refreshStateAndContext()
+    }
+
     func addUnplannedExercise(
         exerciseId: UUID,
         exerciseName: String,

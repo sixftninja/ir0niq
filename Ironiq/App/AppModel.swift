@@ -81,6 +81,8 @@ final class AppModel {
             _ = await sessionVM.endSession()
         case "confirmEnd":
             await sessionVM.confirmEnd()
+        case "discard":
+            await sessionVM.discardSession()
         default:
             break
         }
