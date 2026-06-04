@@ -35,13 +35,11 @@ struct WatchRootView: View {
 
     var body: some View {
         if vm.showEndSummary {
-            WatchEndSummaryView()               // phone saved → "Saved!" + Done
+            WatchEndSummaryView()        // saved → "Saved!" + Done
         } else if vm.showDiscarded {
-            WatchDiscardedView()                // phone/watch discarded → "Discarded" + Done
-        } else if vm.engineState == "ending" && vm.watchTriggeredEnd {
-            WatchEndChoiceView()                // watch triggered end → Save / Discard choice
+            WatchDiscardedView()         // discarded → "Discarded" + Done
         } else if vm.engineState == "ending" {
-            WatchEditInProgressView()           // phone triggered end → "Edit in Progress"
+            WatchEndChoiceView()         // review screen → "Workout Ended" + Save/Discard
         } else if vm.isSessionActive {
             WatchActiveSessionView()
         } else {

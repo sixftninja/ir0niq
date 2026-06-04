@@ -12,31 +12,34 @@ struct WatchSetFaceView: View {
                 activeContent
             }
         }
-        .overlay(alignment: .topTrailing) {
-            if let hr = vm.heartRate {
-                HStack(spacing: 3) {
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 9))
-                        .foregroundStyle(.red)
-                    Text("\(Int(hr))")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.red)
-                }
-                .padding(.top, 6)
-                .padding(.trailing, 8)
-            }
-        }
     }
 
     private var activeContent: some View {
         VStack(spacing: 8) {
-            if let name = vm.exerciseName {
-                Text(name)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .center)
+
+            // HR (left) + exercise name (truncated) in the same row
+            HStack(spacing: 4) {
+                if let hr = vm.heartRate {
+                    HStack(spacing: 2) {
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.red)
+                        Text("\(Int(hr))")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.red)
+                    }
+                    .fixedSize()
+                }
+                if let name = vm.exerciseName {
+                    Text(name)
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("Set \(vm.setNumber) / \(vm.totalSets)")
                 .font(.system(size: 22, weight: .bold))
@@ -57,11 +60,12 @@ struct WatchSetFaceView: View {
             .frame(maxWidth: .infinity)
             .accessibilityIdentifier("watch_finish_set_button")
 
+            // Skip is intentionally small — half the visual weight of Finish Set
             Button("Skip") {
                 vm.sendSkipSet()
             }
-            .font(.system(size: 12))
-            .foregroundStyle(.secondary)
+            .font(.system(size: 10))
+            .foregroundStyle(.tertiary)
             .accessibilityIdentifier("watch_skip_set_button")
         }
         .padding(.horizontal, 8)

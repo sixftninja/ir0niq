@@ -98,7 +98,7 @@ struct WatchEndChoiceView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("Save workout?")
+            Text("Workout Ended")
                 .font(.headline.weight(.bold))
                 .foregroundStyle(.white)
 

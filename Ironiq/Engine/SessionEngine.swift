@@ -129,10 +129,12 @@ actor SessionEngine {
     var iCloudService: (any iCloudServiceProtocol)?
     var watchSyncService: (any WatchSyncServiceProtocol)?
     var unitSystem: String = "metric"
+    var loggingReminderInterval: TimeInterval = 60  // seconds; synced from AppState.restReminderSeconds
     private var lastEndedDurationSeconds: TimeInterval = 0
     private var lastEndedVolumeKg: Double = 0
 
     func updateUnitSystem(_ system: String) { unitSystem = system }
+    func updateLoggingReminderInterval(_ seconds: TimeInterval) { loggingReminderInterval = seconds }
 
     // MARK: - State stream (observed by UI in Phase 3)
 
@@ -1040,6 +1042,18 @@ actor SessionEngine {
         context.exercises[exIdx].setContexts[context.currentSetIndex].lifecycleState = .inProgress(startedAt: startedAt)
         context.exercises[exIdx].status = .inProgress
         context.lastInteractionAt = startedAt
+
+        // Schedule a logging reminder so the watch reminds the user if they haven't
+        // logged this set within loggingReminderInterval * nudgeMultiplier seconds.
+        // tapRest() will replace this timer with a rest-based one if the user taps Rest.
+        let setId = context.exercises[exIdx].setContexts[context.currentSetIndex].sessionSetId
+        let nudgeDelay = loggingReminderInterval * Self.nudgeMultiplier
+        Task { [weak self] in
+            guard let self else { return }
+            await self.timerSystem.schedule(.nudge(setId: setId), after: nudgeDelay) { [weak self] in
+                await self?.handleRestNudge(setId: setId)
+            }
+        }
     }
 
     private func clearEndedSessionIfNeeded() {

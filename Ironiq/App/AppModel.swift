@@ -48,6 +48,7 @@ final class AppModel {
     func startWatchSync() async {
         await WatchSyncService.shared.activate()
         await engine.updateUnitSystem(appState.unitSystem == .imperial ? "imperial" : "metric")
+        await engine.updateLoggingReminderInterval(TimeInterval(appState.restReminderSeconds))
 
         // Handle set completions from watch (log a set)
         await WatchSyncService.shared.onSetCompletion { [weak self] msg in

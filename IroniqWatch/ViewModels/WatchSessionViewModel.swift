@@ -38,9 +38,6 @@ final class WatchSessionViewModel {
     var showEndSummary = false
     var showDiscarded = false
     var showReminderNudge = false
-    /// true when the watch sent the "end" action (shows Save/Discard choice)
-    /// false when phone triggered end (shows "Edit in Progress")
-    private(set) var watchTriggeredEnd = false
 
     // MARK: - Derived
 
@@ -83,13 +80,15 @@ final class WatchSessionViewModel {
         sessionId = message.sessionId.isEmpty ? nil : message.sessionId
         engineState = message.engineState
 
-        // Detect phone-triggered discard: ending → idle without a save
+        // Clear stale end screens when a new session is in progress or ending
+        if engineState == "active" || engineState == "paused" || engineState == "ending" {
+            showEndSummary = false
+            showDiscarded = false
+        }
+
+        // Detect discard: ending → idle (phone or watch discarded, not saved)
         if engineState == "idle" && previousEngineState == "ending" {
             showDiscarded = true
-        }
-        // Reset watchTriggeredEnd whenever we leave the ending state
-        if previousEngineState == "ending" && engineState != "ending" {
-            watchTriggeredEnd = false
         }
         exerciseName = message.exerciseName
         setNumber = message.setNumber ?? 1
@@ -175,7 +174,6 @@ final class WatchSessionViewModel {
     func requestEnd() {
         guard let sid = sessionId else { return }
         showEndConfirm = false
-        watchTriggeredEnd = true  // watch-initiated: show Save/Discard choice
         connectivity.sendAction(WatchActionMessage(action: "end", sessionId: sid, templateId: nil))
         WKInterfaceDevice.current().play(.click)
     }
