@@ -41,7 +41,8 @@ final class WatchHealthKitService: NSObject, @unchecked Sendable {
         self.workoutSession = session
         self.workoutBuilder = builder
 
-        try await session.startActivity(with: Date())
+        // startActivity and stopActivity are synchronous on watchOS 10+
+        session.startActivity(with: Date())
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
             builder.beginCollection(withStart: Date()) { _, error in
                 if let error { cont.resume(throwing: error) } else { cont.resume() }
@@ -52,7 +53,7 @@ final class WatchHealthKitService: NSObject, @unchecked Sendable {
 
     func endSession() async throws {
         guard let session = workoutSession, let builder = workoutBuilder else { return }
-        try await session.stopActivity(with: Date())
+        session.stopActivity(with: Date())
         try await builder.endCollection(at: Date())
         _ = try? await builder.finishWorkout()
         workoutSession = nil

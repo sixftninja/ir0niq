@@ -27,7 +27,7 @@ struct WatchInputFaceView: View {
     // MARK: - Step 1: Reps or Duration
 
     private var primaryStep: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 10) {
             Text(stepOneLabel)
                 .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(.secondary)
@@ -44,78 +44,81 @@ struct WatchInputFaceView: View {
                     from: 0,
                     through: vm.loggingType == "duration" ? 3600 : 100,
                     by: vm.loggingType == "duration" ? 5 : 1,
-                    sensitivity: .medium,
+                    sensitivity: .low,
                     isContinuous: false,
                     isHapticFeedbackEnabled: true
                 )
 
-            // Placeholder hint
             if primaryValue == 0, let hint = stepOnePlaceholder {
                 Text("target: \(hint)")
                     .font(.system(size: 10))
                     .foregroundStyle(.secondary.opacity(0.7))
             }
 
-            Button("Next") { step = .weight }
+            Button("Next →") { step = .weight }
                 .buttonStyle(.borderedProminent)
                 .tint(Color(hex: "E8680A"))
-                .font(.system(size: 14, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
+                .frame(maxWidth: .infinity)
                 .accessibilityIdentifier("watch_next_button")
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 8)
     }
 
     // MARK: - Step 2: Weight
 
     private var weightStep: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
             Text("Weight")
                 .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
                 .tracking(1)
 
-            // Bodyweight toggle
+            // Bodyweight toggle — full-width button for easy tapping
             Button {
                 isBodyweight.toggle()
             } label: {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     Image(systemName: isBodyweight ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: 12))
+                        .font(.system(size: 15))
                         .foregroundStyle(isBodyweight ? Color(hex: "E8680A") : .secondary)
                     Text("Bodyweight")
-                        .font(.system(size: 11))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(isBodyweight ? .white : .secondary)
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.bordered)
+            .tint(isBodyweight ? Color(hex: "E8680A") : .gray)
 
             if !isBodyweight {
                 Text(weightDisplayText)
-                    .font(.system(size: 38, weight: .bold, design: .monospaced))
+                    .font(.system(size: 36, weight: .bold, design: .monospaced))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .focusable()
                     .digitalCrownRotation(
                         $weightValue,
                         from: 0,
-                        through: isImperial ? 5000 : 2267,
-                        by: isImperial ? 5 : 2.5,
-                        sensitivity: .medium,
+                        through: isImperial ? 500 : 200,
+                        by: isImperial ? 5 : 0.5,
+                        sensitivity: .low,
                         isContinuous: false,
                         isHapticFeedbackEnabled: true
                     )
             }
 
-            Button("Done") {
+            Button("Log Set") {
                 submitLog()
             }
             .buttonStyle(.borderedProminent)
             .tint(Color(hex: "2D7D4A"))
-            .font(.system(size: 14, weight: .bold))
+            .font(.system(size: 15, weight: .bold))
+            .frame(maxWidth: .infinity)
             .accessibilityIdentifier("watch_done_button")
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 8)
     }
 
     // MARK: - Helpers
@@ -152,16 +155,16 @@ struct WatchInputFaceView: View {
     }
 
     private func loadDefaults() {
-        // Start at 0 — target shown as placeholder
         primaryValue = 0
-
-        // Weight: start at 45 lb / 20 kg, respect existing target if set
         if isImperial {
-            weightValue = vm.targetWeight.map { $0 * 2.20462 } ?? 45
+            // Round to nearest 5 lb
+            let raw = vm.targetWeight.map { $0 * 2.20462 } ?? 45
+            weightValue = (raw / 5).rounded() * 5
         } else {
-            weightValue = vm.targetWeight ?? 20
+            // Round to nearest 0.5 kg
+            let raw = vm.targetWeight ?? 20
+            weightValue = (raw * 2).rounded() / 2
         }
-        // If target weight is explicitly 0, treat as bodyweight
         if let tw = vm.targetWeight, tw <= 0 { isBodyweight = true }
     }
 

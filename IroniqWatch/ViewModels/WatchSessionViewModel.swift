@@ -125,7 +125,7 @@ final class WatchSessionViewModel {
             durationSeconds: durVal,
             weight: weight > 0 ? weight : nil
         ))
-        WKInterfaceDevice.current().play(.success)
+        WKInterfaceDevice.current().play(.directionUp)  // haptic only, no chime
         showInputFace = false
     }
 

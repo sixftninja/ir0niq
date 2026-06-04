@@ -128,6 +128,9 @@ actor SessionEngine {
     var healthKitService: (any HealthKitServiceProtocol)?
     var iCloudService: (any iCloudServiceProtocol)?
     var watchSyncService: (any WatchSyncServiceProtocol)?
+    var unitSystem: String = "metric"
+
+    func updateUnitSystem(_ system: String) { unitSystem = system }
 
     // MARK: - State stream (observed by UI in Phase 3)
 
@@ -441,6 +444,7 @@ actor SessionEngine {
             isUnrecorded: isUnrecorded
         )
         scheduleIdleReset(sessionId: context.sessionId)
+        notifyWatch(state: state)
     }
 
     /// Advances to the next set, or next exercise if all sets are done.
@@ -482,6 +486,7 @@ actor SessionEngine {
             sessionContext = context
         }
         scheduleIdleReset(sessionId: context.sessionId)
+        notifyWatch(state: state)
     }
 
     // MARK: - Navigate to previous set (Siri intent support)
@@ -537,6 +542,7 @@ actor SessionEngine {
         )
         try await advanceAfterSkippingSet()
         scheduleIdleReset(sessionId: context.sessionId)
+        notifyWatch(state: state)
     }
 
     // MARK: - Pause / Resume
@@ -910,7 +916,7 @@ actor SessionEngine {
                 engineState: stateName,
                 exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
                 targetReps: nil, targetDuration: nil, targetWeight: nil,
-                loggingType: nil, unitSystem: nil,
+                loggingType: nil, unitSystem: unitSystem,
                 reminderFired: nil, sessionDurationSeconds: nil, sessionVolumeKg: nil
             )
         }
@@ -946,7 +952,7 @@ actor SessionEngine {
             targetDuration: set?.targetDuration,
             targetWeight: set?.targetWeight,
             loggingType: loggingType,
-            unitSystem: nil,
+            unitSystem: unitSystem,
             reminderFired: nil,
             sessionDurationSeconds: nil,
             sessionVolumeKg: nil

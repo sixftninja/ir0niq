@@ -47,6 +47,7 @@ final class AppModel {
     // Called from IroniqApp once the engine and templateVM are ready.
     func startWatchSync() async {
         await WatchSyncService.shared.activate()
+        await engine.updateUnitSystem(appState.unitSystem == .imperial ? "imperial" : "metric")
 
         // Handle set completions from watch (log a set)
         await WatchSyncService.shared.onSetCompletion { [weak self] msg in
