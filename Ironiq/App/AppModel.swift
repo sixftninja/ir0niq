@@ -61,6 +61,10 @@ final class AppModel {
         await WatchSyncService.shared.onSetCompletion { [weak self] msg in
             guard let self else { return }
             Task { @MainActor in
+                // Validate session ID before processing — drops stale messages from a
+                // previous session that arrive after the phone has moved on.
+                let activeId = await self.engine.currentSessionId
+                guard let activeId, activeId.uuidString == msg.sessionId else { return }
                 await self.sessionVM.logCurrentSet(
                     reps: msg.reps,
                     durationSeconds: msg.durationSeconds,

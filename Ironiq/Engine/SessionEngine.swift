@@ -135,6 +135,9 @@ actor SessionEngine {
 
     func updateUnitSystem(_ system: String) { unitSystem = system }
     func updateLoggingReminderInterval(_ seconds: TimeInterval) { loggingReminderInterval = seconds }
+    /// The UUID of the currently active session, or nil when idle.
+    var currentSessionId: UUID? { sessionContext?.sessionId }
+
     /// Push current state to watch immediately — called when watch becomes reachable.
     func broadcastCurrentState() { notifyWatch(state: state) }
 
