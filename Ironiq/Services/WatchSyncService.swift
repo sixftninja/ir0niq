@@ -80,7 +80,7 @@ final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sen
         try? WCSession.default.updateApplicationContext(["state": data.base64EncodedString()])
         // Also push real-time update when both devices are reachable
         if isReachable && WCSession.default.isReachable {
-            WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
+            WCSession.default.sendMessageData(data, replyHandler: nil, errorHandler: nil)
         }
     }
 

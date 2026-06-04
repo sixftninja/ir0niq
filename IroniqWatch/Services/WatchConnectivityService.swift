@@ -52,13 +52,13 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
     func sendSetCompletion(_ message: WatchSetCompletionMessage) {
         guard WCSession.default.isReachable,
               let data = try? JSONEncoder().encode(message) else { return }
-        WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
+        WCSession.default.sendMessageData(data, replyHandler: nil, errorHandler: nil)
     }
 
     func sendAction(_ message: WatchActionMessage) {
         guard WCSession.default.isReachable,
               let data = try? JSONEncoder().encode(message) else { return }
-        WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
+        WCSession.default.sendMessageData(data, replyHandler: nil, errorHandler: nil)
     }
 
     private func applyStateBase64(_ base64: String) {
