@@ -66,17 +66,10 @@ final class AppModel {
             guard let self else { return }
             Task { @MainActor in await self.handleWatchAction(msg) }
         }
-
-        // Send current template list to watch
-        await sendTemplateListToWatch()
     }
 
     private func handleWatchAction(_ msg: WatchActionMessage) async {
         switch msg.action {
-        case "startTemplate":
-            guard let idStr = msg.templateId, let id = UUID(uuidString: idStr) else { return }
-            let started = await sessionVM.startTemplateSession(id)
-            if started { await sendTemplateListToWatch() }  // clears list on watch when active
         case "skipSet":
             await sessionVM.skipCurrentSet()
         case "pause":
@@ -87,33 +80,9 @@ final class AppModel {
             _ = await sessionVM.endSession()
         case "confirmEnd":
             await sessionVM.confirmEnd()
-        case "save":
-            // Session already saved via confirmEnd; just send updated idle state with templates
-            await sendTemplateListToWatch()
-        case "discard":
-            await sendTemplateListToWatch()
         default:
             break
         }
-    }
-
-    // Sends current template list to watch (called on idle state and after save/discard)
-    func sendTemplateListToWatch() async {
-        guard WatchSyncService.shared.isReachable else { return }
-        let templates = templateVM.templates.map {
-            WatchTemplateInfo(id: $0.id.uuidString, name: $0.name, exerciseCount: $0.exercises.count)
-        }
-        let msg = WatchSessionStateMessage(
-            sessionId: "",
-            engineState: "idle",
-            exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
-            targetReps: nil, targetDuration: nil, targetWeight: nil,
-            loggingType: nil,
-            unitSystem: appState.unitSystem == .imperial ? "imperial" : "metric",
-            templates: templates,
-            reminderFired: nil, sessionDurationSeconds: nil, sessionVolumeKg: nil
-        )
-        await WatchSyncService.shared.sendSessionState(msg)
     }
 
     // MARK: - Cloud sync

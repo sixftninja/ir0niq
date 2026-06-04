@@ -3,12 +3,6 @@ import WatchConnectivity
 
 // MARK: - Shared types (phone ↔ watch)
 
-struct WatchTemplateInfo: Codable, Sendable {
-    let id: String
-    let name: String
-    let exerciseCount: Int
-}
-
 struct WatchSessionStateMessage: Codable, Sendable {
     let sessionId: String
     let engineState: String
@@ -21,7 +15,6 @@ struct WatchSessionStateMessage: Codable, Sendable {
     let targetWeight: Double?
     let loggingType: String?              // "reps" | "duration"
     let unitSystem: String?               // "imperial" | "metric"
-    let templates: [WatchTemplateInfo]?  // sent when engineState == "idle"
     let reminderFired: Bool?
     let sessionDurationSeconds: TimeInterval?
     let sessionVolumeKg: Double?
@@ -81,9 +74,13 @@ final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sen
     }
 
     func sendSessionState(_ message: WatchSessionStateMessage) async {
-        guard isReachable, WCSession.default.isReachable else { return }
         guard let data = try? JSONEncoder().encode(message) else { return }
-        WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
+        // Always persist context so watch recovers state when it opens (even if not reachable)
+        try? WCSession.default.updateApplicationContext(["state": data.base64EncodedString()])
+        // Also push real-time update when both devices are reachable
+        if isReachable && WCSession.default.isReachable {
+            WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
+        }
     }
 
     func onSetCompletion(_ handler: @escaping WatchMessageHandler) async {

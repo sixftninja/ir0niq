@@ -8,10 +8,6 @@ import WidgetKit
 @Observable
 final class WatchSessionViewModel {
 
-    // MARK: - Template list (shown when idle)
-
-    private(set) var templates: [WatchTemplateInfo] = []
-
     // MARK: - Active session state (mirrored from phone)
 
     private(set) var sessionId: String? = nil
@@ -90,7 +86,6 @@ final class WatchSessionViewModel {
         targetWeight = message.targetWeight
         loggingType = message.loggingType ?? "reps"
         if let us = message.unitSystem { unitSystem = us }
-        if let tpls = message.templates { templates = tpls }
 
         if message.reminderFired == true {
             WKInterfaceDevice.current().play(.notification)
@@ -113,11 +108,6 @@ final class WatchSessionViewModel {
     }
 
     // MARK: - User actions → sent to iPhone
-
-    func sendStartTemplate(id: String) {
-        connectivity.sendAction(WatchActionMessage(action: "startTemplate", sessionId: nil, templateId: id))
-        WKInterfaceDevice.current().play(.start)
-    }
 
     func sendFinishSet() {
         showInputFace = true

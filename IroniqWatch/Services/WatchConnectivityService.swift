@@ -3,12 +3,6 @@ import WatchConnectivity
 
 // MARK: - Message types (mirror of iOS types — kept in sync)
 
-struct WatchTemplateInfo: Codable, Sendable {
-    let id: String
-    let name: String
-    let exerciseCount: Int
-}
-
 struct WatchSessionStateMessage: Codable, Sendable {
     let sessionId: String
     let engineState: String
@@ -21,7 +15,6 @@ struct WatchSessionStateMessage: Codable, Sendable {
     let targetWeight: Double?
     let loggingType: String?
     let unitSystem: String?
-    let templates: [WatchTemplateInfo]?
     let reminderFired: Bool?
     let sessionDurationSeconds: TimeInterval?
     let sessionVolumeKg: Double?
@@ -67,6 +60,12 @@ final class WatchConnectivityService: NSObject, @unchecked Sendable {
               let data = try? JSONEncoder().encode(message) else { return }
         WCSession.default.sendMessageData(data, replyHandler: nil) { _ in }
     }
+
+    private func applyStateBase64(_ base64: String) {
+        guard let data = Data(base64Encoded: base64),
+              let msg = try? JSONDecoder().decode(WatchSessionStateMessage.self, from: data) else { return }
+        onSessionStateReceived?(msg)
+    }
 }
 
 extension WatchConnectivityService: WCSessionDelegate {
@@ -76,7 +75,12 @@ extension WatchConnectivityService: WCSessionDelegate {
         error: Error?
     ) {
         let reachable = activationState == .activated && session.isReachable
-        Task { @MainActor in self.isReachable = reachable }
+        // Extract Sendable string before crossing actor boundary
+        let base64 = session.receivedApplicationContext["state"] as? String
+        Task { @MainActor in
+            self.isReachable = reachable
+            if let base64 { self.applyStateBase64(base64) }
+        }
     }
 
     nonisolated func sessionReachabilityDidChange(_ session: WCSession) {
@@ -84,8 +88,18 @@ extension WatchConnectivityService: WCSessionDelegate {
         Task { @MainActor in self.isReachable = reachable }
     }
 
+    // Real-time push from phone during active session
     nonisolated func session(_ session: WCSession, didReceiveMessageData messageData: Data) {
         guard let msg = try? JSONDecoder().decode(WatchSessionStateMessage.self, from: messageData) else { return }
         Task { @MainActor in self.onSessionStateReceived?(msg) }
+    }
+
+    // Context update from phone (delivers even when watch app was closed)
+    nonisolated func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        // Extract Sendable string before crossing actor boundary
+        let base64 = applicationContext["state"] as? String
+        Task { @MainActor in
+            if let base64 { self.applyStateBase64(base64) }
+        }
     }
 }

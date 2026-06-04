@@ -39,7 +39,7 @@ struct WatchRootView: View {
         } else if vm.isSessionActive {
             WatchActiveSessionView()
         } else {
-            WatchTemplateListView()
+            WatchHomeView()
         }
     }
 }

@@ -899,13 +899,18 @@ actor SessionEngine {
         case .ended: stateName = "ended"
         }
 
-        guard case .active = state, let context else {
+        let isDetailedState: Bool
+        switch state {
+        case .active, .paused: isDetailedState = true
+        default: isDetailedState = false
+        }
+        guard isDetailedState, let context else {
             return WatchSessionStateMessage(
                 sessionId: context?.sessionId.uuidString ?? "",
                 engineState: stateName,
                 exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
                 targetReps: nil, targetDuration: nil, targetWeight: nil,
-                loggingType: nil, unitSystem: nil, templates: nil,
+                loggingType: nil, unitSystem: nil,
                 reminderFired: nil, sessionDurationSeconds: nil, sessionVolumeKg: nil
             )
         }
@@ -942,7 +947,6 @@ actor SessionEngine {
             targetWeight: set?.targetWeight,
             loggingType: loggingType,
             unitSystem: nil,
-            templates: nil,
             reminderFired: nil,
             sessionDurationSeconds: nil,
             sessionVolumeKg: nil
