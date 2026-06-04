@@ -86,6 +86,14 @@ final class WatchSessionViewModel {
             showDiscarded = false
         }
 
+        // Clear stale input/nudge sheets when a fresh session begins.
+        // Prevents the watch sending a phantom set completion from a previous
+        // session's open input sheet, which caused the phone logCurrentSet crash.
+        if engineState == "active" && previousEngineState == "idle" {
+            showInputFace = false
+            showReminderNudge = false
+        }
+
         // Detect discard: ending → idle (phone or watch discarded, not saved)
         if engineState == "idle" && previousEngineState == "ending" {
             showDiscarded = true

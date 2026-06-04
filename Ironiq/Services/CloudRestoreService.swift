@@ -41,7 +41,21 @@ struct CloudRestoreService {
         let fm = FileManager.default
         let containerID = "iCloud.com.ir0niq.app"
 
-        guard let iCloudURL = fm.url(forUbiquityContainerIdentifier: containerID) else {
+        // Apple docs: url(forUbiquityContainerIdentifier:) must not be called from the main
+        // thread and may return nil on fresh install until the container initialises.
+        // Call it from a background thread; if it returns nil, retry once after 2 seconds.
+        var iCloudURL: URL? = await Task.detached(priority: .utility) {
+            FileManager.default.url(forUbiquityContainerIdentifier: containerID)
+        }.value
+
+        if iCloudURL == nil {
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            iCloudURL = await Task.detached(priority: .utility) {
+                FileManager.default.url(forUbiquityContainerIdentifier: containerID)
+            }.value
+        }
+
+        guard let iCloudURL else {
             return CloudRestoreResult(templatesRestored: 0, sessionsRestored: 0, errors: ["iCloud container unavailable."])
         }
 

@@ -415,6 +415,13 @@ actor SessionEngine {
         let exIdx = context.currentExerciseIndex
         let setIdx = context.currentSetIndex
 
+        // Bounds-check before subscript — a watch set completion can arrive after the
+        // phone has already advanced past the last set, which would crash without this.
+        guard exIdx < context.exercises.count,
+              setIdx < context.exercises[exIdx].setContexts.count else {
+            throw SessionEngineError.setNotFound
+        }
+
         var set = context.exercises[exIdx].setContexts[setIdx]
         let now = Date()
 
