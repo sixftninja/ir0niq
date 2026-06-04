@@ -104,6 +104,16 @@ struct SyncGateView: View {
         .foregroundStyle(.white.opacity(0.45))
         .fixedSize(horizontal: false, vertical: true)
 
+        // Demo access for App Store review — no cloud sync, full local functionality
+        Button("Continue as Demo") {
+          appState.continueAsDemo()
+        }
+        .font(.footnote)
+        .foregroundStyle(.white.opacity(0.35))
+        .frame(maxWidth: .infinity)
+        .disabled(appState.isPreparingSync)
+        .accessibilityIdentifier("demo_continue_button")
+
         Spacer()
       }
       .padding(24)

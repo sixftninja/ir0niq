@@ -91,6 +91,16 @@ final class AppState {
   func markSyncHealthy() { syncHealth = .healthy }
   func markSyncFailing(_ reason: String) { syncHealth = .failing(reason) }
 
+  /// Skips cloud login for App Store review demo access.
+  /// No provider is set so cloud sync never runs; all local features work normally.
+  func continueAsDemo() {
+    syncEnabled = true
+    UserDefaults.standard.set(true, forKey: Keys.syncEnabled)
+    syncAccountLabel = "Demo"
+    hasCompletedOnboarding = true
+    syncHealth = .healthy
+  }
+
   func completeSync(provider: SyncProvider, accountId: String, accountLabel: String?) {
     syncProvider = provider
     syncAccountId = accountId
