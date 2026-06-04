@@ -147,8 +147,13 @@ struct WatchInputFaceView: View {
         return "\(Int(primaryValue))"
     }
 
+    // digitalCrownRotation `by:` sets haptic detent spacing but the binding
+    // receives continuous values. Snap explicitly to the configured increment.
+    private var weightIncrement: Double { isImperial ? 5.0 : 2.5 }
+    private var snappedWeight: Double { (weightValue / weightIncrement).rounded() * weightIncrement }
+
     private var weightDisplayText: String {
-        let val = weightValue
+        let val = snappedWeight
         if val <= 0 { return isImperial ? "0 lb" : "0 kg" }
         if isImperial { return String(format: "%.0f lb", val) }
         return String(format: "%.1f kg", val)
@@ -171,7 +176,8 @@ struct WatchInputFaceView: View {
     private func submitLog() {
         let repsVal: Int? = vm.loggingType == "reps" && primaryValue > 0 ? Int(primaryValue) : nil
         let durVal: TimeInterval? = vm.loggingType == "duration" && primaryValue > 0 ? primaryValue : nil
-        let weightKg: Double? = isBodyweight ? nil : (isImperial ? weightValue / 2.20462 : weightValue)
+        let snapped = snappedWeight
+        let weightKg: Double? = isBodyweight ? nil : (isImperial ? snapped / 2.20462 : snapped)
         vm.logCurrentSet(reps: repsVal ?? 0, durationSeconds: durVal ?? 0, weight: weightKg ?? 0)
         dismiss()
     }

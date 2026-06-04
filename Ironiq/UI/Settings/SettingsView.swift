@@ -77,13 +77,13 @@ struct SettingsView: View {
           .accessibilityIdentifier("unit_picker")
 
           Stepper(
-            "Rest reminder: \(state.restReminderSeconds)s",
+            "Logging reminder: \(state.restReminderSeconds)s",
             value: $state.restReminderSeconds,
             in: 30...300,
             step: 15
           )
           .foregroundStyle(.primary)
-          .accessibilityIdentifier("rest_reminder_stepper")
+          .accessibilityIdentifier("logging_reminder_stepper")
         }
         .listRowBackground(Color.ironiqSurface)
 

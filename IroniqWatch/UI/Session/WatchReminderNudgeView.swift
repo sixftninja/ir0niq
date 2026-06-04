@@ -6,28 +6,29 @@ struct WatchReminderNudgeView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("Log set?")
-                .font(.headline)
+            Text("Finished Set?")
+                .font(.headline.weight(.bold))
                 .foregroundStyle(.white)
 
-            Button("Log") {
+            Button("Log it") {
                 vm.showReminderNudge = false
                 vm.showInputFace = true
                 dismiss()
             }
             .buttonStyle(.borderedProminent)
             .tint(Color(hex: "E8680A"))
-            .font(.subheadline.weight(.bold))
+            .font(.system(size: 15, weight: .bold))
+            .frame(maxWidth: .infinity)
             .accessibilityIdentifier("watch_reminder_log_button")
 
-            Button("Skip") {
+            Button("Skip Set") {
                 vm.sendSkipSet()
                 dismiss()
             }
             .foregroundStyle(.secondary)
-            .font(.subheadline)
+            .font(.system(size: 12))
             .accessibilityIdentifier("watch_reminder_skip_button")
         }
-        .padding()
+        .padding(.horizontal, 8)
     }
 }

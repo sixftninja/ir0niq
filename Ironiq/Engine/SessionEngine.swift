@@ -823,7 +823,24 @@ actor SessionEngine {
     // MARK: - Timer event handlers
 
     func handleRestNudge(setId: UUID) {
-        // Phase 3: trigger UI nudge notification
+        guard case .active = state, let context = sessionContext else { return }
+        // Only fire if this is still the current set (user may have already advanced)
+        let current = context.exercises[context.currentExerciseIndex]
+            .setContexts[context.currentSetIndex]
+        guard current.sessionSetId == setId else { return }
+        notifyWatchReminder()
+    }
+
+    private func notifyWatchReminder() {
+        guard let watchSyncService else { return }
+        let context = sessionContext
+        let currentState = state
+        Task { [weak self] in
+            guard let self else { return }
+            var message = await self.buildWatchMessage(for: currentState, context: context)
+            message.reminderFired = true
+            await watchSyncService.sendSessionState(message)
+        }
     }
 
     func handleIdleTimeout() async {

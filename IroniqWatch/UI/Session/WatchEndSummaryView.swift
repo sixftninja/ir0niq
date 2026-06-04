@@ -51,6 +51,47 @@ struct WatchEndSummaryView: View {
     }
 }
 
+/// Shown when phone discards the workout — passive confirmation with Done button.
+struct WatchDiscardedView: View {
+    @Environment(WatchSessionViewModel.self) private var vm
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Text("Discarded")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(.secondary)
+
+            Button("Done") {
+                vm.dismissDiscarded()
+            }
+            .buttonStyle(.bordered)
+            .tint(.secondary)
+            .font(.system(size: 15, weight: .bold))
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 8)
+    }
+}
+
+/// Shown when phone ends and is on the review screen — watch is a passive observer.
+struct WatchEditInProgressView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "iphone")
+                .font(.system(size: 28, weight: .light))
+                .foregroundStyle(.secondary)
+            Text("Edit in\nProgress")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Text("Finish on iPhone")
+                .font(.caption2)
+                .foregroundStyle(.secondary.opacity(0.7))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
 /// Shown when engine is in "ending" state — lets user choose to save or discard.
 struct WatchEndChoiceView: View {
     @Environment(WatchSessionViewModel.self) private var vm

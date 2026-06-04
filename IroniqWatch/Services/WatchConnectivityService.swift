@@ -15,7 +15,7 @@ struct WatchSessionStateMessage: Codable, Sendable {
     let targetWeight: Double?
     let loggingType: String?
     let unitSystem: String?
-    let reminderFired: Bool?
+    var reminderFired: Bool?
     let sessionDurationSeconds: TimeInterval?
     let sessionVolumeKg: Double?
 }
