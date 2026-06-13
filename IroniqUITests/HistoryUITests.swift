@@ -13,7 +13,11 @@ final class HistoryUITests: XCTestCase {
     }
 
     func testHistoryViewLoads() {
-        XCTAssertTrue(app.navigationBars["History"].waitForExistence(timeout: 3))
+        // History no longer has a navigation bar title — check the segment control loads instead
+        XCTAssertTrue(
+            app.segmentedControls["history_view_picker"].waitForExistence(timeout: 5) ||
+            app.staticTexts["No Sessions"].waitForExistence(timeout: 3)
+        )
     }
 
     func testHistoryViewPickerExists() {

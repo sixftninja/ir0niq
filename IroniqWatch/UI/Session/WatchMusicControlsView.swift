@@ -1,23 +1,28 @@
-import SwiftUI
 import MediaPlayer
+import SwiftUI
 
-/// Music controls — reached by swiping right→left from the set face.
-/// Controls send WCSession actions to the phone, which forwards them to the
-/// system music player. Track title is read from the watch system's Now Playing.
+/// Music controls screen — swiped to from the active set face.
+///
+/// Now Playing display: reads from MPNowPlayingInfoCenter.default() which reflects
+/// whatever is playing on the paired iPhone (any app that publishes Now Playing info).
+/// Transport commands: sent to the phone via WCSession, where NowPlayingBridge forwards
+/// them to MPMusicPlayerController.systemMusicPlayer.
 struct WatchMusicControlsView: View {
     @Environment(WatchSessionViewModel.self) private var vm
+    @State private var nowPlayingTitle: String? = nil
+    @State private var nowPlayingArtist: String? = nil
 
     var body: some View {
-        VStack(spacing: 12) {
-            nowPlayingTitle
+        VStack(spacing: 14) {
+            nowPlayingInfo
 
-            HStack(spacing: 24) {
+            HStack(spacing: 20) {
                 transportButton(systemImage: "backward.fill") {
                     vm.sendMediaAction("mediaPrev")
                 }
                 .accessibilityIdentifier("watch_prev_track")
 
-                transportButton(systemImage: "playpause.fill", color: Color(hex: "E8680A")) {
+                transportButton(systemImage: "playpause.fill", color: Color(hex: "E8680A"), large: true) {
                     vm.sendMediaAction("mediaPlayPause")
                 }
                 .accessibilityIdentifier("watch_play_pause")
@@ -29,21 +34,34 @@ struct WatchMusicControlsView: View {
             }
         }
         .padding()
+        .onAppear { refreshNowPlaying() }
+        .task {
+            // Poll NowPlaying info every 3 seconds to keep display fresh
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(3))
+                refreshNowPlaying()
+            }
+        }
     }
 
-    private var nowPlayingTitle: some View {
-        Group {
-            if let title = MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyTitle] as? String,
-               !title.isEmpty {
+    private var nowPlayingInfo: some View {
+        VStack(spacing: 2) {
+            if let title = nowPlayingTitle, !title.isEmpty {
                 Text(title)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
+                if let artist = nowPlayingArtist, !artist.isEmpty {
+                    Text(artist)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.white.opacity(0.6))
+                        .lineLimit(1)
+                }
             } else {
                 Text("Music")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.45))
             }
         }
     }
@@ -51,13 +69,21 @@ struct WatchMusicControlsView: View {
     private func transportButton(
         systemImage: String,
         color: Color = .white,
+        large: Bool = false,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             Image(systemName: systemImage)
-                .font(.title3)
+                .font(large ? .title3 : .body)
                 .foregroundStyle(color)
+                .frame(width: large ? 36 : 28, height: large ? 36 : 28)
         }
         .buttonStyle(.plain)
+    }
+
+    private func refreshNowPlaying() {
+        let info = MPNowPlayingInfoCenter.default().nowPlayingInfo
+        nowPlayingTitle = info?[MPMediaItemPropertyTitle] as? String
+        nowPlayingArtist = info?[MPMediaItemPropertyArtist] as? String
     }
 }

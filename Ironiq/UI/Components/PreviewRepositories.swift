@@ -15,6 +15,7 @@ final class PreviewTemplateRepository: TemplateRepositoryProtocol, @unchecked Se
     func delete(id: UUID) async throws {}
     func appendExercise(templateId: UUID, exercise: CreateTemplateExerciseInput) async throws {}
     func count() async throws -> Int { 0 }
+    func hasAssociatedSessions(id: UUID) async throws -> Bool { false }
 }
 
 final class PreviewSessionRepository: SessionRepositoryProtocol, @unchecked Sendable {

@@ -12,8 +12,8 @@ final class IroniqUITests: XCTestCase {
     }
 
     func testAppLaunches() {
-        XCTAssertTrue(app.buttons["tab_templates"].waitForExistence(timeout: 5),
-                      "Templates tab should appear after launch with onboarding skipped")
+        XCTAssertTrue(app.buttons["tab_analytics"].waitForExistence(timeout: 5),
+                      "Analytics tab should appear after launch")
         XCTAssertTrue(app.buttons["tab_start"].exists,
                       "START tab should appear after launch with onboarding skipped")
     }

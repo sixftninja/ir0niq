@@ -4,6 +4,7 @@ struct ActiveSessionView: View {
     @Binding private var openLogOnAppear: Bool
     @Environment(SessionViewModel.self) private var vm
     @Environment(AppState.self) private var appState
+    @Environment(HistoryViewModel.self) private var historyVM
     @Environment(\.dismiss) private var dismiss
     @State private var showEndConfirm = false
     @State private var showReview = false
@@ -66,7 +67,13 @@ struct ActiveSessionView: View {
                 .presentationDetents([.large])
             }
         }
-        .sensoryFeedback(.warning, trigger: shouldShowRestPrompt)
+        .onChange(of: shouldShowRestPrompt) { _, firing in
+            guard firing else { return }
+            let gen = UIImpactFeedbackGenerator(style: .medium)
+            gen.prepare()
+            gen.impactOccurred()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { gen.impactOccurred() }
+        }
         .onAppear {
             if openLogOnAppear, vm.currentSet != nil {
                 openLogOnAppear = false
@@ -281,7 +288,8 @@ struct ActiveSessionView: View {
 
             VStack(spacing: 10) {
                 metricRow(title: "Target", value: currentTargetText, icon: "scope")
-                metricRow(title: "Last set", value: previousSetText, icon: "checkmark.circle")
+                metricRow(title: "Prev set", value: previousSetText, icon: "checkmark.circle")
+                lastWorkoutSetRow
             }
             .padding(18)
             .background(Color.black.opacity(0.22))
@@ -413,6 +421,75 @@ struct ActiveSessionView: View {
         return exercise.setContexts[index]
     }
 
+    // MARK: - Last workout comparison
+
+    @ViewBuilder
+    private var lastWorkoutSetRow: some View {
+        let (text, indicator) = lastWorkoutSetComparison
+        HStack(spacing: 12) {
+            Image(systemName: "clock.arrow.circlepath")
+                .foregroundStyle(Color.ironiqOrange)
+                .frame(width: 24)
+            Text("Last workout")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.48))
+            Spacer(minLength: 12)
+            if let indicator {
+                Image(systemName: indicator.icon)
+                    .foregroundStyle(indicator.color)
+                    .font(.caption.weight(.bold))
+            }
+            Text(text)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+        }
+    }
+
+    private struct ComparisonIndicator {
+        let icon: String
+        let color: Color
+    }
+
+    private var lastWorkoutSetComparison: (String, ComparisonIndicator?) {
+        guard let exercise = vm.currentExercise else { return ("—", nil) }
+        let templateId = vm.templateId
+        let currentSessionId: UUID? = {
+            if case .active(let id) = vm.engineState { return id }
+            if case .paused(let id) = vm.engineState { return id }
+            return nil
+        }()
+        let lastSession = historyVM.sessions.first {
+            $0.templateId == templateId && $0.id != currentSessionId
+        }
+        guard let lastSession else { return ("—", nil) }
+        let matchingExercise = lastSession.exercises.first { $0.exerciseId == exercise.exerciseId }
+        guard let matchingExercise else { return ("—", nil) }
+        let setIdx = vm.currentSetIndex
+        guard setIdx < matchingExercise.sets.count else { return ("—", nil) }
+        let lastSet = matchingExercise.sets.sorted { $0.order < $1.order }[setIdx]
+        guard lastSet.status == .logged else { return ("—", nil) }
+
+        let repsText = lastSet.reps.map { "\($0) reps" } ?? lastSet.durationSeconds.map { "\(Int($0)) sec" } ?? "—"
+        let weightText = lastSet.weight.map { WeightFormatter.format($0, unitSystem: appState.unitSystem) } ?? "BW"
+        let displayText = "\(repsText) × \(weightText)"
+
+        // Compare vs current set if logged
+        if case .logged(let curReps, let curDur, let curWeight) = vm.currentSet?.lifecycleState {
+            let curVal = Double(curReps ?? 0) * (curWeight ?? 1) + (curDur ?? 0)
+            let lastVal = Double(lastSet.reps ?? 0) * (lastSet.weight ?? 1) + (lastSet.durationSeconds ?? 0)
+            if curVal > lastVal {
+                return (displayText, ComparisonIndicator(icon: "arrow.up", color: .ironiqGreen))
+            } else if curVal < lastVal {
+                return (displayText, ComparisonIndicator(icon: "arrow.down", color: .ironiqRed))
+            } else {
+                return (displayText, ComparisonIndicator(icon: "arrow.right", color: .white.opacity(0.5)))
+            }
+        }
+        return (displayText, nil)
+    }
+
     private var isPaused: Bool {
         if case .paused = vm.engineState { return true }
         return false
@@ -463,14 +540,15 @@ extension SessionEngineState {
 }
 
 #Preview {
+    let appState = AppState()
     ActiveSessionView()
-        .environment(AppState())
+        .environment(appState)
         .environment(SessionViewModel(engine: SessionEngine(
             templateRepository: PreviewRepositories.template,
             sessionRepository: PreviewRepositories.session
         )))
         .environment(HistoryViewModel(
             sessionRepo: PreviewRepositories.session,
-            appState: AppState()
+            appState: appState
         ))
 }

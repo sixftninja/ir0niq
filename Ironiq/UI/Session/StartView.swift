@@ -408,7 +408,7 @@ private struct WorkoutSessionView: View {
     }
 }
 
-private struct AddExerciseToWorkoutView: View {
+struct AddExerciseToWorkoutView: View {
     let exercise: ExerciseDTO
     let onAdd: ([CreateTemplateSetInput]) -> Void
     let onBack: () -> Void

@@ -45,6 +45,8 @@ private func makeSessionDTO(from model: Session) -> SessionDTO {
     return SessionDTO(
         id: model.id,
         templateId: model.template?.id,
+        templateName: model.template?.name,
+        isFromArchivedTemplate: model.template?.isArchived ?? false,
         startedAt: model.startedAt,
         endedAt: model.endedAt,
         status: model.status,

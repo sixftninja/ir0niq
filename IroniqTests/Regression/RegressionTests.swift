@@ -200,21 +200,17 @@ final class RegressionTests: XCTestCase {
         XCTAssertTrue({ if case .active = resumed { return true }; return false }())
     }
 
-    // MARK: - Feature gate regression (Phase 5)
+    // MARK: - Feature gate regression (Pro removed — all features free)
 
     @MainActor
-    func testFreeTemplateLimitEnforced() {
+    func testAllFeaturesAlwaysAvailable() {
         let appState = AppState()
-        appState.isProUser = false
-
-        // 7 templates → at limit
-        let atLimit = AppState.freeTemplateLimit
-        let canCreate = appState.isProUser || atLimit < AppState.freeTemplateLimit
-        XCTAssertFalse(canCreate)
-
-        // Pro unlocks
-        appState.isProUser = true
-        XCTAssertTrue(appState.isProUser || atLimit < AppState.freeTemplateLimit)
+        let vm = TemplateViewModel(
+            templateRepo: PreviewRepositories.template,
+            exerciseRepo: PreviewRepositories.exercise
+        )
+        // Pro removed: canCreateTemplate always returns true
+        XCTAssertTrue(vm.canCreateTemplate(appState: appState))
     }
 
     // MARK: - Weight formatter regression (Phase 6)

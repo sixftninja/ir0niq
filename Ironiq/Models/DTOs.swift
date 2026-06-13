@@ -142,11 +142,41 @@ struct TemplateSetDTO: Sendable, Equatable, Identifiable {
 struct SessionDTO: Sendable, Equatable, Identifiable {
     let id: UUID
     let templateId: UUID?
+    let templateName: String?
+    let isFromArchivedTemplate: Bool
     let startedAt: Date
     let endedAt: Date?
     let status: SessionStatus
     let totalPauseDuration: TimeInterval
     let exercises: [SessionExerciseDTO]
+
+    init(
+        id: UUID,
+        templateId: UUID?,
+        templateName: String? = nil,
+        isFromArchivedTemplate: Bool = false,
+        startedAt: Date,
+        endedAt: Date?,
+        status: SessionStatus,
+        totalPauseDuration: TimeInterval,
+        exercises: [SessionExerciseDTO]
+    ) {
+        self.id = id
+        self.templateId = templateId
+        self.templateName = templateName
+        self.isFromArchivedTemplate = isFromArchivedTemplate
+        self.startedAt = startedAt
+        self.endedAt = endedAt
+        self.status = status
+        self.totalPauseDuration = totalPauseDuration
+        self.exercises = exercises
+    }
+
+    /// Template name for display — shows "Archived" for deleted templates, "Quick Start" for ad-hoc.
+    var displayTemplateName: String {
+        if isFromArchivedTemplate { return "Archived" }
+        return templateName ?? "Quick Start"
+    }
 }
 
 struct SessionExerciseDTO: Sendable, Equatable, Identifiable {

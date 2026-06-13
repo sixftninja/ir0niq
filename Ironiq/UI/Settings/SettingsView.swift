@@ -1,13 +1,13 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
   @Environment(AppState.self) private var appState
   @Environment(AppModel.self) private var appModel
   @Environment(SettingsViewModel.self) private var vm
-  @Environment(StoreKitService.self) private var storeKit
-  @State private var showPurchaseError = false
-  @State private var purchaseErrorMessage = ""
+  @Environment(HistoryViewModel.self) private var historyVM
   @State private var isRestoring = false
+  @State private var exportItem: CSVExportItem?
 
   var body: some View {
     NavigationStack {
@@ -77,62 +77,36 @@ struct SettingsView: View {
           .accessibilityIdentifier("unit_picker")
 
           Stepper(
-            "Logging reminder: \(state.restReminderSeconds)s",
+            "Log reminder: \(state.restReminderSeconds)s",
             value: $state.restReminderSeconds,
             in: 30...300,
             step: 15
           )
           .foregroundStyle(.primary)
           .accessibilityIdentifier("logging_reminder_stepper")
+
+          Stepper(
+            "Sessions per week: \(state.sessionsPerWeekTarget)",
+            value: $state.sessionsPerWeekTarget,
+            in: 1...14,
+            step: 1
+          )
+          .foregroundStyle(.primary)
+          .accessibilityIdentifier("sessions_per_week_stepper")
         }
         .listRowBackground(Color.ironiqSurface)
 
-        Section("Ironiq Pro") {
-          if appState.isProUser {
-            HStack {
-              Label("Pro Active", systemImage: "checkmark.seal.fill")
-                .foregroundStyle(Color.ironiqGreen)
-              Spacer()
-            }
-          } else {
-            VStack(alignment: .leading, spacing: 8) {
-              Text("Ironiq Pro")
-                .font(.headline)
-                .foregroundStyle(.white)
-              Text("Unlimited templates · Full history · Analytics · Export")
-                .font(.caption)
-                .foregroundStyle(.white.opacity(0.6))
-
-              HStack(spacing: 12) {
-                Button(storeKit.isPurchasing ? "Purchasing…" : "Upgrade") {
-                  Task {
-                    do {
-                      _ = try await storeKit.purchase(appState: appState)
-                    } catch {
-                      purchaseErrorMessage = error.localizedDescription
-                      showPurchaseError = true
-                    }
-                  }
-                }
-                .disabled(storeKit.isPurchasing)
-                .foregroundStyle(.black)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(Color.ironiqOrange)
-                .clipShape(Capsule())
-                .accessibilityIdentifier("upgrade_pro_button")
-
-                Button("Restore") {
-                  Task { await storeKit.restorePurchases(appState: appState) }
-                }
-                .foregroundStyle(Color.ironiqOrange.opacity(0.8))
-                .font(.subheadline)
-              }
-            }
-            .padding(.vertical, 4)
+        Section("Data") {
+          Button {
+            exportItem = CSVExportItem(csv: buildCSV())
+          } label: {
+            Label("Export History", systemImage: "square.and.arrow.up")
+              .foregroundStyle(historyVM.sessions.isEmpty ? Color.white.opacity(0.35) : Color.ironiqOrange)
           }
+          .disabled(historyVM.sessions.isEmpty)
+          .accessibilityIdentifier("export_history_button")
         }
-        .listRowBackground(Color(white: 0.1))
+        .listRowBackground(Color.ironiqSurface)
 
         Section("About") {
           HStack {
@@ -159,7 +133,9 @@ struct SettingsView: View {
       .background(Color.ironiqDark)
       .navigationTitle("Settings")
       .navigationBarTitleDisplayMode(.large)
-
+      .sheet(item: $exportItem) { item in
+        ShareSheet(activityItems: [item.fileURL])
+      }
       .alert("Switch sync provider?", isPresented: $state.showProviderSwitchWarning) {
         Button("Cancel", role: .cancel) {}
         Button("Switch", role: .destructive) {
@@ -171,14 +147,9 @@ struct SettingsView: View {
           "Your existing workouts and templates stay in the current drive. Earlier history will not appear after switching unless you switch back or migrate later."
         )
       }
-      .alert("Purchase Failed", isPresented: $showPurchaseError) {
-
-        Button("OK") {}
-      } message: {
-        Text(purchaseErrorMessage)
-      }
     }
   }
+
   @ViewBuilder
   private var syncHealthIndicator: some View {
     switch appState.syncHealth {
@@ -193,11 +164,54 @@ struct SettingsView: View {
         .foregroundStyle(.white.opacity(0.4))
     }
   }
+
+  private func buildCSV() -> String {
+    var lines = ["date,template_name,exercise_name,set_number,reps,weight_kg,set_duration_seconds,rest_duration_seconds,session_status"]
+    let df = DateFormatter()
+    df.dateFormat = "yyyy-MM-dd"
+    for session in historyVM.sessions {
+      let templateName = session.displayTemplateName
+      let dateStr = df.string(from: session.startedAt)
+      let status = session.status.rawValue
+      for exercise in session.exercises.sorted(by: { $0.order < $1.order }) {
+        for set in exercise.sets.sorted(by: { $0.order < $1.order }) {
+          guard set.status == .logged else { continue }
+          let reps = set.reps.map(String.init) ?? ""
+          let weight = set.weight.map { String(format: "%.2f", $0) } ?? ""
+          let setDur = set.setDuration.map { String(format: "%.0f", $0) } ?? ""
+          let restDur = set.restDuration.map { String(format: "%.0f", $0) } ?? ""
+          lines.append("\(dateStr),\(templateName),\(exercise.exerciseName),\(set.order + 1),\(reps),\(weight),\(setDur),\(restDur),\(status)")
+        }
+      }
+    }
+    return lines.joined(separator: "\n")
+  }
+}
+
+// MARK: - CSV export helpers
+
+struct CSVExportItem: Identifiable {
+  let id = UUID()
+  let csv: String
+  var fileURL: URL {
+    let url = FileManager.default.temporaryDirectory
+      .appendingPathComponent("ironiq_history_\(id.uuidString.prefix(8)).csv")
+    try? csv.write(to: url, atomically: true, encoding: .utf8)
+    return url
+  }
+}
+
+struct ShareSheet: UIViewControllerRepresentable {
+  let activityItems: [Any]
+  func makeUIViewController(context: Context) -> UIActivityViewController {
+    UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+  }
+  func updateUIViewController(_ uvc: UIActivityViewController, context: Context) {}
 }
 
 #Preview {
   SettingsView()
     .environment(AppState())
     .environment(SettingsViewModel())
-    .environment(StoreKitService.shared)
+    .environment(HistoryViewModel(sessionRepo: PreviewRepositories.session, appState: AppState()))
 }

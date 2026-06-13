@@ -21,7 +21,6 @@ struct IroniqApp: App {
           .environment(appModel.templateVM)
           .environment(appModel.historyVM)
           .environment(appModel.settingsVM)
-          .environment(appModel.storeKit)
           .preferredColorScheme(appModel.appState.useDarkMode ? .dark : .light)
           .task {
             await appModel.templateVM.seedExercisesIfNeeded()

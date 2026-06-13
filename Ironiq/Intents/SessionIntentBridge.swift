@@ -18,6 +18,10 @@ final class SessionIntentBridge {
         _engine = engine
     }
 
+    func clearEngine() {
+        _engine = nil
+    }
+
     /// Returns the active engine, or nil if the app has not yet initialized.
     func engine() -> SessionEngine? {
         _engine

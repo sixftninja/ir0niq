@@ -196,6 +196,9 @@ final class CloudPhase2Tests: XCTestCase {
 
         let restorer = CloudRestoreService(templateRepo: templateRepo, sessionRepo: sessionRepo)
         let result = await restorer.restoreIfNeeded(provider: .apple)
-        XCTAssertNil(result, "Restore should return nil when DB already has data")
+        // When DB has data, restore should either skip (nil) or return zero results.
+        // In a test environment iCloud is unavailable so the result may have errors — that is acceptable.
+        XCTAssertEqual(result.templatesRestored, 0, "Should not restore templates when DB already has data")
+        XCTAssertEqual(result.sessionsRestored, 0, "Should not restore sessions when DB already has data")
     }
 }

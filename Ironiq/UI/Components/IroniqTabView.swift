@@ -2,8 +2,6 @@ import SwiftUI
 
 // MARK: - Session presentation state
 
-// Replaces five competing booleans with a single source of truth.
-// Only one session overlay can be active at a time.
 private enum SessionPresentation: Equatable {
     case none
     case dashboard(openLogOnAppear: Bool)
@@ -28,63 +26,33 @@ private enum SessionPresentation: Equatable {
     }
 }
 
+private enum AppTab: CaseIterable {
+    case analytics
+    case start
+    case history
+
+    var label: String {
+        switch self {
+        case .analytics: return "Analytics"
+        case .start:     return "Start"
+        case .history:   return "History"
+        }
+    }
+}
+
 struct IroniqTabView: View {
     @Environment(SessionViewModel.self) private var sessionVM
-    @State private var selectedTab: AppTab = .templates
+    @State private var selectedTab: AppTab = .start
     @State private var sessionPresentation: SessionPresentation = .none
     @State private var showSettings = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Group {
-                switch selectedTab {
-                case .templates:
-                    HomeView()
-                case .start:
-                    StartView(
-                        showWorkoutDashboard: Binding(
-                            get: { sessionPresentation.showsDashboard },
-                            set: { if $0 { sessionPresentation = .dashboard(openLogOnAppear: false) } else { sessionPresentation = .none } }
-                        ),
-                        showLogOnDashboardOpen: Binding(
-                            get: { sessionPresentation.openLogOnDashboardAppear },
-                            set: { newVal in
-                                if case .dashboard = sessionPresentation {
-                                    sessionPresentation = .dashboard(openLogOnAppear: newVal)
-                                }
-                            }
-                        ),
-                        showExercisePicker: Binding(
-                            get: { sessionPresentation.showsExercisePicker },
-                            set: { if $0 { sessionPresentation = .exercisePicker } else { sessionPresentation = .none } }
-                        )
-                    )
-                case .history:
-                    HistoryListView()
-                }
-            }
-            .safeAreaInset(edge: .bottom) {
-                bottomBar
-            }
-            .overlay(alignment: .topTrailing) {
-                Button {
-                    showSettings = true
-                } label: {
-                    Image(systemName: "person.crop.circle")
-                        .font(.title2)
-                        .foregroundStyle(.white)
-                        .frame(width: 42, height: 42)
-                        .background(Color.white.opacity(0.1))
-                        .clipShape(Circle())
-                }
-                .padding(.trailing, 16)
-                .padding(.top, 8)
-                .accessibilityIdentifier("profile_button")
-            }
+            tabContent
+                .safeAreaInset(edge: .bottom) { bottomBar }
+                .overlay(alignment: .topTrailing) { profileButton }
         }
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-        }
+        .sheet(isPresented: $showSettings) { SettingsView() }
         .fullScreenCover(
             isPresented: Binding(
                 get: { sessionPresentation.showsDashboard },
@@ -110,9 +78,7 @@ struct IroniqTabView: View {
                 get: { sessionPresentation.showsSummary },
                 set: { if !$0 { sessionPresentation = .none } }
             )
-        ) {
-            SessionSummaryView()
-        }
+        ) { SessionSummaryView() }
         .onChange(of: sessionVM.completedSessionId) { _, sessionId in
             if sessionId != nil { sessionPresentation = .summary }
         }
@@ -126,19 +92,48 @@ struct IroniqTabView: View {
         }
     }
 
-    private var bottomBar: some View {
-        HStack(spacing: 12) {
-            iconOnlyTabButton(.templates, assetName: "TemplateTabIcon", accessibilityId: "tab_templates")
-            tabButton(
-                .start,
-                title: sessionVM.isSessionActive ? sessionVM.sessionElapsed.timerFormatted : "START",
-                icon: sessionVM.isSessionActive ? "timer" : "play.fill",
-                prominent: true,
-                accessibilityId: "tab_start"
+    @ViewBuilder
+    private var tabContent: some View {
+        switch selectedTab {
+        case .analytics:
+            AnalyticsView()
+        case .start:
+            StartTabView(
+                showWorkoutDashboard: Binding(
+                    get: { sessionPresentation.showsDashboard },
+                    set: { if $0 { sessionPresentation = .dashboard(openLogOnAppear: false) } else { sessionPresentation = .none } }
+                ),
+                showExercisePicker: Binding(
+                    get: { sessionPresentation.showsExercisePicker },
+                    set: { if $0 { sessionPresentation = .exercisePicker } else { sessionPresentation = .none } }
+                )
             )
-            iconOnlyTabButton(.history, assetName: "HistoryTabIcon", accessibilityId: "tab_history")
+        case .history:
+            HistoryListView()
         }
-        .padding(.horizontal, 16)
+    }
+
+    private var profileButton: some View {
+        Button { showSettings = true } label: {
+            Image(systemName: "person.crop.circle")
+                .font(.title2)
+                .foregroundStyle(.white)
+                .frame(width: 42, height: 42)
+                .background(Color.white.opacity(0.1))
+                .clipShape(Circle())
+        }
+        .padding(.trailing, 16)
+        .padding(.top, 8)
+        .accessibilityIdentifier("profile_button")
+    }
+
+    private var bottomBar: some View {
+        HStack(spacing: 0) {
+            ForEach(AppTab.allCases, id: \.self) { tab in
+                tabButton(tab)
+            }
+        }
+        .padding(.horizontal, 12)
         .padding(.top, 10)
         .padding(.bottom, 8)
         .background(.ultraThinMaterial)
@@ -149,73 +144,42 @@ struct IroniqTabView: View {
         }
     }
 
-    private func iconOnlyTabButton(_ tab: AppTab, assetName: String, accessibilityId: String) -> some View {
-        Button {
-            selectedTab = tab
-        } label: {
-            Image(assetName)
-                .resizable()
-                .renderingMode(.template)
-                .scaledToFit()
-                .foregroundStyle(selectedTab == tab ? .black : .white.opacity(0.78))
-                .frame(width: 24, height: 24)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 13)
-                .background(tabBackground(for: tab))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-        }
-        .accessibilityIdentifier(accessibilityId)
-    }
+    private func tabButton(_ tab: AppTab) -> some View {
+        let isStart = tab == .start
+        let isActive = selectedTab == tab
+        let showingSession = isStart && sessionVM.isSessionActive
 
-    private func tabButton(
-        _ tab: AppTab,
-        title: String,
-        icon: String,
-        prominent: Bool = false,
-        accessibilityId: String? = nil
-    ) -> some View {
-        Button {
+        return Button {
             selectedTab = tab
-            if tab == .start, sessionVM.isSessionActive {
+            if isStart, sessionVM.isSessionActive {
                 sessionPresentation = .dashboard(openLogOnAppear: false)
             }
         } label: {
-            HStack(spacing: 8) {
-                Image(systemName: icon)
-                Text(title)
-                    .fontWeight(.bold)
+            VStack(spacing: 4) {
+                if isStart, sessionVM.isSessionActive {
+                    Text(sessionVM.sessionElapsed.timerFormatted)
+                        .font(.caption2.monospacedDigit().weight(.bold))
+                        .foregroundStyle(Color.ironiqGreen)
+                } else {
+                    Spacer().frame(height: 14)
+                }
+                Text(tab.label)
+                    .font(isStart ? .headline.weight(.bold) : .subheadline.weight(.semibold))
+                    .foregroundStyle(showingSession ? Color.ironiqGreen : (isActive ? Color.ironiqOrange : .white.opacity(0.6)))
             }
-            .font(prominent ? .headline : .subheadline)
-            .foregroundStyle(tab == .start && sessionVM.isSessionActive ? .black : (selectedTab == tab ? .black : .white.opacity(0.72)))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, prominent ? 15 : 13)
-            .background(tabBackground(for: tab))
-            .clipShape(RoundedRectangle(cornerRadius: prominent ? 18 : 14))
-            .overlay(
-                RoundedRectangle(cornerRadius: prominent ? 18 : 14)
-                    .stroke(tab == .start && sessionVM.isSessionActive ? Color.ironiqGreen : .clear, lineWidth: 2)
-            )
+            .padding(.vertical, 10)
+            .background(isActive ? Color.white.opacity(0.06) : .clear)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .accessibilityIdentifier(accessibilityId ?? "tab_\(title.lowercased())")
+        .accessibilityIdentifier("tab_\(tab.label.lowercased())")
     }
-
-    private func tabBackground(for tab: AppTab) -> Color {
-        if tab == .start, sessionVM.isSessionActive {
-            return Color.ironiqGreen
-        }
-        return selectedTab == tab ? Color.ironiqOrange : Color.white.opacity(0.08)
-    }
-}
-
-private enum AppTab {
-    case templates
-    case start
-    case history
 }
 
 #Preview {
+    let appState = AppState()
     IroniqTabView()
-        .environment(AppState())
+        .environment(appState)
         .environment(SessionViewModel(engine: SessionEngine(
             templateRepository: PreviewRepositories.template,
             sessionRepository: PreviewRepositories.session
@@ -226,8 +190,7 @@ private enum AppTab {
         ))
         .environment(HistoryViewModel(
             sessionRepo: PreviewRepositories.session,
-            appState: AppState()
+            appState: appState
         ))
         .environment(SettingsViewModel())
-        .environment(StoreKitService.shared)
 }

@@ -9,11 +9,7 @@ final class SettingsViewModel {
         appState.hasCompletedOnboarding = false
     }
 
-    func toggleProSimulation(appState: AppState) {
-        appState.isProUser.toggle()
-    }
-
-    var appVersion: String {
+var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 }

@@ -39,8 +39,6 @@ struct HistoryCalendarView: View {
             Spacer()
         }
         .background(Color.ironiqDark)
-        .navigationTitle("Calendar")
-        .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: SessionDTO.self) { session in
             SessionDetailView(session: session)
         }
@@ -62,14 +60,16 @@ struct HistoryCalendarView: View {
                 }
             }
 
-            ForEach(0..<(days.count / 7 + (days.count % 7 > 0 ? 1 : 0)), id: \.self) { row in
-                HStack(spacing: 4) {
-                    ForEach(0..<7) { col in
-                        let index = row * 7 + col
-                        if index < days.count, let date = days[index] {
-                            dayCell(date)
-                        } else {
-                            Color.clear.frame(maxWidth: .infinity, minHeight: 36)
+            ForEach(weeks(from: days), id: \.offset) { _, week in
+                // Collapse weeks that contain no actual dates (all nil).
+                if week.contains(where: { $0 != nil }) {
+                    HStack(spacing: 4) {
+                        ForEach(0..<7) { col in
+                            if let date = week[col] {
+                                dayCell(date)
+                            } else {
+                                Color.clear.frame(maxWidth: .infinity, minHeight: 36)
+                            }
                         }
                     }
                 }
@@ -107,6 +107,15 @@ struct HistoryCalendarView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Day \(calendar.component(.day, from: date))\(hasWorkout ? ", has workout" : "")")
+    }
+
+    private func weeks(from days: [Date?]) -> [(offset: Int, element: [Date?])] {
+        stride(from: 0, to: days.count, by: 7).enumerated().map { index, start in
+            let end = min(start + 7, days.count)
+            var week = Array(days[start..<end])
+            while week.count < 7 { week.append(nil) }
+            return (offset: index, element: week)
+        }
     }
 
     private func calendarDays(for month: Date) -> [Date?] {

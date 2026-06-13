@@ -6,17 +6,20 @@ final class Template {
     var id: UUID
     var name: String
     var createdAt: Date
+    var isArchived: Bool = false
     @Relationship(deleteRule: .cascade, inverse: \TemplateExercise.template)
     var exercises: [TemplateExercise]
 
     init(
         id: UUID = UUID(),
         name: String,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        isArchived: Bool = false
     ) {
         self.id = id
         self.name = name
         self.createdAt = createdAt
+        self.isArchived = isArchived
         self.exercises = []
     }
 }

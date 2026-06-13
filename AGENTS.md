@@ -65,7 +65,7 @@ The human fills in `.env` manually. Codex reads keys via fastlane's dotenv integ
 - **HealthKit** — HKWorkoutSession, heart rate, calories
 - **WatchConnectivity** — iPhone ↔ Watch sync
 - **CloudKit / FileManager** — iCloud Drive session log export
-- **StoreKit 2** — Ironiq Pro IAP
+- **Google Drive** — session log sync alongside iCloud Drive
 - **AppIntents** — Siri navigation commands
 - **AVFoundation** — none (no sound)
 - **Combine / async-await** — reactive state
@@ -136,6 +136,13 @@ restStart, restEnd, noteLabel, isUnrecorded
 id, session, startedAt, endedAt, duration
 ```
 
+### UserPreferences
+```swift
+unitSystem: UnitSystem (.imperial | .metric),  // default: .imperial — already exists in AppState
+restReminderSeconds: Int,                       // default: 120, range: 30–300 — already exists in AppState
+sessionsPerWeekTarget: Int                      // default: 5, range: 1–14 — NEW
+```
+
 ---
 
 ## Session State Machine
@@ -195,20 +202,6 @@ static let ironiqGreen  = Color(hex: "2D7D4A")
 static let ironiqDark   = Color(hex: "1A1A1A")
 static let ironiqRed    = Color(hex: "E53E3E")  // heart rate only
 ```
-
----
-
-## Ironiq Pro — StoreKit
-
-Product ID: `com.ir0niq.app.pro`
-
-Gated features:
-- Unlimited templates (free: 7)
-- Full history (free: 90 days)
-- Analytics + charts
-- PR tracking
-- Export (CSV + PDF)
-- Custom exercise icons
 
 ---
 
@@ -275,28 +268,35 @@ Verify Xcode, simulators, signing identity, fastlane. Generate `.env.template`. 
 - **Tests:** All session flows, every edge case scenario, HealthKit mock, connectivity mock, export format validation
 
 ### Phase 3 — iPhone UI
-- All screens: onboarding, home, template list, template detail, template editor, active session, session summary, history (list + calendar), settings
-- Navigation structure (tab bar)
+- Navigation: 3 tabs — **Analytics | Start | History** (text only, no icons)
+- Start tab has two sub-tabs: **Workout** (default) and **Templates**
+  - Workout sub-tab: Quick Start row pinned at top (subtle orange left border), then saved templates; template row tap = inline expansion; no edit/delete here
+  - Templates sub-tab: list with section-header-style title; New Template button distinct from rows; right swipe = Edit, left swipe = Delete; no Start Workout from this tab
+- Settings accessible only via profile icon top-right — not a tab
+- Analytics tab: 2×2 metric grid (Consistency, Total Weight, Muscle Balance, Max Weight); each box tappable for expanded chart view
+- All screens: onboarding (Sign In → Permissions → Preferences → Home), template detail, template editor, active session, session summary, history (list + calendar)
 - Active session: set/rest/pause states, Rest button, End Session (with confirmation)
 - Review Before Saving screen
-- **Tests:** UI tests for every screen, navigation flows, button states, interaction simulations including forgot scenarios
+- **Tests:** UI tests for every screen, navigation flows, sub-tab switching, Quick Start launches blank session, template Start launches correct template, no Pro gating logic anywhere
 
 ### Phase 4 — Watch UI
 - Watch home, template scroll, active session faces (set/rest/input/pause)
 - Set timer large center, rest countdown, heart rate display (red outline)
 - Reps/weight input (dual Crown scroll)
 - Rest button (persistent), End Session (distinct, confirm required)
-- Music controls (swipe right)
+- Swipe navigation: active workout is center/default; swipe right → Pause screen; swipe left → Music controls
+- **Pause screen:** large "PAUSED" text, frozen elapsed time, current exercise + set X/Y, Resume button — nothing else
+- **Music controls (re-implementation required):** Previous implementation was removed because it failed — watch read `MPNowPlayingInfoCenter.default()` which only reflects the watch app's own audio session, not the iPhone's active player; phone also had no handler for the WCSession media action messages. Correct approach: phone polls its own `MPNowPlayingInfoCenter` and pushes Now Playing state (title, artist) to watch via WCSession; watch displays it and sends transport commands ("mediaPrev", "mediaPlayPause", "mediaNext") back to phone; phone handles commands using `MPRemoteCommandCenter` + `UIApplication.beginReceivingRemoteControlEvents()`. Do not re-use the old WCSession-only relay without the phone-side NowPlaying polling and command handler.
+- Watch storage full: persistent warning banner on home and active session; block new sessions until sync clears storage
 - 5-second haptic countdown
 - On-time celebration (green ring + checkmark flash)
 - Watch complication
-- **Tests:** Watch UI tests, haptic trigger tests, complication rendering
+- **Tests:** Watch UI tests, swipe navigation, pause screen content, music controls render, haptic trigger tests, complication rendering
 
 ### Phase 5 — Integrations
 - Siri AppIntents (6 navigation commands)
-- StoreKit 2 IAP (Ironiq Pro)
-- Feature gating
-- **Tests:** Intent handling, purchase flow mock, feature gate enforcement
+- Google Drive sync (auth token in Keychain; silent launch sync; same robustness as iCloud)
+- **Tests:** Intent handling, Google Drive auth + sync mock
 
 ### Phase 6 — Polish + Regression
 - Dark/light theme
@@ -332,12 +332,15 @@ Every phase must include:
    - Pause during rest
    - Session ends at 3-hour max timer
    - Ad-hoc session saved as template
-   - Ironiq Pro purchase + feature unlock
+   - Template deleted with sessions → archived, sessions remain in History as "Archived"
+   - Export CSV: verify all columns, all sessions including archived templates
+   - Watch phone-disconnect: watch holds session locally, syncs on reconnect
+   - Onboarding preferences: range validation blocks proceed, field clears on tap, defaults pre-populated
 
 Test target: **100% of business logic covered. 0 skipped tests.**
 All tests must pass before phase is marked complete.
 Use `XCTExpectation` and async test patterns throughout.
-Mock HealthKit, WatchConnectivity, StoreKit, and iCloud in tests — never hit real services.
+Mock HealthKit, WatchConnectivity, iCloud, and Google Drive in tests — never hit real services.
 
 ---
 
@@ -367,8 +370,8 @@ Ironiq/
 │   ├── Services/
 │   │   ├── HealthKitService.swift
 │   │   ├── iCloudService.swift
-│   │   ├── WatchSyncService.swift
-│   │   └── StoreKitService.swift
+│   │   ├── GoogleDriveService.swift
+│   │   └── WatchSyncService.swift
 │   ├── Intents/
 │   ├── UI/
 │   │   ├── Onboarding/
@@ -415,3 +418,5 @@ Ironiq/
 10. Every public function has a doc comment
 11. When a phase fails, diagnose and fix before proceeding — never work around a failing test
 12. After each phase: run `fastlane test`, confirm all green, print summary
+13. The "Continue as Demo" button must be preserved in all builds — required for App Store reviewer access
+14. All features are free — never add feature gating, paywalls, or upgrade prompts

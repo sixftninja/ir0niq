@@ -66,6 +66,8 @@ actor MockWatchSyncService: WatchSyncServiceProtocol {
     completionHandler = handler
   }
 
+  func onWatchAction(_ handler: @escaping WatchActionHandler) async {}
+
   func simulateSetCompletion(_ message: WatchSetCompletionMessage) async {
     completionHandler?(message)
   }

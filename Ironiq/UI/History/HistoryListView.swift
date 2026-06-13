@@ -33,8 +33,7 @@ struct HistoryListView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .background(Color.ironiqDark)
-            .navigationTitle("History")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarHidden(true)
             .navigationDestination(for: SessionDTO.self) { session in
                 SessionDetailView(session: session)
             }

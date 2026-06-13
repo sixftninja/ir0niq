@@ -156,16 +156,30 @@ struct SessionRowView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(session.startedAt.formatted(date: .abbreviated, time: .omitted))
-                    .font(.body).bold()
-                    .foregroundStyle(.white)
+                HStack(spacing: 6) {
+                    Text(session.startedAt.formatted(date: .abbreviated, time: .omitted))
+                        .font(.body).bold()
+                        .foregroundStyle(.white)
+                    if session.isFromArchivedTemplate {
+                        Text("Archived")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.45))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.white.opacity(0.1))
+                            .clipShape(Capsule())
+                    } else if let name = session.templateName {
+                        Text(name)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(Color.ironiqOrange.opacity(0.85))
+                            .lineLimit(1)
+                    }
+                }
                 Text(sessionSummary)
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.5))
             }
             Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundStyle(.white.opacity(0.3))
         }
         .padding(14)
         .background(Color(white: 0.1))
@@ -174,9 +188,8 @@ struct SessionRowView: View {
 
     private var sessionSummary: String {
         let sets = session.exercises.flatMap(\.sets).filter { $0.status == .logged }
-        let duration = sets.compactMap(\.durationSeconds).reduce(0, +)
-        let durationText = duration > 0 ? " · \(Int(duration)) sec logged" : ""
-        return "\(session.exercises.count) exercises · \(sets.count) sets logged\(durationText)"
+        let setWord = sets.count == 1 ? "set" : "sets"
+        return "\(session.exercises.count) exercises · \(sets.count) \(setWord)"
     }
 }
 

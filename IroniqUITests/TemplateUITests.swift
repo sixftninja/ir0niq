@@ -9,6 +9,11 @@ final class TemplateUITests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments = ["--skip-onboarding"]
         app.launch()
+        // Navigate to Start tab → Templates sub-tab
+        let startTab = app.buttons["tab_start"]
+        if startTab.waitForExistence(timeout: 3) { startTab.tap() }
+        let templatesSubTab = app.buttons["start_subtab_templates"]
+        if templatesSubTab.waitForExistence(timeout: 3) { templatesSubTab.tap() }
     }
 
     func testNewTemplateButtonExists() {

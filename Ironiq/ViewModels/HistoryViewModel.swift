@@ -19,13 +19,7 @@ final class HistoryViewModel {
     func loadSessions() async {
         isLoading = true
         do {
-            let all = try await sessionRepo.fetchAll()
-            if appState.isProUser {
-                sessions = all
-            } else {
-                let cutoff = Date().addingTimeInterval(-TimeInterval(AppState.freeHistoryDays * 86400))
-                sessions = all.filter { $0.startedAt >= cutoff }
-            }
+            sessions = try await sessionRepo.fetchAll()
         } catch { /* non-fatal */ }
         isLoading = false
     }

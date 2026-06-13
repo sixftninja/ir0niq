@@ -35,8 +35,13 @@ final class WatchSyncServiceTests: XCTestCase {
             setNumber: 1,
             totalSets: 3,
             setStatus: "inProgress",
-            targetRestDuration: 90,
-            unitSystem: nil
+            targetReps: nil,
+            targetDuration: nil,
+            targetWeight: nil,
+            loggingType: "reps",
+            unitSystem: nil,
+            sessionDurationSeconds: nil,
+            sessionVolumeKg: nil
         )
         await mock.sendSessionState(message)
         let sent = await mock.sentStates
@@ -77,7 +82,9 @@ final class WatchSyncServiceTests: XCTestCase {
                 sessionId: UUID().uuidString,
                 engineState: state,
                 exerciseName: nil, setNumber: nil, totalSets: nil, setStatus: nil,
-                targetRestDuration: nil, unitSystem: nil
+                targetReps: nil, targetDuration: nil, targetWeight: nil,
+                loggingType: nil, unitSystem: nil,
+                sessionDurationSeconds: nil, sessionVolumeKg: nil
             ))
         }
         let sent = await mock.sentStates

@@ -90,7 +90,15 @@ extension SessionEngine {
     /// Deprecated — use SessionIntentBridge.shared instead.
     static var current: SessionEngine? {
         get { MainActor.assumeIsolated { SessionIntentBridge.shared.engine() } }
-        set { if let e = newValue { MainActor.assumeIsolated { SessionIntentBridge.shared.setEngine(e) } } }
+        set {
+            MainActor.assumeIsolated {
+                if let e = newValue {
+                    SessionIntentBridge.shared.setEngine(e)
+                } else {
+                    SessionIntentBridge.shared.clearEngine()
+                }
+            }
+        }
     }
 }
 

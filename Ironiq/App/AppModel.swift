@@ -13,7 +13,6 @@ final class AppModel {
     let historyVM: HistoryViewModel
     let settingsVM: SettingsViewModel
     let engine: SessionEngine
-    let storeKit: StoreKitService
 
     private let templateRepo: TemplateRepository
     private let sessionRepo: SessionRepository
@@ -37,9 +36,6 @@ final class AppModel {
         self.templateVM = TemplateViewModel(templateRepo: templateRepo, exerciseRepo: exerciseRepo)
         self.historyVM = HistoryViewModel(sessionRepo: sessionRepo, appState: appState)
         self.settingsVM = SettingsViewModel()
-        self.storeKit = StoreKitService.shared
-
-        Task { await StoreKitService.shared.initialize(appState: appState) }
     }
 
     // MARK: - Watch action handling
@@ -95,6 +91,12 @@ final class AppModel {
             await sessionVM.confirmEnd()
         case "discard":
             await sessionVM.discardSession()
+        case "mediaPrev":
+            NowPlayingBridge.shared.previous()
+        case "mediaPlayPause":
+            NowPlayingBridge.shared.togglePlayPause()
+        case "mediaNext":
+            NowPlayingBridge.shared.next()
         default:
             break
         }

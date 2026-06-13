@@ -42,7 +42,7 @@ struct SessionDetailView: View {
                                     }
                                 }
                             } else {
-                                Text(set.status.rawValue.capitalized)
+                                Text(set.status == .notPerformed ? "—" : set.status.rawValue.capitalized)
                                     .foregroundStyle(.white.opacity(0.4))
                             }
                         }
@@ -71,7 +71,7 @@ struct SessionDetailView: View {
     }
 
     private var workoutTitle: String {
-        session.exercises.isEmpty ? "Workout" : "\(session.exercises.count) Exercises"
+        session.displayTemplateName
     }
 
     private var actualDuration: TimeInterval {

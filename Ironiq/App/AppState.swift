@@ -29,6 +29,9 @@ final class AppState {
     static let syncAccountLabel = "syncAccountLabel"
     static let syncEnabled = "syncEnabled"
     static let hasCompletedOnboarding = "hasCompletedOnboarding"
+    static let unitSystem = "unitSystem"
+    static let restReminderSeconds = "restReminderSeconds"
+    static let sessionsPerWeekTarget = "sessionsPerWeekTarget"
   }
 
   // iCloud KV — used only for hasCompletedOnboarding so onboarding slides are
@@ -36,8 +39,10 @@ final class AppState {
   // reinstall always shows the login screen again.
   private static let kv = NSUbiquitousKeyValueStore.default
 
-  var unitSystem: UnitSystem = .imperial
-  var isProUser: Bool = false
+  var unitSystem: UnitSystem = UserDefaults.standard.string(forKey: "unitSystem")
+    .flatMap(UnitSystem.init(rawValue:)) ?? .imperial {
+    didSet { UserDefaults.standard.set(unitSystem.rawValue, forKey: "unitSystem") }
+  }
 
   var hasCompletedOnboarding: Bool =
     UserDefaults.standard.bool(forKey: Keys.hasCompletedOnboarding)
@@ -51,7 +56,18 @@ final class AppState {
   }
 
   var useDarkMode: Bool = true
-  var restReminderSeconds: Int = 120
+
+  var restReminderSeconds: Int = {
+    let v = UserDefaults.standard.integer(forKey: "restReminderSeconds"); return v > 0 ? v : 120
+  }() {
+    didSet { UserDefaults.standard.set(restReminderSeconds, forKey: "restReminderSeconds") }
+  }
+
+  var sessionsPerWeekTarget: Int = {
+    let v = UserDefaults.standard.integer(forKey: "sessionsPerWeekTarget"); return v > 0 ? v : 5
+  }() {
+    didSet { UserDefaults.standard.set(sessionsPerWeekTarget, forKey: "sessionsPerWeekTarget") }
+  }
 
   // Sync credentials — UserDefaults only. Cleared on reinstall so the user must log in again.
   var syncProvider: SyncProvider? = UserDefaults.standard.string(forKey: Keys.syncProvider)
@@ -127,7 +143,4 @@ final class AppState {
     syncHealth = .unknown
   }
 
-  // MARK: - Pro feature limits
-  nonisolated static let freeTemplateLimit = 7
-  nonisolated static let freeHistoryDays = 90
 }

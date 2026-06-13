@@ -50,9 +50,7 @@ final class TemplateViewModel {
 
   // MARK: - Templates
 
-  func canCreateTemplate(appState: AppState) -> Bool {
-    appState.isProUser || templates.count < AppState.freeTemplateLimit
-  }
+  func canCreateTemplate(appState: AppState) -> Bool { true }
 
   func createTemplate(
     name: String,

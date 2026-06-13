@@ -4,17 +4,13 @@ struct TemplateListView: View {
     @Environment(TemplateViewModel.self) private var vm
     @Environment(AppState.self) private var appState
     @Environment(SessionViewModel.self) private var sessionVM
-    @Environment(StoreKitService.self) private var storeKit
     @State private var showEditor = false
-    @State private var showProGate = false
-    @State private var purchaseErrorMessage = ""
-    @State private var showPurchaseError = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    Button { handleNew() } label: {
+                    Button { showEditor = true } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Create Template")
@@ -76,15 +72,6 @@ struct TemplateListView: View {
             .sheet(isPresented: $showEditor) {
                 TemplateEditorView()
             }
-            .sheet(isPresented: $showProGate) {
-                proGateSheet
-            }
-            .alert("Purchase Failed", isPresented: $showPurchaseError) {
-                Button("OK") {}
-            } message: {
-                Text(purchaseErrorMessage)
-            }
-            
         }
     }
 
@@ -115,33 +102,6 @@ struct TemplateListView: View {
         let rest = template.exercises.flatMap(\.sets).compactMap(\.restDuration).reduce(0, +)
         return rest > 0 ? rest.timerFormatted : "No target"
     }
-
-    private func handleNew() {
-        if vm.canCreateTemplate(appState: appState) {
-            showEditor = true
-        } else {
-            showProGate = true
-        }
-    }
-
-    private var proGateSheet: some View {
-        ZStack {
-            Color.ironiqDark.ignoresSafeArea()
-            ProGateView(feature: "More than \(AppState.freeTemplateLimit) templates") {
-                Task {
-                    do {
-                        if try await storeKit.purchase(appState: appState) {
-                            showProGate = false
-                        }
-                    } catch {
-                        purchaseErrorMessage = error.localizedDescription
-                        showPurchaseError = true
-                    }
-                }
-            }
-        }
-        
-    }
 }
 
 extension TemplateDTO: Hashable {
@@ -160,5 +120,4 @@ extension TemplateDTO: Hashable {
             templateRepository: PreviewRepositories.template,
             sessionRepository: PreviewRepositories.session
         )))
-        .environment(StoreKitService.shared)
 }

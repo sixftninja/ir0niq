@@ -9,7 +9,11 @@ final class SettingsUITests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments = ["--skip-onboarding"]
         app.launch()
-        app.buttons["profile_button"].tap()
+        let profileBtn = app.buttons["profile_button"]
+        XCTAssertTrue(profileBtn.waitForExistence(timeout: 5))
+        profileBtn.tap()
+        // Wait for settings sheet to appear
+        _ = app.navigationBars["Settings"].waitForExistence(timeout: 3)
     }
 
     func testSettingsViewLoads() {
@@ -23,6 +27,12 @@ final class SettingsUITests: XCTestCase {
     }
 
     func testResetOnboardingButtonExists() {
-        XCTAssertTrue(app.buttons["reset_onboarding_button"].waitForExistence(timeout: 3))
+        let btn = app.buttons["reset_onboarding_button"]
+        if !btn.waitForExistence(timeout: 2) {
+            // Scroll down to find it
+            app.swipeUp()
+            app.swipeUp()
+        }
+        XCTAssertTrue(btn.waitForExistence(timeout: 3))
     }
 }

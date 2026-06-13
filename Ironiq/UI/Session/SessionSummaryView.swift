@@ -23,8 +23,8 @@ struct SessionSummaryView: View {
                 ScrollView {
                     VStack(spacing: 22) {
                         if let summary {
-                            completionHero(summary)
-                            metricGrid(summary)
+                            endMetricGrid(summary)
+                            encouragingText(summary)
                         } else {
                             ProgressView()
                                 .tint(.ironiqOrange)
@@ -66,74 +66,129 @@ struct SessionSummaryView: View {
         .task { await loadSummary() }
     }
 
-    private func completionHero(_ summary: WorkoutExportSession) -> some View {
-        VStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .stroke(Color.white.opacity(0.08), lineWidth: 14)
-                    .frame(width: 142, height: 142)
-                Circle()
-                    .trim(from: 0, to: animate ? completionRatio(summary) : 0)
-                    .stroke(Color.ironiqGreen, style: StrokeStyle(lineWidth: 14, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .frame(width: 142, height: 142)
-                Image(systemName: "checkmark")
-                    .font(.system(size: 42, weight: .black))
-                    .foregroundStyle(.black)
-                    .frame(width: 74, height: 74)
-                    .background(Color.ironiqGreen)
-                    .clipShape(Circle())
-                    .scaleEffect(animate ? 1 : 0.72)
-                    .opacity(animate ? 1 : 0)
-            }
-
-            VStack(spacing: 5) {
-                Text("Session complete")
-                    .font(.system(.largeTitle, design: .default).weight(.bold))
-                    .foregroundStyle(.white)
-                Text(summary.startedAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.55))
-            }
+    private func endMetricGrid(_ summary: WorkoutExportSession) -> some View {
+        let lastSession = historyVM.sessions.first {
+            guard let src = sourceSession else { return false }
+            return $0.templateId == src.templateId && $0.id != src.id
         }
-        .padding(.top, 18)
-        .accessibilityIdentifier("session_summary_hero")
-    }
+        let lastVolume = lastSession.map { s in
+            s.exercises.flatMap(\.sets).filter { $0.status == .logged }.reduce(0) { $0 + $1.volumeKg }
+        }
+        let volumeTrend: String? = lastVolume.map { lv in
+            if summary.totalVolumeKg > lv { return "↑" }
+            if summary.totalVolumeKg < lv { return "↓" }
+            return "→"
+        }
+        let volumeTrendColor: Color = {
+            guard let t = volumeTrend else { return .white }
+            if t == "↑" { return .ironiqGreen }
+            if t == "↓" { return .ironiqRed }
+            return .white.opacity(0.55)
+        }()
 
-    private func metricGrid(_ summary: WorkoutExportSession) -> some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 2), spacing: 10) {
-            metric("Duration", summary.durationSeconds.timerFormatted, "timer")
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.18), value: animate)
-            metric("Exercises", "\(summary.exerciseCount)", "figure.strengthtraining.traditional")
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.26), value: animate)
-            metric("Volume", volumeText(summary.totalVolumeKg), "scalemass")
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.34), value: animate)
-            metric("Peak HR", heartRateText(summary.peakHeartRateBPM), "heart.fill", accent: Color.ironiqRed)
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.42), value: animate)
+        let allSets = (sourceSession?.exercises ?? []).flatMap(\.sets)
+        let plannedSets = allSets.count
+        let loggedSets = allSets.filter { $0.status == .logged }.count
+        let completionPct = plannedSets > 0 ? Int(Double(loggedSets) / Double(plannedSets) * 100) : 100
+
+        let bestSet = (sourceSession?.exercises ?? []).flatMap(\.sets)
+            .filter { $0.status == .logged && $0.weight != nil }
+            .max(by: { ($0.weight ?? 0) < ($1.weight ?? 0) })
+        let bestLiftName = bestSet.flatMap { s in
+            sourceSession?.exercises.first(where: { ex in ex.sets.contains(where: { $0.id == s.id }) })?.exerciseName
+        }
+        let bestLiftText: String = {
+            guard let s = bestSet, let w = s.weight else { return "—" }
+            let repsStr = s.reps.map { " × \($0) reps" } ?? ""
+            let name = bestLiftName.map { "\($0) — " } ?? ""
+            return "\(name)\(WeightFormatter.format(w, unitSystem: appState.unitSystem))\(repsStr)"
+        }()
+
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 2), spacing: 10) {
+            endMetric("Volume", volumeText(summary.totalVolumeKg), "scalemass",
+                      badge: volumeTrend, badgeColor: volumeTrendColor)
+            endMetric("Best Lift", bestLiftText, "sparkline")
+            endMetric("Completion", "\(completionPct)%", "checkmark.circle.fill")
+            endMetric("Duration", summary.durationSeconds.timerFormatted, "timer")
         }
         .opacity(animate ? 1 : 0)
         .offset(y: animate ? 0 : 18)
+        .accessibilityIdentifier("session_summary_metrics")
     }
 
-    private func metric(_ title: String, _ value: String, _ icon: String, accent: Color = Color.ironiqOrange) -> some View {
+    private func endMetric(_ title: String, _ value: String, _ icon: String,
+                           badge: String? = nil, badgeColor: Color = .white) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Label(title, systemImage: icon)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(accent.opacity(0.9))
-            Text(value)
-                .font(.headline.weight(.bold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                .foregroundStyle(Color.ironiqOrange.opacity(0.9))
+            HStack(spacing: 4) {
+                Text(value)
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                if let badge {
+                    Text(badge)
+                        .font(.subheadline.weight(.black))
+                        .foregroundStyle(badgeColor)
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(Color.white.opacity(0.07))
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.08), lineWidth: 1)
-        )
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white.opacity(0.08), lineWidth: 1))
+    }
+
+    @ViewBuilder
+    private func encouragingText(_ summary: WorkoutExportSession) -> some View {
+        Text(encouragingLine(summary))
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.white.opacity(0.72))
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 4)
+            .opacity(animate ? 1 : 0)
+    }
+
+    private func encouragingLine(_ summary: WorkoutExportSession) -> String {
+        let allSets = (sourceSession?.exercises ?? []).flatMap(\.sets)
+        let planned = allSets.count
+        let logged = allSets.filter { $0.status == .logged }.count
+        let allComplete = planned > 0 && logged == planned
+
+        let lastSession = historyVM.sessions.first {
+            guard let src = sourceSession else { return false }
+            return $0.templateId == src.templateId && $0.id != src.id
+        }
+
+        if historyVM.sessions.filter({ $0.templateId == sourceSession?.templateId }).count <= 1 {
+            return "First one's always the hardest. Well done."
+        }
+
+        if let lv = lastSession.map({ s in
+            s.exercises.flatMap(\.sets).filter { $0.status == .logged }.reduce(0) { $0 + $1.volumeKg }
+        }), summary.totalVolumeKg > lv {
+            let thirtyDaysAgo = Date().addingTimeInterval(-30 * 86400)
+            let recentBest = historyVM.sessions
+                .filter { ($0.startedAt > thirtyDaysAgo) && ($0.id != sourceSession?.id) }
+                .map { s in s.exercises.flatMap(\.sets).filter { $0.status == .logged }.reduce(0) { $0 + $1.volumeKg } }
+                .max() ?? 0
+            if summary.totalVolumeKg > recentBest {
+                return "Strongest session this month."
+            }
+            return "More volume than last time."
+        }
+
+        if allComplete { return "Perfect execution." }
+
+        if let lastDur = lastSession?.actualDurationSeconds, summary.durationSeconds < lastDur {
+            return "Done in record time."
+        }
+
+        return "Good work. See you next time."
     }
 
     private func exerciseBreakdown(_ summary: WorkoutExportSession) -> some View {

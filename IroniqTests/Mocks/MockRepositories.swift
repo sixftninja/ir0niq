@@ -34,6 +34,7 @@ actor MockTemplateRepository: TemplateRepositoryProtocol {
     }
 
     func count() throws -> Int { templates.count }
+    func hasAssociatedSessions(id: UUID) throws -> Bool { false }
 
     /// Test helper to pre-seed a template.
     func seed(template: TemplateDTO) { templates.append(template) }

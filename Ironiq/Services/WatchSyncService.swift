@@ -91,6 +91,12 @@ final class WatchSyncService: NSObject, WatchSyncServiceProtocol, @unchecked Sen
     func onWatchAction(_ handler: @escaping WatchActionHandler) async {
         actionHandler = handler
     }
+
+    /// Sends Now Playing metadata to the Watch for the music controls screen.
+    func sendNowPlayingUpdate(_ info: [String: Any]) {
+        guard isReachable && WCSession.default.isReachable else { return }
+        WCSession.default.sendMessage(info, replyHandler: nil, errorHandler: nil)
+    }
 }
 
 // MARK: - WCSessionDelegate

@@ -75,7 +75,7 @@ final class StoreKitService: StoreKitServiceProtocol, @unchecked Sendable {
       switch verificationResult {
       case .verified(let transaction):
         await transaction.finish()
-        appState.isProUser = true
+        _ = appState  // Pro removed; purchase no longer gates features
         return true
       case .unverified:
         throw StoreError.verificationFailed
@@ -106,9 +106,9 @@ final class StoreKitService: StoreKitServiceProtocol, @unchecked Sendable {
     let currentEntitlement = await Transaction.currentEntitlement(for: Self.proProductId)
     switch currentEntitlement {
     case .verified(let transaction):
-      appState.isProUser = transaction.revocationDate == nil
+      _ = transaction.revocationDate  // Pro removed
     default:
-      appState.isProUser = false
+      break
     }
   }
 
@@ -122,7 +122,7 @@ final class StoreKitService: StoreKitServiceProtocol, @unchecked Sendable {
         case .verified(let transaction):
           if transaction.productID == Self.proProductId {
             if transaction.revocationDate == nil {
-              appState.isProUser = true
+              _ = appState  // Pro removed; purchase no longer gates features
             } else {
               await self.checkEntitlement(appState: appState)
             }

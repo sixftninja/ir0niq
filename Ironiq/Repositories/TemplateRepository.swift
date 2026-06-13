@@ -51,6 +51,7 @@ protocol TemplateRepositoryProtocol: Sendable {
     func appendExercise(templateId: UUID, exercise: CreateTemplateExerciseInput) async throws
     func delete(id: UUID) async throws
     func count() async throws -> Int
+    func hasAssociatedSessions(id: UUID) async throws -> Bool
 }
 
 // MARK: - DTO construction helpers (within ModelActor context)
@@ -89,7 +90,9 @@ actor TemplateRepository: TemplateRepositoryProtocol {
 
     func fetchAll() throws -> [TemplateDTO] {
         let descriptor = FetchDescriptor<Template>(sortBy: [SortDescriptor(\.name)])
-        return try modelContext.fetch(descriptor).map { makeTemplateDTO(from: $0) }
+        return try modelContext.fetch(descriptor)
+            .filter { !$0.isArchived }
+            .map { makeTemplateDTO(from: $0) }
     }
 
     func fetchById(_ id: UUID) throws -> TemplateDTO? {
@@ -220,10 +223,26 @@ actor TemplateRepository: TemplateRepositoryProtocol {
         let predicate = #Predicate<Template> { $0.id == id }
         var descriptor = FetchDescriptor<Template>(predicate: predicate)
         descriptor.fetchLimit = 1
-        if let model = try modelContext.fetch(descriptor).first {
+        guard let model = try modelContext.fetch(descriptor).first else { return }
+
+        // Archive if sessions exist; permanently delete if none.
+        let hasSessions = try hasAssociatedSessionsLocal(id: id)
+        if hasSessions {
+            model.isArchived = true
+            try modelContext.save()
+        } else {
             modelContext.delete(model)
             try modelContext.save()
         }
+    }
+
+    func hasAssociatedSessions(id: UUID) throws -> Bool {
+        try hasAssociatedSessionsLocal(id: id)
+    }
+
+    private func hasAssociatedSessionsLocal(id: UUID) throws -> Bool {
+        let all = try modelContext.fetch(FetchDescriptor<Session>())
+        return all.contains { $0.template?.id == id }
     }
 
     func count() throws -> Int {
